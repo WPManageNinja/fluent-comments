@@ -1,0 +1,63 @@
+<?php
+if ( post_password_required() ) {
+    return;
+}
+    $comments_number = get_comments_number();
+    ?>
+    <div class="fluent_comments_wrap comments-area">
+        <?php if ( $comments ) : ?>
+            <h2 class="flc_comments-title">Latest comments (<?php echo absint($comments_number); ?>)</h2>
+        <?php else: ?>
+            <h2 class="flc_comments-title">Add your first comment to this post</h2>
+        <?php endif; ?>
+
+        <?php include FLUENT_COMMENTS_PLUGIN_PATH.'app/Views/comment_form.php'; ?>
+
+        <div class="flc_comments flc_native_comments" id="comments">
+            <div class="flc_comment-list">
+
+                <?php
+                wp_list_comments(
+                    array(
+                        'walker'      => new \FluentComments\App\Services\FluentWalkerComment(),
+                        'avatar_size' => 64,
+                        'style'       => 'div',
+                    )
+                );
+
+                $comment_pagination = paginate_comments_links(
+                    array(
+                        'echo'      => false,
+                        'end_size'  => 0,
+                        'mid_size'  => 0,
+                        'next_text' => __( 'Newer Comments', 'fluent-comments' ) . ' <span aria-hidden="true">&rarr;</span>',
+                        'prev_text' => '<span aria-hidden="true">&larr;</span> ' . __( 'Older Comments', 'fluent-comments' ),
+                    )
+                );
+
+                if ( $comment_pagination ) {
+                    $pagination_classes = '';
+
+                    // If we're only showing the "Next" link, add a class indicating so.
+                    if ( false === strpos( $comment_pagination, 'prev page-numbers' ) ) {
+                        $pagination_classes = ' only-next';
+                    }
+                    ?>
+
+                    <nav class="pagination pagination<?php echo $pagination_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>" aria-label="<?php esc_attr_e( 'Comments', 'fluent-comments' ); ?>">
+                        <?php echo wp_kses_post( $comment_pagination ); ?>
+                    </nav>
+
+                    <?php
+                }
+                ?>
+
+            </div><!-- .comments-inner -->
+        </div><!-- comments -->
+
+        <?php if ( !comments_open() ) { ?>
+            <div class="comment-respond" id="respond">
+                <p class="comments-closed"><?php _e( 'Comments are closed.', 'fluent-comments' ); ?></p>
+            </div>
+        <?php } ?>
+    </div>

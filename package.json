@@ -1,0 +1,23 @@
+{
+  "name": "fluent-conversations",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "laravel-mix": "^6.0.49",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.57.1",
+    "sass-loader": "^12.6.0",
+    "svelte": "^3.55.0",
+    "svelte-loader": "^3.1.4"
+  },
+  "dependencies": {
+    "laravel-mix-svelte": "^0.5.0"
+  }
+}

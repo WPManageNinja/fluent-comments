@@ -44,6 +44,11 @@ class ShortcodeHandler
 
         add_action('wp_ajax_fluent_comment_post', [$this, 'handleAjaxComment']);
         add_action('wp_ajax_nopriv_fluent_comment_post', [$this, 'handleAjaxComment']);
+
+        add_action('wp_ajax_fluent_comment_comment_token', [$this, 'handleAjaxCommentToken']);
+        add_action('wp_ajax_nopriv_fluent_comment_comment_token', [$this, 'handleAjaxCommentToken']);
+
+        add_filter('pre_comment_approved', [$this, 'checkForSecurityToken'], 10, 2);
     }
 
     public function handleAjaxComment()
@@ -57,7 +62,6 @@ class ShortcodeHandler
                 'message' => 'Sorry, this post does not allow new comments'
             ], 423);
         }
-
 
         $comment = wp_handle_comment_submission(wp_unslash($_REQUEST));
 
@@ -73,6 +77,47 @@ class ShortcodeHandler
         ], 200);
     }
 
+    public function checkForSecurityToken($approved, $commendData)
+    {
+        if(is_wp_error($approved)) {
+            return $approved;
+        }
+
+        if(current_user_can('moderate_comments')) {
+            return $approved;
+        }
+
+        if(empty($_REQUEST['_fluent_comment_s_token'])) {
+            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
+        }
+
+        $token = $this->encryptDecrypt(sanitize_text_field($_REQUEST['_fluent_comment_s_token']), 'decrypt');
+
+        if (!$token) {
+            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
+        }
+
+        $tokenParts = explode('|', $token);
+
+        if (count($tokenParts) !== 2) {
+            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
+        }
+
+        $timeStamp = $tokenParts[0];
+        $tokenPostId = $tokenParts[1];
+
+        if (time() - $timeStamp > 300) {
+            return new \WP_Error('fluent_comment_s_token', 'Token expired');
+        }
+
+        if ($tokenPostId != $commendData['comment_post_ID']) {
+            return new \WP_Error('fluent_comment_s_token', 'Invalid post id on security token');
+        }
+
+        return $approved;
+
+    }
+
     public function handleShortcode()
     {
         $postId = get_the_ID();
@@ -83,6 +128,22 @@ class ShortcodeHandler
     {
         $this->initAssets();
         return '<div data-post_id="' . $postId . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">Loading..</h3></div>';
+    }
+
+    public function handleAjaxCommentToken()
+    {
+        $postId = (int)$_REQUEST['comment_post_ID'];
+
+        if (!$postId) {
+            wp_send_json([
+                'message' => 'Invalid post id'
+            ], 423);
+        }
+
+        $token = time() . '|' . $postId;
+        wp_send_json([
+            'token' => $this->encryptDecrypt($token)
+        ], 200);
     }
 
     private function initAssets()
@@ -165,4 +226,24 @@ class ShortcodeHandler
         return ob_get_clean();
     }
 
+    private function encryptDecrypt($string, $action = 'encrypt')
+    {
+        // you may change these values to your own
+        $secret_key = 'my_simple_secret_key';
+        $secret_iv = 'my_simple_secret_iv';
+
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $key = hash('sha256', $secret_key);
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+        if ($action == 'encrypt') {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+        } else if ($action == 'decrypt') {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
+    }
 }

@@ -28,8 +28,6 @@ class FluentCommentsPlugin
 
     private function registerAutoLoad()
     {
-        // require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/libs/wpfluent/wpfluent.php';
-
         spl_autoload_register(function ($class) {
             $match = 'FluentComments';
 

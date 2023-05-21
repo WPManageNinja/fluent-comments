@@ -19,9 +19,50 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = !submitBtn.disabled;
         },
 
+        maybeGetSecurityToken() {
+            if(window._fluent_comment_s_token) {
+                return false;
+            }
+
+            setTimeout(() => {
+                // return if this.commentForm has class flc_tokenizing
+                if (this.commentForm.classList.contains('flc_tokenizing')) {
+                    return false;
+                }
+                // add class to this.commentForm
+                this.commentForm.classList.add('flc_tokenizing');
+
+                const commentPostId = this.commentForm.querySelector('input[name="comment_post_ID"]').value;
+
+                const request = new XMLHttpRequest();
+
+                request.open('POST', window.fluentCommentPublic.ajaxurl, true);
+                request.responseType = 'json';
+
+                var that = this;
+
+                request.onload = function () {
+                    if (this.status === 200) {
+                        window._fluent_comment_s_token = this.response.token;
+                    } else {
+                        window._fluent_comment_s_token = null;
+                    }
+                };
+
+                // convert data to FormData
+                const formData = new FormData();
+                formData.append('action', 'fluent_comment_comment_token');
+                formData.append('comment_post_ID', commentPostId);
+
+                request.send(formData);
+
+            }, 2000);
+        },
+
         initTextArea() {
             if (this.textArea) {
                 this.textArea.addEventListener('focus', () => {
+                    this.maybeGetSecurityToken();
                     this.commentForm.querySelector(".flc_comment_meta").style.display = "block";
                 });
 
@@ -71,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = new FormData(event.target);
 
+                data.append('_fluent_comment_s_token', window._fluent_comment_s_token);
+
                 const request = new XMLHttpRequest();
 
                 request.open('POST', window.fluentCommentPublic.ajaxurl, true);
@@ -82,9 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (this.status === 200) {
                         that.appendComment(this.response.comment_preview);
                         that.closeForm(form);
-                        console.log(this.response.comment_preview);
                     } else {
-
                         let genericError = this.response.error;
 
                         if (!genericError && this.response.message) {
@@ -112,8 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
-
                     that.toggleLoading(submitBtn);
+
+                    window._fluent_comment_s_token = null;
                 };
 
                 request.send(data);
@@ -148,5 +190,4 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     commentHandler.init(commentForm);
-
 });

@@ -7,23 +7,10 @@ class ShortcodeHandler
     public function register()
     {
         add_shortcode('fluent_comments', array($this, 'handleShortcode'));
-        add_action('comment_form', function () {
-            return;
-            global $post;
-            if (is_admin() || !is_singular() || !comments_open($post)) {
-                return;
-            }
-            ?>
-            <script>
-                window.flc_post_id = <?php echo $post->ID; ?>;
-            </script>
-            <?php
-            $this->initAssets();
-        });
 
         add_filter('comments_template', function ($file) {
             return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
-        });
+        },9999, 1);
 
         add_action('wp_enqueue_scripts', function () {
             if (is_admin() || !is_singular()) {

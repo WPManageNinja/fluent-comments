@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData();
                 formData.append('action', 'fluent_comment_comment_token');
                 formData.append('comment_post_ID', commentPostId);
+                formData.append('comment_time', Date.now());
 
                 request.send(formData);
 
@@ -113,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = new FormData(event.target);
 
                 data.append('_fluent_comment_s_token', window._fluent_comment_s_token);
+                data.append('comment_time', Date.now());
 
                 const request = new XMLHttpRequest();
 

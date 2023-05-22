@@ -46,7 +46,7 @@ $commenter = wp_get_current_commenter();
 
                         do_action( 'comment_form_after_fields' );
 
-                        $submitField = '<div class="flc_submit"><button class="btn flc_button">Submit Comment</button></div>';
+                        $submitField = '<div class="flc_submit"><button class="btn flc_button">'.__('Submit Comment', 'fluent-comments').'</button></div>';
                         echo apply_filters( 'comment_form_submit_field', $submitField, [] );
 
                         do_action( 'comment_form', $post->ID );

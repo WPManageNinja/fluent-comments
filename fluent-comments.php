@@ -3,11 +3,11 @@ defined('ABSPATH') or die;
 
 /*
 Plugin Name:  Fluent Comments
-Plugin URI:   https://fluentcrm.com
-Description:  Simple Comments Plugin for WordPress
-Version:      1.0.0
+Plugin URI:   https://github.com/techjewel/fluent-comments
+Description:  Simple Comments Plugin for WordPress to fight with spams and trolls
+Version:      1.0
 Author:       WPManageNinja Team
-Author URI:   https://fluentcrm.com
+Author URI:   https://wpmanageninja.com
 License:      GPLv2 or later
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  fluent-comments
@@ -52,7 +52,6 @@ class FluentCommentsPlugin
 
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/hooks.php';
     }
-
 }
 
 

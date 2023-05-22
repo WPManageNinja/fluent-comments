@@ -6,9 +6,9 @@ if ( post_password_required() ) {
     ?>
     <div class="fluent_comments_wrap comments-area">
         <?php if ( $comments ) : ?>
-            <h2 class="flc_comments-title">Latest comments (<?php echo absint($comments_number); ?>)</h2>
+            <h2 class="flc_comments-title"><?php echo __('Latest comments', 'fluent-comments'); ?> (<?php echo absint($comments_number); ?>)</h2>
         <?php else: ?>
-            <h2 class="flc_comments-title">Add your first comment to this post</h2>
+            <h2 class="flc_comments-title"><?php echo __('Add your first comment to this post', 'fluent-comments'); ?></h2>
         <?php endif; ?>
 
         <?php include FLUENT_COMMENTS_PLUGIN_PATH.'app/Views/comment_form.php'; ?>
@@ -44,7 +44,7 @@ if ( post_password_required() ) {
                     }
                     ?>
 
-                    <nav class="pagination pagination<?php echo $pagination_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>" aria-label="<?php esc_attr_e( 'Comments', 'fluent-comments' ); ?>">
+                    <nav class="pagination pagination <?php esc_attr_e($pagination_classes); ?>" aria-label="<?php esc_attr_e( 'Comments', 'fluent-comments' ); ?>">
                         <?php echo wp_kses_post( $comment_pagination ); ?>
                     </nav>
 

@@ -46,7 +46,7 @@ class ShortcodeHandler
 
         if (!$post || !comments_open($post)) {
             wp_send_json([
-                'message' => 'Sorry, this post does not allow new comments'
+                'message' => __('Sorry, this post does not allow new comments', 'fluent-comments')
             ], 423);
         }
 
@@ -81,24 +81,24 @@ class ShortcodeHandler
         $token = $this->encryptDecrypt(sanitize_text_field($_REQUEST['_fluent_comment_s_token']), 'decrypt');
 
         if (!$token) {
-            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
+            return new \WP_Error('fluent_comment_s_token', __('Invalid Security Token', 'fluent-comments'));
         }
 
         $tokenParts = explode('|', $token);
 
         if (count($tokenParts) !== 2) {
-            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
+            return new \WP_Error('fluent_comment_s_token', __('Invalid Security Token', 'fluent-comments'));
         }
 
         $timeStamp = $tokenParts[0];
         $tokenPostId = $tokenParts[1];
 
         if (time() - $timeStamp > 300) {
-            return new \WP_Error('fluent_comment_s_token', 'Token expired');
+            return new \WP_Error('fluent_comment_s_token', __('Security Token Expired', 'fluent-comments'));
         }
 
         if ($tokenPostId != $commendData['comment_post_ID']) {
-            return new \WP_Error('fluent_comment_s_token', 'Invalid post id on security token');
+            return new \WP_Error('fluent_comment_s_token', __('Invalid post id on security token', 'fluent-comments'));
         }
 
         return $approved;
@@ -114,12 +114,12 @@ class ShortcodeHandler
     public function render($postId)
     {
         $this->initAssets();
-        return '<div data-post_id="' . $postId . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">Loading..</h3></div>';
+        return '<div data-post_id="' . esc_attr($postId) . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">Loading..</h3></div>';
     }
 
     public function handleAjaxCommentToken()
     {
-        $postId = (int)$_REQUEST['comment_post_ID'];
+        $postId = (int) $_REQUEST['comment_post_ID'];
 
         if (!$postId) {
             wp_send_json([
@@ -163,10 +163,17 @@ class ShortcodeHandler
         ];
 
         if (get_current_user_id()) {
+
+
             $currentUser = wp_get_current_user();
+            $name = trim($currentUser->first_name . ' ' . $currentUser->last_name);
+            if(!$name) {
+                $name = $currentUser->display_name;
+            }
+
             $vars['me'] = [
                 'id'        => $currentUser->ID,
-                'full_name' => trim($currentUser->first_name . ' ' . $currentUser->last_name),
+                'full_name' => $name,
                 'email'     => $currentUser->user_email,
                 'avatar'    => get_avatar_url($currentUser->user_email)
             ];
@@ -183,7 +190,7 @@ class ShortcodeHandler
         $avatar = get_avatar($comment, 64);
         $comment_author = get_comment_author($comment);
         ?>
-        <div id="comment-<?php echo (int)$comment->comment_ID; ?>" class="flc_comment fls_new_comment">
+        <div id="comment-<?php echo (int) $comment->comment_ID; ?>" class="flc_comment fls_new_comment">
             <article class="flc_body">
                 <div class="flc_avatar">
                     <div class="flc_comment_author">

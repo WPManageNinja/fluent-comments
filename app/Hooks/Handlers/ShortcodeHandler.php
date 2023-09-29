@@ -6,16 +6,24 @@ class ShortcodeHandler
 {
     public function register()
     {
-        add_shortcode('fluent_comments', array($this, 'handleShortcode'));
+       // add_shortcode('fluent_comments', array($this, 'handleShortcode'));
 
         add_filter('comments_template', function ($file) {
             return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
-        },9999, 1);
+        }, 9999, 1);
 
         add_action('wp_enqueue_scripts', function () {
             if (is_admin() || !is_singular()) {
                 return;
             }
+
+            // Check if the current post type supports comments, if not, bail.
+            global $post;
+            if (!post_type_supports($post->post_type, 'comments')) {
+                return;
+            }
+
+            wp_deregister_script('comment-reply');
 
             wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], time(), 'all');
 
@@ -66,15 +74,15 @@ class ShortcodeHandler
 
     public function checkForSecurityToken($approved, $commendData)
     {
-        if(is_wp_error($approved)) {
+        if (is_wp_error($approved)) {
             return $approved;
         }
 
-        if(current_user_can('moderate_comments')) {
+        if (current_user_can('moderate_comments')) {
             return $approved;
         }
 
-        if(empty($_REQUEST['_fluent_comment_s_token'])) {
+        if (empty($_REQUEST['_fluent_comment_s_token'])) {
             return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
         }
 
@@ -101,6 +109,31 @@ class ShortcodeHandler
             return new \WP_Error('fluent_comment_s_token', __('Invalid post id on security token', 'fluent-comments'));
         }
 
+        if (empty($_REQUEST['_flc_comment_sign'])) {
+            return new \WP_Error('_flc_comment_sign', __('Invalid Security Signature', 'fluent-comments'));
+        }
+
+        $commentSign = $this->encryptDecrypt(sanitize_text_field($_REQUEST['_flc_comment_sign']), 'decrypt');
+
+        $tokenParts = explode('||', $commentSign);
+
+        if (count($tokenParts) !== 2) {
+            return new \WP_Error('_flc_comment_sign', __('Invalid Security Signature', 'fluent-comments'));
+        }
+
+        $postType = $tokenParts[0];
+        $postId = $tokenParts[1];
+
+        if ($postId != $commendData['comment_post_ID']) {
+            return new \WP_Error('_flc_comment_sign', __('Invalid post id on security signature', 'fluent-comments'));
+        }
+
+        $post = get_post($postId);
+
+        if (!$post || $post->post_type != $postType) {
+            return new \WP_Error('_flc_comment_sign', __('Invalid post type on security signature', 'fluent-comments'));
+        }
+
         return $approved;
 
     }
@@ -119,7 +152,7 @@ class ShortcodeHandler
 
     public function handleAjaxCommentToken()
     {
-        $postId = (int) $_REQUEST['comment_post_ID'];
+        $postId = (int)$_REQUEST['comment_post_ID'];
 
         if (!$postId) {
             wp_send_json([
@@ -164,10 +197,9 @@ class ShortcodeHandler
 
         if (get_current_user_id()) {
 
-
             $currentUser = wp_get_current_user();
             $name = trim($currentUser->first_name . ' ' . $currentUser->last_name);
-            if(!$name) {
+            if (!$name) {
                 $name = $currentUser->display_name;
             }
 
@@ -190,7 +222,7 @@ class ShortcodeHandler
         $avatar = get_avatar($comment, 64);
         $comment_author = get_comment_author($comment);
         ?>
-        <div id="comment-<?php echo (int) $comment->comment_ID; ?>" class="flc_comment fls_new_comment">
+        <div id="comment-<?php echo (int)$comment->comment_ID; ?>" class="flc_comment fls_new_comment">
             <article class="flc_body">
                 <div class="flc_avatar">
                     <div class="flc_comment_author">
@@ -220,11 +252,11 @@ class ShortcodeHandler
         return ob_get_clean();
     }
 
-    private function encryptDecrypt($string, $action = 'encrypt')
+    public function encryptDecrypt($string, $action = 'encrypt')
     {
         // you may change these values to your own
-        $secret_key = 'my_simple_secret_key';
-        $secret_iv = 'my_simple_secret_iv';
+        $secret_key = (defined('LOGGED_IN_SALT') && '' !== LOGGED_IN_SALT) ? LOGGED_IN_SALT : 'this-is-a-fallback-salt-but-not-secure';
+        $secret_iv = (defined('LOGGED_IN_KEY') && '' !== LOGGED_IN_KEY) ? LOGGED_IN_KEY : 'this-is-a-fallback-key-but-not-secure';
 
         $output = false;
         $encrypt_method = "AES-256-CBC";

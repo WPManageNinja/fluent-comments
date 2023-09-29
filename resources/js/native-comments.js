@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         maybeGetSecurityToken() {
+            console.log('maybeGetSecurityToken', window._fluent_comment_s_token);
             if(window._fluent_comment_s_token) {
                 return false;
             }
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         window._fluent_comment_s_token = null;
                     }
+                    that.commentForm.classList.remove('flc_tokenizing');
                 };
 
                 // convert data to FormData
@@ -140,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             let el = document.createElement("div");
                             el.classList.add('error', 'text-danger');
                             el.innerHTML = genericError;
-
                             form.appendChild(el);
                         } else {
                             for (const property in this.response) {
@@ -156,8 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                     that.toggleLoading(submitBtn);
-
-                    window._fluent_comment_s_token = null;
+                    console.log('OK');
+                    window._fluent_comment_s_token = false;
+                    that.maybeGetSecurityToken();
                 };
 
                 request.send(data);

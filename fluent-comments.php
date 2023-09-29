@@ -28,24 +28,12 @@ class FluentCommentsPlugin
 
     private function registerAutoLoad()
     {
-        spl_autoload_register(function ($class) {
-            $match = 'FluentComments';
-
-            if (!preg_match("/\b{$match}\b/", $class)) {
-                return;
-            }
-
-            $path = plugin_dir_path(__FILE__);
-
-            $file = str_replace(
-                ['FluentComments', '\\', '/App/'],
-                ['', DIRECTORY_SEPARATOR, 'app/'],
-                $class
-            );
-
-            require(trailingslashit($path) . trim($file, '/') . '.php');
-        });
-
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Helpers/Arr.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/ShortcodeHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Http/Controllers/CommentsController.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Router.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/FluentWalkerComment.php';
+        
         add_action('rest_api_init', function () {
             require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Http/routes.php';
         });

@@ -1,4 +1,4 @@
-<?php
+<?php defined('ABSPATH') or die;
 if (post_password_required()) {
     return;
 }

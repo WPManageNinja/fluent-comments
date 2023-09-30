@@ -1,10 +1,10 @@
 === Fluent Comments - Spam protection, AntiSpam, Ajax Enhanced Comments ===
-Contributors: techjewel
+Contributors: techjewel, wpmanageninja
 Tags: comments, spam protection, better comments, ajax comments
 Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 7.0
-Stable tag: 1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ Designed to supercharge WordPress native comments with beautiful design, super f
 </ul>
 
 == CONTRIBUTE ==
-If you want to contribute to this project or just report a bug, you are more than welcome. Please check repository from <a href="https://github.com/WPManageNinja/fluent-auth/">Github</a>.
+If you want to contribute to this project or just report a bug, you are more than welcome. Please check repository from <a href="https://github.com/WPManageNinja/fluent-comments/">Github</a>.
 
 
 == Installation ==

@@ -3,7 +3,7 @@ defined('ABSPATH') or die;
 
 /*
 Plugin Name:  Fluent Comments
-Plugin URI:   https://github.com/techjewel/fluent-comments
+Plugin URI:   https://github.com/WPManageNinja/fluent-comments
 Description:  Simple Comments Plugin for WordPress to fight with spams and trolls
 Version:      1.0.0
 Author:       WPManageNinja Team
@@ -11,7 +11,7 @@ Author URI:   https://wpmanageninja.com
 License:      GPLv2 or later
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  fluent-comments
-Domain Path:  /language
+Domain Path:  /languages
 */
 
 define('FLUENT_COMMENTS_PLUGIN_PATH', plugin_dir_path(__FILE__));
@@ -39,6 +39,10 @@ class FluentCommentsPlugin
         });
 
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/hooks.php';
+
+        add_action('init', function () {
+            load_plugin_textdomain( 'fluent-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+        });
     }
 }
 

@@ -1,4 +1,4 @@
-<?php
+<?php defined('ABSPATH') or die;
 $userAvatar = 'https://secure.gravatar.com/avatar/?s=96&d=mm&r=g';
 $currentUser = false;
 if (get_current_user_id()) {

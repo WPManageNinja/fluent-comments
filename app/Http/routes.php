@@ -1,4 +1,4 @@
-<?php
+<?php defined('ABSPATH') or die;
 
 $router = new \FluentComments\App\Services\Router('fluent-comments');
 

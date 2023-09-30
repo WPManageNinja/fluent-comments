@@ -1,0 +1,155 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Fluent Comments\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-30 08:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.6; wp-6.3.1\n"
+"X-Domain: fluent-comments"
+
+#. 1: Comment date, 2: Comment time.
+#: app/Services/FluentWalkerComment.php:43
+#, php-format
+msgid "%1$s at %2$s"
+msgstr ""
+
+#: app/Views/comments.php:31
+msgid "Add your first comment to this post"
+msgstr ""
+
+#: app/Views/comments.php:67
+msgid "Comments"
+msgstr ""
+
+#: app/Views/comments.php:80
+msgid "Comments are closed."
+msgstr ""
+
+#. 1: comment count number
+#: app/Views/comments.php:18
+#, php-format
+msgctxt "comments title"
+msgid "%1$s Comment"
+msgid_plural "%1$s Comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:192
+msgid "Dashboard"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:193
+msgid "Docs"
+msgstr ""
+
+#: app/Services/FluentWalkerComment.php:57
+msgid "Edit"
+msgstr ""
+
+#: app/Views/comment_form.php:41
+msgid "Email Address"
+msgstr ""
+
+#: app/Views/comment_form.php:29 app/Views/comment_form.php:30
+msgid "Enter your comment here..."
+msgstr ""
+
+#. Name of the plugin
+msgid "Fluent Comments"
+msgstr ""
+
+#: app/Views/comment_form.php:37
+msgid "Full Name"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/techjewel/fluent-comments"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://wpmanageninja.com"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:128
+msgid "Invalid post id on security signature"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:109
+msgid "Invalid post id on security token"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:134
+msgid "Invalid post type on security signature"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:113
+#: app/Hooks/Handlers/ShortcodeHandler.php:121
+msgid "Invalid Security Signature"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:92
+#: app/Hooks/Handlers/ShortcodeHandler.php:98
+msgid "Invalid Security Token"
+msgstr ""
+
+#: app/Views/comments.php:27
+msgid "Latest comments"
+msgstr ""
+
+#: app/Views/comments.php:52
+msgid "Newer Comments"
+msgstr ""
+
+#: app/Views/comments.php:53
+msgid "Older Comments"
+msgstr ""
+
+#: app/Views/comments.php:14
+msgid "One Comment"
+msgstr ""
+
+#: app/Views/comment_form.php:50
+msgid "Post Comment"
+msgstr ""
+
+#: app/Services/FluentWalkerComment.php:77
+msgid "Reply"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:105
+msgid "Security Token Expired"
+msgstr ""
+
+#. Description of the plugin
+msgid "Simple Comments Plugin for WordPress to fight with spams and trolls"
+msgstr ""
+
+#: app/Hooks/Handlers/ShortcodeHandler.php:57
+msgid "Sorry, this post does not allow new comments"
+msgstr ""
+
+#. Author of the plugin
+msgid "WPManageNinja Team"
+msgstr ""
+
+#: app/Services/FluentWalkerComment.php:67
+#: app/Hooks/Handlers/ShortcodeHandler.php:242
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#: app/Views/comment_form.php:42
+msgid "Your Email Address"
+msgstr ""
+
+#: app/Views/comment_form.php:38
+msgid "Your Name"
+msgstr ""

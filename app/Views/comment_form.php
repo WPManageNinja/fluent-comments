@@ -26,24 +26,20 @@ $commentSign = (new \FluentComments\App\Hooks\Handlers\ShortcodeHandler)->encryp
                     <input type="hidden" name="_flc_comment_sign" value="<?php echo esc_attr($commentSign); ?>"/>
                     <div class="flc_form_field flc_textarea">
                         <div class="flc_comment_input">
-                            <textarea class="flc_content_textarea" name="comment" title="Enter your comment here..."
-                                      placeholder="Enter your comment here..."></textarea>
+                            <textarea class="flc_content_textarea" name="comment" title="<?php _e('Enter your comment here...', 'fluent-comments'); ?>"
+                                      placeholder="<?php _e('Enter your comment here...', 'fluent-comments'); ?>"></textarea>
                         </div>
                     </div>
                     <div style="display: none" class="flc_comment_meta">
                         <?php if (!$currentUser): ?>
                             <div class="flc_row flc_person_form_fields">
                                 <div class="flc_form_field">
-                                    <label for="flc_person_name">Full Name</label>
-                                    <input value="<?php echo esc_attr($commenter['comment_author']); ?>"
-                                           placeholder="Your Name" name="author" id="flc_person_name" type="text"
-                                           class="flc_input_text"/>
+                                    <label class="flc_sr-only" for="flc_person_name"><?php _e('Full Name', 'fluent-comments'); ?></label>
+                                    <input value="<?php echo esc_attr($commenter['comment_author']); ?>" placeholder="<?php _e('Your Name', 'fluent-comments'); ?>" name="author" id="flc_person_name" type="text" class="flc_input_text"/>
                                 </div>
                                 <div class="flc_form_field">
-                                    <label for="flc_person_email">Email Address</label>
-                                    <input value="<?php echo esc_attr($commenter['comment_author_email']) ?>"
-                                           placeholder="Your Email Address" name="email" id="flc_person_email"
-                                           type="email" class="flc_input_text"/>
+                                    <label class="flc_sr-only" for="flc_person_email"><?php _e('Email Address', 'fluent-comments'); ?></label>
+                                    <input value="<?php echo esc_attr($commenter['comment_author_email']) ?>" placeholder="<?php _e('Your Email Address', 'fluent-comments'); ?>" name="email" id="flc_person_email" type="email" class="flc_input_text"/>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -51,7 +47,7 @@ $commentSign = (new \FluentComments\App\Hooks\Handlers\ShortcodeHandler)->encryp
 
                         do_action('comment_form_after_fields');
 
-                        $submitField = '<div class="flc_submit"><button class="btn flc_button">' . __('Post Comment', 'fluent-comments') . '</button></div>';
+                        $submitField = '<div class="flc_submit"><input type="submit" id="submit" value="'.__('Post Comment', 'fluent-comments').'" class="flc_button" /></div>';
                         echo apply_filters('comment_form_submit_field', $submitField, []);
 
                         do_action('comment_form', $post->ID);

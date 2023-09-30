@@ -35,7 +35,6 @@ $commentOrder = get_option('comment_order', 'desc');
 
     <div class="flc_comments flc_native_comments" id="comments">
         <div class="flc_comment-list">
-
             <?php
             wp_list_comments(
                 array(

@@ -214,24 +214,16 @@
 }
 
 button.flc_button {
-  color: #fff;
   display: inline-block;
-  border: 1px solid #0e85ff;
+  border: 1px solid;
   border-radius: 4px;
   line-height: 100%;
   font-weight: 700;
   font-size: 14px;
-  background-color: #0e85ff;
   padding: 10px 20px;
   box-shadow: none;
   cursor: pointer;
 }
-
-button.flc_button:hover {
-  background: #fff;
-  color: #0e85ff;
-}
-
 
 .flc_native_comments {
   .flc_comment {
@@ -248,4 +240,15 @@ button.flc_button:hover {
 p.comment-awaiting-moderation {
   font-size: 90%;
   font-style: italic;
+}
+
+.flc_sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }

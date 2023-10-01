@@ -12,7 +12,7 @@ AJAX powered realtime comments. Designed to prevent spams, performance and make 
 
 == Description ==
 
-Fluent Comments is a better comment form and comment spam protection plugin. It is easy to use, and it is compatible with all themes.
+Fluent Comments is a better comment form and comment spam protection plugin. It is easy to use, and it is compatible with all themes except FSE Themes.
 Designed to supercharge WordPress native comments with beautiful design, super fast, spam protection. Fluent Comments changes your site's commenting experience and provides you with user engagement features.
 
 ==Amazing Features==
@@ -20,9 +20,12 @@ Designed to supercharge WordPress native comments with beautiful design, super f
 - Spam protection with advanced cryptographic mechanisms
 - Intuitive Comment Form
 - Beautiful design and user experience
-- Compatible with all themes
+- Compatible with all themes (except FSE Themes)
 - Compatible with all page builders
 
+==Upcoming Features==
+- Compatible with FSE Themes
+- More Design Options
 
 == Other Plugins By WPManageNinja Team ==
 <ul>

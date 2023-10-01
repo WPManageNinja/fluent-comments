@@ -6,7 +6,7 @@ class ShortcodeHandler
 {
     public function register()
     {
-       // add_shortcode('fluent_comments', array($this, 'handleShortcode'));
+        // add_shortcode('fluent_comments', array($this, 'handleShortcode'));
 
         add_filter('comments_template', function ($file) {
             return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
@@ -19,7 +19,7 @@ class ShortcodeHandler
 
             // Check if the current post type supports comments, if not, bail.
             global $post;
-            if (!post_type_supports($post->post_type, 'comments')) {
+            if (!post_type_supports($post->post_type, 'comments') || $this->isFseTheme()) {
                 return;
             }
 
@@ -29,7 +29,6 @@ class ShortcodeHandler
 
             if (comments_open()) {
                 wp_enqueue_script('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/native-comments.js', [], FLUENT_COMMENTS_VERSION, true);
-
                 wp_localize_script('fluent_comments', 'fluentCommentPublic', [
                     'ajaxurl' => admin_url('admin-ajax.php')
                 ]);
@@ -78,7 +77,7 @@ class ShortcodeHandler
             return $approved;
         }
 
-        if (current_user_can('moderate_comments')) {
+        if (current_user_can('moderate_comments') || $this->isFseTheme()) {
             return $approved;
         }
 
@@ -271,5 +270,17 @@ class ShortcodeHandler
         }
 
         return $output;
+    }
+
+    public function isFseTheme()
+    {
+        if (function_exists('wp_is_block_theme')) {
+            return (bool)wp_is_block_theme();
+        }
+        if (function_exists('gutenberg_is_fse_theme')) {
+            return (bool)gutenberg_is_fse_theme();
+        }
+
+        return false;
     }
 }

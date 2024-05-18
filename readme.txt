@@ -2,9 +2,9 @@
 Contributors: techjewel, wpmanageninja
 Tags: comments, spam protection, better comments, ajax comments
 Requires at least: 5.0
-Tested up to: 6.3
+Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ Designed to supercharge WordPress native comments with beautiful design, super f
 - Compatible with FSE Themes
 - More Design Options
 
+==Using in FSE Themes==
+Fluent Comments is not compatible with FSE Themes yet. But you can use Fluent Comments shortcode to use it in FSE Themes. Just use the shortcode `[fluent_comments]` in your template and it will render the comments with form.
+
 == Other Plugins By WPManageNinja Team ==
 <ul>
 	<li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">Fluent Forms – Fastest Contact Form Builder Plugin for WordPress</a></li>
@@ -44,8 +47,8 @@ If you want to contribute to this project or just report a bug, you are more tha
 
 == Installation ==
 
-1. Install Fluent Comments either via the WordPress.org plugin repository or by uploading the files to your server.
-2. Activate Fluent Comments from Plugins page.
+1. Install FluentComments either via the WordPress.org plugin repository or by uploading the files to your server.
+2. Activate FluentComments from Plugins page.
 3. That's it, no additional setup required. Enjoy the secure and beautiful comments in your WordPress.
 
 == Frequently Asked Questions ==
@@ -65,6 +68,11 @@ Yes, it is compatible with all themes. It will work with any theme.
 1. Comment List
 
 == Changelog ==
+
+= 1.0.1 (Date: May 18, 2024) =
+* Added shortcode support for FSE Themes
+* Fixed minor CSS issues
+* Checking Logged in requirement for comment form
 
 = 1.0.0 (Date: Sep 30, 2023) =
 * Initial release

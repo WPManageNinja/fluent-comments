@@ -79,7 +79,6 @@
             })
             .catch(errors => {
                 error = errors.response.message;
-                console.log(errors);
             })
             .finally(() => {
                 isSubmitting = false;

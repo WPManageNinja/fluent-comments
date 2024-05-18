@@ -43,6 +43,9 @@ class ShortcodeHandler
         add_action('wp_ajax_nopriv_fluent_comment_comment_token', [$this, 'handleAjaxCommentToken']);
 
         add_filter('pre_comment_approved', [$this, 'checkForSecurityToken'], 10, 2);
+
+        add_shortcode('fluent_comments', [$this, 'handleShortcode']);
+
     }
 
     public function handleAjaxComment()
@@ -139,6 +142,7 @@ class ShortcodeHandler
 
     public function handleShortcode()
     {
+        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], time(), 'all');
         $postId = get_the_ID();
         return $this->render($postId);
     }

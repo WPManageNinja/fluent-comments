@@ -129,6 +129,10 @@
   align-items: flex-start;
   column-gap: 10px;
 
+  * {
+    box-sizing: border-box;
+  }
+
   .flc_comment_form {
     flex: 1 auto;
     min-width: 0;
@@ -211,6 +215,7 @@
 .flc_content_textarea  {
   padding: 10px;
   border-color: #d5e6f3;
+  width: 100%;
 }
 
 button.flc_button {

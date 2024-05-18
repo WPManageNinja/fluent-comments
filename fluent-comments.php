@@ -41,7 +41,7 @@ class FluentCommentsPlugin
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/hooks.php';
 
         add_action('init', function () {
-            load_plugin_textdomain( 'fluent-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+            load_plugin_textdomain('fluent-comments', false, dirname(plugin_basename(__FILE__)) . '/languages');
         });
     }
 }

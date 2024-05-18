@@ -182,20 +182,21 @@ class ShortcodeHandler
         wp_enqueue_script('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/app.js', [], FLUENT_COMMENTS_VERSION, true);
 
         $vars = [
-            'slug'        => 'fluent-comments',
-            'nonce'       => wp_create_nonce('fluent-comments'),
-            'rest'        => [
+            'slug'          => 'fluent-comments',
+            'nonce'         => wp_create_nonce('fluent-comments'),
+            'rest'          => [
                 'base_url'  => esc_url_raw(rest_url()),
                 'url'       => rest_url('fluent-comments'),
                 'nonce'     => wp_create_nonce('wp_rest'),
                 'namespace' => 'fluent-comments',
                 'version'   => '1'
             ],
-            'i18n'        => [
+            'i18n'          => [
                 'Dashboard' => __('Dashboard', 'fluent-comments'),
                 'Docs'      => __('Docs', 'fluent-comments'),
             ],
-            'user_avatar' => 'https://secure.gravatar.com/avatar/?s=96&d=mm&r=g'
+            'user_avatar'   => 'https://secure.gravatar.com/avatar/?s=96&d=mm&r=g',
+            'require_login' => get_option('comment_registration') && !get_current_user_id(),
         ];
 
         if (get_current_user_id()) {
@@ -213,7 +214,10 @@ class ShortcodeHandler
                 'avatar'    => get_avatar_url($currentUser->user_email)
             ];
             $vars['user_avatar'] = $vars['me']['avatar'];
+        } else if ($vars['require_login']) {
+            $vars['login_message'] = __(sprintf('You must be %1slogged in%2s to post a comment.', '<a class="flc_login_link" href="'. wp_login_url(get_permalink()).'">', '</a>'), 'fluent-comments');
         }
+
 
         wp_localize_script('fluent_comments', 'fluentCommentVars', $vars);
     }

@@ -190,8 +190,10 @@
 
   input {
     flex: 1;
+    padding: 7px 10px;
     @media (max-width: 769px) {
       width: 100%;
+      margin-bottom: 10px;
     }
   }
 

@@ -43,6 +43,15 @@ class CommentsController
             return new \WP_Error(423, 'Invalid Post');
         }
 
+        if (!comments_open($postId)) {
+            return new \WP_Error(423, 'Comments are closed for this post');
+        }
+
+        // Check if the user can comment
+        if(get_option('comment_registration') && !is_user_logged_in()) {
+            return new \WP_Error(423, 'You must be logged in to comment');
+        }
+
         $content = wp_kses_post($request->get_param('content'));
         if (!$content) {
             return new \WP_Error(423, 'Please provide contents');
@@ -160,7 +169,7 @@ class CommentsController
         $childs = $comment->get_children([
             'orderby' => 'comment_ID',
             'order'   => 'DESC',
-            'status' => 'approve'
+            'status'  => 'approve'
         ]);
 
         if ($childs) {

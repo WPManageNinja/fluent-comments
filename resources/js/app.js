@@ -1,5 +1,5 @@
 import App from './comments.svelte';
-//import '../sass/app.scss';
+import '../sass/app.scss';
 
 const dynamicComments = document.querySelectorAll('.fluent_dynamic_comments');
 if (dynamicComments.length) {

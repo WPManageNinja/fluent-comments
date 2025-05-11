@@ -43,6 +43,10 @@
     display: block;
     font-size: 14px;
   }
+
+  .flc_submit {
+    margin-top: 20px;
+  }
 }
 
 .flc_body {
@@ -218,6 +222,8 @@
   padding: 10px;
   border-color: #d5e6f3;
   width: 100%;
+  height: auto;
+  background: #fff;
 }
 
 button.flc_button {

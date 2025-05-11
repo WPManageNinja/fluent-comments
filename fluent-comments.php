@@ -29,9 +29,11 @@ class FluentCommentsPlugin
     private function registerAutoLoad()
     {
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Helpers/Arr.php';
-        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/ShortcodeHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/AdminSettingsHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Http/Controllers/CommentsController.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Router.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Helper.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/FluentWalkerComment.php';
 
         add_action('rest_api_init', function () {

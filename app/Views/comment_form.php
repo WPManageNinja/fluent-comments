@@ -14,7 +14,7 @@ if (get_option('comment_registration') && !$currentUser) {
 }
 
 $commenter = wp_get_current_commenter();
-$commentSign = (new \FluentComments\App\Hooks\Handlers\ShortcodeHandler)->encryptDecrypt($post->post_type . '||' . $post->ID);
+$commentSign = (new \FluentComments\App\Hooks\Handlers\CommentsHandler)->encryptDecrypt($post->post_type . '||' . $post->ID);
 ?>
 <div class="flc_comment_respond" id="respond">
     <div class="flc_respond">

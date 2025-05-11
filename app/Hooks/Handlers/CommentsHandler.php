@@ -2,14 +2,22 @@
 
 namespace FluentComments\App\Hooks\Handlers;
 
-class ShortcodeHandler
+use FluentComments\App\Services\Helper;
+
+class CommentsHandler
 {
     public function register()
     {
         // add_shortcode('fluent_comments', array($this, 'handleShortcode'));
 
         add_filter('comments_template', function ($file) {
-            return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
+            global $post;
+
+            if ($post && Helper::isFluentCommentsPostTyepe($post->post_type)) {
+                return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
+            }
+
+            return $file;
         }, 9999, 1);
 
         add_action('wp_enqueue_scripts', function () {
@@ -33,7 +41,6 @@ class ShortcodeHandler
                     'ajaxurl' => admin_url('admin-ajax.php')
                 ]);
             }
-
         });
 
         add_action('wp_ajax_fluent_comment_post', [$this, 'handleAjaxComment']);
@@ -45,6 +52,35 @@ class ShortcodeHandler
         add_filter('pre_comment_approved', [$this, 'checkForSecurityToken'], 10, 2);
 
         add_shortcode('fluent_comments', [$this, 'handleShortcode']);
+
+        add_action('pre_comment_on_post', function ($postId) {
+
+            if(current_user_can('pre_comment_on_post')) {
+                return false;
+            }
+
+            $post = get_post($postId);
+            if (!$post || Helper::isFluentCommentsPostTyepe($post->post_type)) {
+                return;
+            }
+
+            // this is our post type. So we will not allow default comment
+
+            if (did_action('fluent_comments/before_process')) {
+                return;
+            }
+
+            // this is our post type. So we will not allow default comment
+            wp_die(
+                '<p>' . __('Direct Comments is disabled. Please go back and try again', 'fluent-comments') . '</p>',
+                __('Comment Submission Failure', 'fluent-comments'),
+                array(
+                    'response'  => [],
+                    'back_link' => true,
+                )
+            );
+
+        });
 
     }
 
@@ -60,7 +96,12 @@ class ShortcodeHandler
             ], 423);
         }
 
-        $comment = wp_handle_comment_submission(wp_unslash($_REQUEST));
+        do_action('fluent_comments/before_process', $post);
+
+        $commentData = wp_unslash($_REQUEST);
+        unset($commentData['url']);
+
+        $comment = wp_handle_comment_submission($commentData);
 
         if (is_wp_error($comment)) {
             wp_send_json([
@@ -142,7 +183,13 @@ class ShortcodeHandler
 
     public function handleShortcode()
     {
-        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], time(), 'all');
+        global $post;
+
+        if (!$post || !post_type_supports($post->post_type, 'comments')) {
+            return '';
+        }
+
+        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/app.css', [], time(), 'all');
         $postId = get_the_ID();
         return $this->render($postId);
     }
@@ -215,7 +262,7 @@ class ShortcodeHandler
             ];
             $vars['user_avatar'] = $vars['me']['avatar'];
         } else if ($vars['require_login']) {
-            $vars['login_message'] = __(sprintf('You must be %1slogged in%2s to post a comment.', '<a class="flc_login_link" href="'. wp_login_url(get_permalink()).'">', '</a>'), 'fluent-comments');
+            $vars['login_message'] = __(sprintf('You must be %1slogged in%2s to post a comment.', '<a class="flc_login_link" href="' . wp_login_url(get_permalink()) . '">', '</a>'), 'fluent-comments');
         }
 
 

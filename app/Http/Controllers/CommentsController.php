@@ -10,6 +10,10 @@ class CommentsController
     public static function getComments(\WP_REST_Request $request)
     {
         $postId = (int)$request->get_param('id');
+        
+        if (post_password_required($postId)) {
+            return new \WP_Error(423, 'This post is password protected');
+        }
 
         $comments = get_comments([
             'post_id'      => $postId,
@@ -48,7 +52,7 @@ class CommentsController
         }
 
         // Check if the user can comment
-        if(get_option('comment_registration') && !is_user_logged_in()) {
+        if (get_option('comment_registration') && !is_user_logged_in()) {
             return new \WP_Error(423, 'You must be logged in to comment');
         }
 

@@ -33,7 +33,7 @@
         });
         setTimeout(() => {
             document.querySelector('#' + formId + ' textarea').focus({preventScroll: true});
-        }, 1000);
+        }, 100);
     });
 
     function handleOpen(even) {
@@ -104,20 +104,18 @@
                         <textarea class="flc_content_textarea {isOpen ? 'flc_text_active' : ''}"
                                   bind:value={form.content}
                                   on:input={resizeTextArea} on:focus={handleOpen} name="comment"
-                                  title="Enter your comment here..."
-                                  placeholder="Enter your comment here..."></textarea>
+                                  title="Write your comment here..."
+                                  placeholder="Write your comment here..."></textarea>
                         </div>
                     </div>
                     {#if isOpen}
                         {#if !isLoggedIn}
                             <div class="flc_row flc_person_form_fields">
                                 <div class="flc_form_field">
-                                    <label for="{formId}_name">Full Name</label>
                                     <input placeholder="Your Name" id="{formId}_name" bind:value={form.name} type="text"
                                            class="flc_input_text"/>
                                 </div>
                                 <div class="flc_form_field">
-                                    <label for="{formId}_email">Email Address</label>
                                     <input placeholder="Your Email Address" id="{formId}_email" bind:value={form.email}
                                            type="email" class="flc_input_text"/>
                                 </div>

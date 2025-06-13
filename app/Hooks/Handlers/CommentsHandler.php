@@ -33,7 +33,7 @@ class CommentsHandler
 
             wp_deregister_script('comment-reply');
 
-            wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], time(), 'all');
+            wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], FLUENT_COMMENTS_VERSION, 'all');
 
             if (comments_open()) {
                 wp_enqueue_script('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/native-comments.js', [], FLUENT_COMMENTS_VERSION, true);
@@ -81,7 +81,6 @@ class CommentsHandler
             );
 
         });
-
     }
 
     public function handleAjaxComment()
@@ -178,7 +177,6 @@ class CommentsHandler
         }
 
         return $approved;
-
     }
 
     public function handleShortcode()
@@ -189,7 +187,7 @@ class CommentsHandler
             return '';
         }
 
-        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/app.css', [], time(), 'all');
+        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], FLUENT_COMMENTS_VERSION, 'all');
         $postId = get_the_ID();
         return $this->render($postId);
     }

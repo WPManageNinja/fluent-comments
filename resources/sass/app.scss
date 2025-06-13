@@ -3,6 +3,12 @@
   padding: 0;
   list-style: none;
 
+  .flc_textarea {
+    .flc_comment {
+      margin-bottom: 20px;
+    }
+  }
+
   .flc_comment {
     display: block;
     margin-bottom: 30px;

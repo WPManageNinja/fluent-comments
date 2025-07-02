@@ -33,7 +33,7 @@ class AdminSettingsHandler
         $post_types_with_comments = array();
         // Get all registered post types
         $post_types = get_post_types(array(), 'objects');
-        $globalDisabled = ['product', 'attachment'];
+        $globalDisabled = ['product', 'attachment', 'page'];
         foreach ($post_types as $post_type) {
             // Check if the post type supports comments
             if (!in_array($post_type->name, $globalDisabled) && $post_type->public && post_type_supports($post_type->name, 'comments')) {
@@ -81,6 +81,9 @@ class AdminSettingsHandler
         });
 
         $settings['reject_native_comments'] = isset($settings['reject_native_comments']) && $settings['reject_native_comments'] === 'yes' ? 'yes' : 'no';
+        $settings['email_on_comment_approval'] = isset($settings['email_on_comment_approval']) && $settings['email_on_comment_approval'] === 'yes' ? 'yes' : 'no';
+        $settings['email_on_reply'] = isset($settings['email_on_reply']) && $settings['email_on_reply'] === 'yes' ? 'yes' : 'no';
+        $settings['email_to_author'] = isset($settings['email_to_author']) && $settings['email_to_author'] === 'yes' ? 'yes' : 'no';
 
         update_option('_fluent_comments_settings', $settings);
 

@@ -26,7 +26,6 @@ class FluentWalkerComment extends \Walker_Comment {
         $args['depth'] = $depth;
         ?>
         <div id="comment-<?php comment_ID(); ?>" class="flc_comment">
-
             <article class="flc_body">
                 <div class="flc_avatar">
                     <div class="flc_comment_author">
@@ -81,6 +80,10 @@ class FluentWalkerComment extends \Walker_Comment {
                 </div>
             </article>
         <?php
+    }
+
+    protected function comment( $comment, $depth, $args ) {
+        $this->html5_comment( $comment, $depth, $args );
     }
 
     private function isCommentOpen()

@@ -138,3 +138,19 @@
   top: auto !important;
   bottom: 10px;
 }
+
+
+.fluent_content_box {
+  display: block;
+  width: 100%;
+  padding: 20px 20px 10px;
+  background: #fafafa;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  h3 {
+    margin-top: 0px;
+  }
+  .el-form-item__content p {
+    margin-top: 0;
+  }
+}

@@ -1,5 +1,3 @@
 {
-    "/dist/js/app.js": "/dist/js/app.js",
-    "/dist/js/native-comments.js": "/dist/js/native-comments.js",
-    "/dist/css/app.css": "/dist/css/app.css"
+    "/dist/admin_app.js": "/dist/admin_app.js"
 }

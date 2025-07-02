@@ -24,6 +24,39 @@
                         </div>
                         <p>We highly recommend to enable this. If you enable, then all comments posted to WordPress default comment form will be rejected for the selected Post Types. This will block the spam comments by bot.</p>
                     </el-form-item>
+
+                    <div class="fluent_content_box">
+                        <h3 style="margin-bottom: 0;">Email Notifications</h3>
+                        <p style="margin-top: 5px;">These email notifications will work only for the comments posted FluentComments</p>
+
+                        <el-form-item>
+                            <div style="display: block; width: 100%; margin-bottom: 0px;">
+                                <el-checkbox true-value="yes" false-value="no" v-model="settings.email_on_comment_approval">
+                                    Send email notification to the commenter when a comment is get approved.
+                                </el-checkbox>
+                            </div>
+                            <p>When enabled, the commenter will get an email when the comment get approved by an admin</p>
+                        </el-form-item>
+
+                        <el-form-item>
+                            <div style="display: block; width: 100%; margin-bottom: 0px;">
+                                <el-checkbox true-value="yes" false-value="no" v-model="settings.email_on_reply">
+                                    Send email to participants of that thread when someone reply to a comment.
+                                </el-checkbox>
+                            </div>
+                            <p>When enabled, participants of the selected thread will get email notification.</p>
+                        </el-form-item>
+
+                        <el-form-item>
+                            <div style="display: block; width: 100%; margin-bottom: 0px;">
+                                <el-checkbox true-value="yes" false-value="no" v-model="settings.email_to_author">
+                                    Send email to the post author when a comment is posted.
+                                </el-checkbox>
+                            </div>
+                            <p>When enabled, the post author will get an email when a new comment is posted.</p>
+                        </el-form-item>
+                    </div>
+
                     <el-form-item>
                         <el-button :disabled="saving" :loading="saving" @click="updateSettings()" size="large" type="success">
                             Save Settings

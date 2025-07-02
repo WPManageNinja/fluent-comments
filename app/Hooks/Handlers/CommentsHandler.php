@@ -13,12 +13,12 @@ class CommentsHandler
         add_filter('comments_template', function ($file) {
             global $post;
 
-            if ($post && Helper::isFluentCommentsPostTyepe($post->post_type)) {
+            if ($post && Helper::isFluentCommentsPostType($post->post_type)) {
                 return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
             }
 
             return $file;
-        }, 9999, 1);
+        }, 9999999, 1);
 
         add_action('wp_enqueue_scripts', function () {
             if (is_admin() || !is_singular()) {
@@ -55,12 +55,12 @@ class CommentsHandler
 
         add_action('pre_comment_on_post', function ($postId) {
 
-            if(current_user_can('pre_comment_on_post')) {
+            if (current_user_can('moderate_comments')) {
                 return false;
             }
 
             $post = get_post($postId);
-            if (!$post || Helper::isFluentCommentsPostTyepe($post->post_type)) {
+            if (!$post || !Helper::willRejectNativeComments($post->post_type)) {
                 return;
             }
 
@@ -107,6 +107,8 @@ class CommentsHandler
                 'message' => $comment->get_error_message()
             ], 423);
         }
+
+        do_action('fluent_comments/after_added_comment', $comment, $post);
 
         wp_send_json([
             'comment_id'      => $comment->comment_ID,
@@ -195,7 +197,7 @@ class CommentsHandler
     public function render($postId)
     {
         $this->initAssets();
-        return '<div data-post_id="' . esc_attr($postId) . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">Loading..</h3></div>';
+        return '<div data-post_id="' . esc_attr($postId) . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">' . __('Loading..', 'fluent-comments') . '</h3></div>';
     }
 
     public function handleAjaxCommentToken()

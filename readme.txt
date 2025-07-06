@@ -66,6 +66,10 @@ Yes, it is compatible with all themes. It will work with any theme.
 
 == Screenshots ==
 1. Comment List
+2. Admin Panel
+3. Notification Email on Comment Approval
+4. Notification Email to Post Author
+5. Notification Email to Commenters
 
 == Changelog ==
 

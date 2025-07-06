@@ -15,6 +15,27 @@ class CommentNotificationHandler
             }
         }, 10, 3);
 
+        add_action('comment_post', function ($commentId, $approved) {
+            if (!$approved) {
+                return;
+            }
+
+            $comment = get_comment($commentId);
+
+            if (!$comment || !$comment->comment_approved) {
+                return; // comment is not approved
+            }
+
+            $post = get_post($comment->comment_post_ID);
+
+            if (!$post || !Helper::isFluentCommentsPostType($post->post_type)) {
+                return; // not a fluent comments post type
+            }
+
+            $this->maybeSendNewCommentNotification($comment, $post);
+
+        }, 10, 2);
+
         add_action('fluent_comments/after_added_comment', [$this, 'maybeSendNewCommentNotification'], 10, 2);
     }
 

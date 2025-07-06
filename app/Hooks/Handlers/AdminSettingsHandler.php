@@ -52,7 +52,7 @@ class AdminSettingsHandler
         wp_localize_script('fluent_comments_admin', 'fluentCommentsVars', array(
             'ajax_url'            => admin_url('admin-ajax.php'),
             'nonce'               => wp_create_nonce('fluent_comment_admin_nonce'),
-            'version'             => FLUENT_COMMUNITY_PLUGIN_VERSION,
+            'version'             => FLUENT_COMMENTS_VERSION,
             'comments_post_types' => array_values($post_types_with_comments),
             'settings'            => $settings,
             'using_block_theme'   => function_exists('wp_is_block_theme') && wp_is_block_theme() ? 'yes' : 'no',

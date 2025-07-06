@@ -2,10 +2,10 @@
 defined('ABSPATH') or die;
 
 /*
-Plugin Name:  Fluent Comments
+Plugin Name:  FluentComments
 Plugin URI:   https://github.com/WPManageNinja/fluent-comments
 Description:  Simple Comments Plugin for WordPress to fight with spams and trolls
-Version:      1.0.0
+Version:      2.0.0
 Author:       WPManageNinja Team
 Author URI:   https://wpmanageninja.com
 License:      GPLv2 or later
@@ -16,7 +16,7 @@ Domain Path:  /languages
 
 define('FLUENT_COMMENTS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('FLUENT_COMMENTS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('FLUENT_COMMENTS_VERSION', '1.0.0');
+define('FLUENT_COMMENTS_VERSION', '2.0.0');
 
 class FluentCommentsPlugin
 {
@@ -31,9 +31,11 @@ class FluentCommentsPlugin
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Helpers/Arr.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/AdminSettingsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentsHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentNotificationHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Http/Controllers/CommentsController.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Router.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Helper.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Mailer.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/FluentWalkerComment.php';
 
         add_action('rest_api_init', function () {

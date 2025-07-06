@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Comments\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-30 08:24+0000\n"
+"POT-Creation-Date: 2025-07-06 15:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -17,13 +17,31 @@ msgstr ""
 "X-Domain: fluent-comments"
 
 #. 1: Comment date, 2: Comment time.
-#: app/Services/FluentWalkerComment.php:43
+#: app/Services/FluentWalkerComment.php:42
 #, php-format
 msgid "%1$s at %2$s"
 msgstr ""
 
 #: app/Views/comments.php:31
 msgid "Add your first comment to this post"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:344
+msgid "Best regards,"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:130
+#, php-format
+msgid "Comment Approved: %s"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:232
+#, php-format
+msgid "Comment from: %s"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:76
+msgid "Comment Submission Failure"
 msgstr ""
 
 #: app/Views/comments.php:67
@@ -43,66 +61,106 @@ msgid_plural "%1$s Comments"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:192
+#: app/Hooks/Handlers/CommentsHandler.php:242
 msgid "Dashboard"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:193
+#: app/Hooks/Handlers/CommentsHandler.php:75
+msgid "Direct Comments is disabled. Please go back and try again"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:243
 msgid "Docs"
 msgstr ""
 
-#: app/Services/FluentWalkerComment.php:57
+#: app/Services/FluentWalkerComment.php:56
 msgid "Edit"
 msgstr ""
 
-#: app/Views/comment_form.php:41
+#: app/Views/comment_form.php:52
 msgid "Email Address"
 msgstr ""
 
-#: app/Views/comment_form.php:29 app/Views/comment_form.php:30
+#: app/Hooks/Handlers/CommentNotificationHandler.php:256
+msgid ""
+"Engaging with your readers helps build a strong community around your "
+"content. Consider replying to keep the conversation going!"
+msgstr ""
+
+#: app/Views/comment_form.php:36 app/Views/comment_form.php:37
 msgid "Enter your comment here..."
 msgstr ""
 
-#. Name of the plugin
+#: app/Hooks/Handlers/AdminSettingsHandler.php:20
+#: app/Hooks/Handlers/AdminSettingsHandler.php:21
 msgid "Fluent Comments"
 msgstr ""
 
-#: app/Views/comment_form.php:37
+#. Name of the plugin
+msgid "FluentComments"
+msgstr ""
+
+#: app/Views/comment_form.php:45
 msgid "Full Name"
 msgstr ""
 
 #. URI of the plugin
-msgid "https://github.com/techjewel/fluent-comments"
+msgid "https://github.com/WPManageNinja/fluent-comments"
 msgstr ""
 
 #. Author URI of the plugin
 msgid "https://wpmanageninja.com"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:128
+#: app/Hooks/Handlers/CommentsHandler.php:172
 msgid "Invalid post id on security signature"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:109
+#: app/Hooks/Handlers/CommentsHandler.php:153
 msgid "Invalid post id on security token"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:134
+#: app/Hooks/Handlers/CommentsHandler.php:178
 msgid "Invalid post type on security signature"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:113
-#: app/Hooks/Handlers/ShortcodeHandler.php:121
+#: app/Hooks/Handlers/CommentsHandler.php:157
+#: app/Hooks/Handlers/CommentsHandler.php:165
 msgid "Invalid Security Signature"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:92
-#: app/Hooks/Handlers/ShortcodeHandler.php:98
+#: app/Hooks/Handlers/CommentsHandler.php:136
+#: app/Hooks/Handlers/CommentsHandler.php:142
 msgid "Invalid Security Token"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:215
+#: app/Hooks/Handlers/CommentNotificationHandler.php:257
+msgid ""
+"Keep the conversation going by sharing your thoughts on other posts too."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:274
+#, php-format
+msgid "Latest comment by %s"
 msgstr ""
 
 #: app/Views/comments.php:27
 msgid "Latest comments"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:200
+msgid "Loading.."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:134
+#, php-format
+msgid "New Comment on Your Post: %s"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:138
+#, php-format
+msgid "New Reply to Your Comment in: %s"
 msgstr ""
 
 #: app/Views/comments.php:52
@@ -117,39 +175,102 @@ msgstr ""
 msgid "One Comment"
 msgstr ""
 
-#: app/Views/comment_form.php:50
+#: app/Views/comment_form.php:63
 msgid "Post Comment"
 msgstr ""
 
-#: app/Services/FluentWalkerComment.php:77
+#: app/Services/FluentWalkerComment.php:76
 msgid "Reply"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:105
+#: app/Hooks/Handlers/CommentsHandler.php:149
 msgid "Security Token Expired"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:73
+msgid "Settings cannot be empty."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:90
+msgid "Settings saved successfully."
 msgstr ""
 
 #. Description of the plugin
 msgid "Simple Comments Plugin for WordPress to fight with spams and trolls"
 msgstr ""
 
-#: app/Hooks/Handlers/ShortcodeHandler.php:57
+#: app/Hooks/Handlers/CommentsHandler.php:94
 msgid "Sorry, this post does not allow new comments"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:214
+msgid ""
+"Thank you for engaging with our content! We appreciate your thoughtful "
+"contribution to the discussion."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:345
+#, php-format
+msgid "The %s Team"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:283
+msgid ""
+"The conversation is continuing, and your insights might be valuable to the "
+"discussion. Join back in and share your thoughts!"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:266
+#, php-format
+msgid ""
+"There's a new comment in the discussion on \"%1$s\" by %2$s, where you "
+"previously participated."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:250
+#: app/Hooks/Handlers/CommentNotificationHandler.php:292
+msgid "View the Comment"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:209
+msgid "View Your Comment"
 msgstr ""
 
 #. Author of the plugin
 msgid "WPManageNinja Team"
 msgstr ""
 
-#: app/Services/FluentWalkerComment.php:67
-#: app/Hooks/Handlers/ShortcodeHandler.php:242
+#: app/Hooks/Handlers/AdminSettingsHandler.php:97
+msgid "You do not have permission to do this action."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:224
+#, php-format
+msgid "You have received a new comment on your post \"%s\""
+msgstr ""
+
+#: app/Services/FluentWalkerComment.php:66
+#: app/Hooks/Handlers/CommentsHandler.php:296
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: app/Views/comment_form.php:42
+#: app/Hooks/Handlers/CommentNotificationHandler.php:185
+#, php-format
+msgid "Your comment on \"%s\" has been approved and is now live on our site."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:193
+msgid "Your Comment:"
+msgstr ""
+
+#: app/Views/comment_form.php:54
 msgid "Your Email Address"
 msgstr ""
 
-#: app/Views/comment_form.php:38
+#: app/Views/comment_form.php:47
 msgid "Your Name"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:304
+msgid "💡 Why we're notifying you:"
 msgstr ""

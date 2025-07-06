@@ -1,10 +1,10 @@
-=== Fluent Comments - Spam protection, AntiSpam, Ajax Enhanced Comments ===
+=== FluentComments - Spam protection, AntiSpam, Ajax Enhanced Comments ===
 Contributors: techjewel, wpmanageninja
 Tags: comments, spam protection, better comments, ajax comments
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 1.0.1
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,12 +19,12 @@ Designed to supercharge WordPress native comments with beautiful design, super f
 - AJAX powered realtime comments
 - Spam protection with advanced cryptographic mechanisms
 - Intuitive Comment Form
+- Beautiful Email Notifications for new comments to authors, admins and commenters
 - Beautiful design and user experience
 - Compatible with all themes (except FSE Themes)
 - Compatible with all page builders
 
 ==Upcoming Features==
-- Compatible with FSE Themes
 - More Design Options
 
 ==Using in FSE Themes==
@@ -68,6 +68,12 @@ Yes, it is compatible with all themes. It will work with any theme.
 1. Comment List
 
 == Changelog ==
+
+= 2.0.0 (Date: Jul 07, 2025) =
+- Added support for FSE Themes
+- Added Email Notification for Admins, Authors and Commenters
+- Added option to enable/disable email notification
+- Advanced spam protection with cryptographic tokens
 
 = 1.0.1 (Date: May 18, 2024) =
 * Added shortcode support for FSE Themes

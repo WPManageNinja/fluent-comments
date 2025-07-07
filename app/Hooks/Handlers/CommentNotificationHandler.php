@@ -363,7 +363,7 @@ class CommentNotificationHandler
                                 <hr style="border-color:rgb(209,213,219);margin-top:32px;margin-bottom:32px;width:100%;border:none;border-top:1px solid #eaeaea">
                                 <p style="font-size:12px;color:rgb(107,114,128);margin-bottom:8px;margin-top:0px;line-height:24px">
                                     <?php esc_html_e('Best regards,', 'fluent-comments'); ?><br>
-                                    <?php echo sprintf(__('The %s Team', 'fluent-comments'), get_bloginfo('name')); ?>
+                                    <?php echo esc_html(get_bloginfo('name')); ?>
                                 </p>
                                 <p style="font-size:12px;color:rgb(107,114,128);margin-bottom:16px;margin-top:0px;line-height:24px">
                                     <a href="<?php echo esc_url(home_url()); ?>"

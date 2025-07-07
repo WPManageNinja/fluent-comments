@@ -27,7 +27,7 @@ class CommentsHandler
 
             // Check if the current post type supports comments, if not, bail.
             global $post;
-            if (!post_type_supports($post->post_type, 'comments') || $this->isFseTheme()) {
+            if (!$post || !Helper::isFluentCommentsPostType($post->post_type) || !post_type_supports($post->post_type, 'comments') || $this->isFseTheme()) {
                 return;
             }
 

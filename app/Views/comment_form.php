@@ -1,9 +1,12 @@
 <?php defined('ABSPATH') or die;
+$showAvatars = get_option('show_avatars');
 $userAvatar = 'https://secure.gravatar.com/avatar/?s=96&d=mm&r=g';
 $currentUser = false;
 if (get_current_user_id()) {
     $currentUser = get_user_by('ID', get_current_user_id());
-    $userAvatar = get_avatar_url($currentUser->user_email);
+    if ($showAvatars) {
+        $userAvatar = get_avatar_url($currentUser->user_email);
+    }
 }
 global $post;
 
@@ -19,11 +22,13 @@ $commentSign = (new \FluentComments\App\Hooks\Handlers\CommentsHandler)->encrypt
 <div class="flc_comment_respond" id="respond">
     <div class="flc_respond">
         <div class="flc_comment_wrap">
+            <?php if ( $showAvatars ): ?>
             <div class="flc_author_placeholder">
                 <div class="flc_comment_author">
                     <img src="<?php echo esc_url($userAvatar); ?>"/>
                 </div>
             </div>
+            <?php endif; ?>
             <div class="flc_comment_form">
                 <form id="flc_comment_form" method="POST">
                     <input type="hidden" name="comment_post_ID" value="<?php echo (int)$post->ID; ?>"/>

@@ -273,16 +273,17 @@ class CommentsHandler
     {
         ob_start();
 
-        $avatar = get_avatar($comment, 64);
         $comment_author = get_comment_author($comment);
         ?>
         <div id="comment-<?php echo (int)$comment->comment_ID; ?>" class="flc_comment fls_new_comment">
             <article class="flc_body">
+                <?php if ( get_option('show_avatars') ): ?>
                 <div class="flc_avatar">
                     <div class="flc_comment_author">
-                        <?php echo wp_kses_post($avatar); ?>
+                        <?php echo wp_kses_post( get_avatar( $comment, 64 ) ); ?>
                     </div>
                 </div>
+                <?php endif; ?>
                 <div class="flc_comment__details">
                     <div class="crayons-card">
                         <div class="comment__header">

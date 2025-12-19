@@ -21,17 +21,18 @@ class FluentWalkerComment extends \Walker_Comment {
      * @param array      $args    An array of arguments.
      */
     protected function html5_comment( $comment, $depth, $args ) {
-        $avatar             = get_avatar( $comment, $args['avatar_size'] );
         $comment_author     = get_comment_author( $comment );
         $args['depth'] = $depth;
         ?>
         <div id="comment-<?php comment_ID(); ?>" class="flc_comment">
             <article class="flc_body">
+                <?php if ( get_option('show_avatars') ): ?>
                 <div class="flc_avatar">
                     <div class="flc_comment_author">
-                        <?php echo wp_kses_post( $avatar ); ?>
+                        <?php echo wp_kses_post( get_avatar( $comment, $args['avatar_size'] ) ); ?>
                     </div>
                 </div>
+                <?php endif; ?>
                 <div class="flc_comment__details">
                     <div class="crayons-card">
                         <div class="comment__header">

@@ -4,11 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build"
+    "build": "vite build && npm run build:block",
+    "build:main": "vite build",
+    "build:block": "wp-scripts build resources/block/editor.jsx --output-path=dist/block",
+    "dev:block": "wp-scripts start resources/block/editor.jsx --output-path=dist/block"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@wordpress/scripts": "^30.12.0",
     "sass": "^1.83.4",
     "svelte": "^5.19.0",
     "unplugin-auto-import": "^0.18.6",

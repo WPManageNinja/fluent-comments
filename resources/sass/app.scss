@@ -1,42 +1,42 @@
-// CSS Custom Properties (easily themeable)
+// CSS Custom Properties (using fcom theme convention)
 :root {
-  // Colors
-  --flc-color-primary: #171717;
-  --flc-color-secondary: #717171;
-  --flc-color-link: rgb(61, 61, 61);
-  --flc-color-bg: #ffffff;
-  --flc-color-bg-hover: rgb(0 0 0 / 4%);
-  --flc-color-border: #d5e6f3;
-  --flc-color-avatar-border: #edf2f7;
-  --flc-color-error-bg: #fff06f;
-  --flc-color-placeholder-bg: #d4d4d4;
-  --flc-color-shadow: #1717171a;
+  // Colors (fallbacks - will inherit from theme if defined)
+  --fcom-primary-text: #19283a;
+  --fcom-secondary-text: #525866;
+  --fcom-text-link: #2271b1;
+  --fcom-text-off: #959595;
+  --fcom-primary-bg: #ffffff;
+  --fcom-secondary-bg: #f0f2f5;
+  --fcom-secondary-content-bg: #f0f3f5;
+  --fcom-active-bg: #f0f3f5;
+  --fcom-light-bg: #E1E4EA;
+  --fcom-primary-border: #e3e8ee;
+  --fcom-highlight-bg: #fffce3;
+  --fcom-primary-button: #2B2E33;
+  --fcom-primary-button-text: #ffffff;
 
   // Spacing
-  --flc-spacing-xs: 5px;
-  --flc-spacing-sm: 10px;
-  --flc-spacing-md: 15px;
-  --flc-spacing-lg: 20px;
-  --flc-spacing-xl: 30px;
-  --flc-spacing-2xl: 40px;
+  --fcom-spacing-xs: 5px;
+  --fcom-spacing-sm: 10px;
+  --fcom-spacing-md: 15px;
+  --fcom-spacing-lg: 20px;
+  --fcom-spacing-xl: 30px;
+  --fcom-spacing-2xl: 40px;
 
   // Sizing
-  --flc-avatar-size: 54px;
-  --flc-avatar-size-mobile: 24px;
-  --flc-child-indent: 60px;
-  --flc-child-indent-mobile: 15px;
+  --fcom-avatar-size: 54px;
+  --fcom-avatar-size-mobile: 24px;
+  --fcom-child-indent: 60px;
+  --fcom-child-indent-mobile: 15px;
 
   // Typography
-  --flc-font-size-sm: 80%;
-  --flc-font-size-base: 14px;
-  --flc-font-size-title: 28px;
+  --fcom-font-size-sm: 80%;
+  --fcom-font-size-base: 14px;
+  --fcom-font-size-title: 28px;
 
   // Border radius
-  --flc-radius: 4px;
-  --flc-radius-full: 50%;
-
-  // Breakpoint
-  --flc-breakpoint-mobile: 769px;
+  --fcom-radius: 4px;
+  --fcom-radius-full: 50%;
 }
 
 // Mixins
@@ -53,12 +53,12 @@
   list-style: none;
 
   .flc_textarea .flc_comment {
-    margin-bottom: var(--flc-spacing-lg);
+    margin-bottom: var(--fcom-spacing-lg);
   }
 
   .flc_comment {
     display: block;
-    margin-bottom: var(--flc-spacing-xl);
+    margin-bottom: var(--fcom-spacing-xl);
 
     > article.flc_body {
       position: relative;
@@ -68,7 +68,7 @@
         padding-top: 0.5em;
 
         p {
-          margin-bottom: var(--flc-spacing-xs);
+          margin-bottom: var(--fcom-spacing-xs);
 
           &:last-child {
             margin-bottom: 0;
@@ -87,17 +87,17 @@
 
 // Comment form respond area
 .flc_respond {
-  margin: 0 auto var(--flc-spacing-2xl);
+  margin: 0 auto var(--fcom-spacing-2xl);
 
   h3 {
     padding: 0;
-    margin: var(--flc-spacing-md) 0;
+    margin: var(--fcom-spacing-md) 0;
     display: block;
-    font-size: var(--flc-font-size-base);
+    font-size: var(--fcom-font-size-base);
   }
 
   .flc_submit {
-    margin-top: var(--flc-spacing-lg);
+    margin-top: var(--fcom-spacing-lg);
   }
 }
 
@@ -105,7 +105,7 @@
 .flc_body {
   display: flex;
   align-items: flex-start;
-  column-gap: var(--flc-spacing-sm);
+  column-gap: var(--fcom-spacing-sm);
 
   @include mobile {
     column-gap: 7px;
@@ -117,12 +117,12 @@
   }
 
   .crayons-card {
-    border-radius: var(--flc-radius);
-    background: var(--flc-color-bg);
-    color: var(--flc-color-primary);
-    box-shadow: 0 0 0 1px var(--flc-color-shadow);
+    border-radius: var(--fcom-radius);
+    background: var(--fcom-secondary-content-bg);
+    color: var(--fcom-primary-text);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
     overflow-wrap: anywhere;
-    padding: var(--flc-spacing-md);
+    padding: var(--fcom-spacing-md);
 
     @include mobile {
       padding: 7px;
@@ -130,8 +130,8 @@
 
     time,
     .comment-edit-link {
-      color: var(--flc-color-secondary);
-      font-size: var(--flc-font-size-sm);
+      color: var(--fcom-text-off);
+      font-size: var(--fcom-font-size-sm);
     }
 
     .comment__header {
@@ -139,13 +139,13 @@
 
       a {
         text-decoration: none;
-        color: var(--flc-color-link);
+        color: var(--fcom-primary-text);
       }
     }
   }
 
   .comment_footer {
-    margin-top: var(--flc-spacing-sm);
+    margin-top: var(--fcom-spacing-sm);
     display: flex;
     align-items: center;
     line-height: 100%;
@@ -155,15 +155,15 @@
       display: flex;
       align-items: center;
       text-decoration: none;
-      color: var(--flc-color-link);
+      color: var(--fcom-text-link);
       cursor: pointer;
-      font-size: var(--flc-font-size-sm);
+      font-size: var(--fcom-font-size-sm);
 
       &:hover {
-        background-color: var(--flc-color-bg-hover);
+        background-color: var(--fcom-active-bg);
         border-color: transparent;
         box-shadow: none;
-        color: var(--flc-color-primary);
+        color: var(--fcom-primary-text);
       }
     }
   }
@@ -171,16 +171,16 @@
 
 // Avatar styling
 .flc_comment_author {
-  width: var(--flc-avatar-size);
+  width: var(--fcom-avatar-size);
 
   @include mobile {
-    width: var(--flc-avatar-size-mobile);
+    width: var(--fcom-avatar-size-mobile);
   }
 
   img {
     box-sizing: border-box;
-    border: 5px solid var(--flc-color-avatar-border);
-    border-radius: var(--flc-radius-full);
+    border: 5px solid var(--fcom-primary-border);
+    border-radius: var(--fcom-radius-full);
     max-width: 100%;
   }
 }
@@ -189,7 +189,7 @@
 .flc_comment_wrap {
   display: flex;
   align-items: flex-start;
-  column-gap: var(--flc-spacing-sm);
+  column-gap: var(--fcom-spacing-sm);
 
   * {
     box-sizing: border-box;
@@ -212,45 +212,45 @@
 // Error messages
 .flc_error,
 .error.text-danger {
-  margin: var(--flc-spacing-sm) 0 !important;
-  background: var(--flc-color-error-bg);
-  padding: var(--flc-spacing-sm) var(--flc-spacing-md);
+  margin: var(--fcom-spacing-sm) 0 !important;
+  background: var(--fcom-highlight-bg);
+  padding: var(--fcom-spacing-sm) var(--fcom-spacing-md);
 }
 
 // Child comments indentation
 .flc_comment-list.flc_child_comments {
-  margin-left: var(--flc-child-indent);
-  margin-top: var(--flc-spacing-lg);
+  margin-left: var(--fcom-child-indent);
+  margin-top: var(--fcom-spacing-lg);
 
   @include mobile {
-    margin-left: var(--flc-child-indent-mobile);
+    margin-left: var(--fcom-child-indent-mobile);
   }
 }
 
 // Child comment form
 .flc_child_form {
-  margin-left: calc(var(--flc-child-indent) + 4px);
-  margin-top: var(--flc-spacing-lg);
+  margin-left: calc(var(--fcom-child-indent) + 4px);
+  margin-top: var(--fcom-spacing-lg);
 
   @include mobile {
-    margin-left: var(--flc-child-indent-mobile);
+    margin-left: var(--fcom-child-indent-mobile);
   }
 }
 
 // Avatar placeholder
 .flc_avatar_el {
-  width: var(--flc-avatar-size);
-  height: var(--flc-avatar-size);
-  background: var(--flc-color-placeholder-bg);
-  border-radius: var(--flc-radius-full);
-  border: 5px solid var(--flc-color-avatar-border);
+  width: var(--fcom-avatar-size);
+  height: var(--fcom-avatar-size);
+  background: var(--fcom-light-bg);
+  border-radius: var(--fcom-radius-full);
+  border: 5px solid var(--fcom-primary-border);
 }
 
 // Person form fields (name, email)
 .flc_row.flc_person_form_fields {
   display: flex;
-  column-gap: var(--flc-spacing-md);
-  margin: var(--flc-spacing-sm) 0 var(--flc-spacing-md);
+  column-gap: var(--fcom-spacing-md);
+  margin: var(--fcom-spacing-sm) 0 var(--fcom-spacing-md);
 
   @include mobile {
     flex-direction: column;
@@ -262,11 +262,11 @@
 
   input {
     flex: 1;
-    padding: 7px var(--flc-spacing-sm);
+    padding: 7px var(--fcom-spacing-sm);
 
     @include mobile {
       width: 100%;
-      margin-bottom: var(--flc-spacing-sm);
+      margin-bottom: var(--fcom-spacing-sm);
     }
   }
 
@@ -274,7 +274,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: var(--flc-spacing-xs);
+    column-gap: var(--fcom-spacing-xs);
 
     @include mobile {
       flex-direction: column;
@@ -285,30 +285,42 @@
 
 // Comments title
 .flc_comments-title {
-  margin-bottom: var(--flc-spacing-lg);
-  font-size: var(--flc-font-size-title);
+  margin-bottom: var(--fcom-spacing-lg);
+  font-size: var(--fcom-font-size-title);
+  color: var(--fcom-text-link);
 }
 
 // Comment textarea
 .flc_content_textarea {
-  padding: var(--flc-spacing-sm);
-  border-color: var(--flc-color-border);
+  padding: var(--fcom-spacing-sm);
+  border-color: var(--fcom-primary-border);
   width: 100%;
   height: auto;
-  background: var(--flc-color-bg);
+  background: var(--fcom-secondary-content-bg);
+  color: var(--fcom-primary-text);
+
+  &::placeholder {
+    color: var(--fcom-text-off);
+  }
 }
 
 // Submit button
 button.flc_button {
   display: inline-block;
-  border: 1px solid;
-  border-radius: var(--flc-radius);
+  border: none;
+  border-radius: var(--fcom-radius);
   line-height: 100%;
   font-weight: 700;
-  font-size: var(--flc-font-size-base);
-  padding: var(--flc-spacing-sm) var(--flc-spacing-lg);
+  font-size: var(--fcom-font-size-base);
+  padding: var(--fcom-spacing-sm) var(--fcom-spacing-lg);
   box-shadow: none;
   cursor: pointer;
+  background: var(--fcom-primary-button);
+  color: var(--fcom-primary-button-text);
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
 
 // Native comments nested styling
@@ -316,11 +328,11 @@ button.flc_button {
   .flc_comment {
     .flc_comment,
     .flc_comment_respond {
-      margin-left: var(--flc-child-indent);
-      margin-top: var(--flc-spacing-lg);
+      margin-left: var(--fcom-child-indent);
+      margin-top: var(--fcom-spacing-lg);
 
       @include mobile {
-        margin-left: var(--flc-child-indent-mobile);
+        margin-left: var(--fcom-child-indent-mobile);
       }
     }
   }

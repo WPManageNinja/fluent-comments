@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fluent-comments/comments",
+  "version": "1.0.0",
+  "title": "Fluent Comments",
+  "category": "theme",
+  "icon": "admin-comments",
+  "description": "Display comments and comment form with AJAX loading and spam protection.",
+  "keywords": ["comments", "discussion", "fluent"],
+  "textdomain": "fluent-comments",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "attributes": {
+    "titleWithComments": {
+      "type": "string",
+      "default": ""
+    },
+    "titleNoComments": {
+      "type": "string",
+      "default": ""
+    },
+    "showTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAvatars": {
+      "type": "boolean",
+      "default": true
+    },
+    "primaryColor": {
+      "type": "string",
+      "default": ""
+    },
+    "textColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBackgroundColor": {
+      "type": "string",
+      "default": ""
+    },
+    "borderRadius": {
+      "type": "number",
+      "default": 4
+    }
+  },
+  "editorScript": "file:../../dist/block/editor.jsx.js",
+  "editorStyle": "file:../../dist/block/editor.jsx.css",
+  "style": "file:../../dist/css/app.css"
+}

@@ -32,6 +32,7 @@ class FluentCommentsPlugin
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/AdminSettingsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentNotificationHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/BlockHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Http/Controllers/CommentsController.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Router.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Helper.php';

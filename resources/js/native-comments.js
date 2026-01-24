@@ -1,197 +1,236 @@
 document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('flc_comment_form');
+    if (!commentForm) return;
 
-    if (!commentForm) {
-        return;
-    }
+    const CommentHandler = {
+        form: null,
+        textArea: null,
+        submitBtn: null,
+        metaSection: null,
+        commentList: null,
+        parentInput: null,
+        postIdInput: null,
+        parentCommentId: null,
+        resizeTimeout: null,
 
-    const commentHandler = {
-        init(commentForm) {
-            this.commentForm = commentForm;
-            this.textArea = commentForm.querySelector('.flc_content_textarea');
-            this.initTextArea();
-            this.registerFormSubmit();
-            this.initChildForm();
+        init(form) {
+            this.form = form;
+            this.textArea = form.querySelector('.flc_content_textarea');
+            this.submitBtn = form.querySelector('.flc_button');
+            this.metaSection = form.querySelector('.flc_comment_meta');
+            this.commentList = document.querySelector('.flc_comment-list');
+            this.parentInput = document.getElementById('comment_parent');
+            this.postIdInput = form.querySelector('input[name="comment_post_ID"]');
+
+            this.bindEvents();
+            this.exposeChildCommentHandler();
         },
 
-        toggleLoading(submitBtn) {
-            submitBtn.classList.toggle('flc_loading');
-            submitBtn.disabled = !submitBtn.disabled;
-        },
+        request(data, onSuccess, onError) {
+            const formData = data instanceof FormData ? data : this.objectToFormData(data);
 
-        maybeGetSecurityToken() {
-            console.log('maybeGetSecurityToken', window._fluent_comment_s_token);
-            if(window._fluent_comment_s_token) {
-                return false;
-            }
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', window.fluentCommentPublic.ajaxurl, true);
+            xhr.responseType = 'json';
 
-            setTimeout(() => {
-                // return if this.commentForm has class flc_tokenizing
-                if (this.commentForm.classList.contains('flc_tokenizing')) {
-                    return false;
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    onSuccess?.(xhr.response);
+                } else {
+                    onError?.(xhr.response);
                 }
-                // add class to this.commentForm
-                this.commentForm.classList.add('flc_tokenizing');
+            };
 
-                const commentPostId = this.commentForm.querySelector('input[name="comment_post_ID"]').value;
+            xhr.onerror = () => onError?.(null);
 
-                const request = new XMLHttpRequest();
-
-                request.open('POST', window.fluentCommentPublic.ajaxurl, true);
-                request.responseType = 'json';
-
-                var that = this;
-
-                request.onload = function () {
-                    if (this.status === 200) {
-                        window._fluent_comment_s_token = this.response.token;
-                    } else {
-                        window._fluent_comment_s_token = null;
-                    }
-                    that.commentForm.classList.remove('flc_tokenizing');
-                };
-
-                // convert data to FormData
-                const formData = new FormData();
-                formData.append('action', 'fluent_comment_comment_token');
-                formData.append('comment_post_ID', commentPostId);
-                formData.append('comment_time', Date.now());
-
-                request.send(formData);
-
-            }, 2000);
+            xhr.send(formData);
         },
 
-        initTextArea() {
-            if (this.textArea) {
-                this.textArea.addEventListener('focus', () => {
-                    this.maybeGetSecurityToken();
-                    this.commentForm.querySelector(".flc_comment_meta").style.display = "block";
-                });
-
-                this.textArea.addEventListener('input', () => {
-                    this.resizeTextArea();
-                });
+        objectToFormData(obj) {
+            const formData = new FormData();
+            for (const key in obj) {
+                formData.append(key, obj[key]);
             }
+            return formData;
+        },
+
+        bindEvents() {
+            if (this.textArea) {
+                this.textArea.addEventListener('focus', this.handleTextAreaFocus.bind(this));
+                this.textArea.addEventListener('input', this.handleTextAreaInput.bind(this));
+            }
+            this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        },
+
+        handleTextAreaFocus() {
+            this.maybeGetSecurityToken();
+            if (this.metaSection) {
+                this.metaSection.style.display = 'block';
+            }
+        },
+
+        handleTextAreaInput() {
+            if (this.resizeTimeout) {
+                cancelAnimationFrame(this.resizeTimeout);
+            }
+            this.resizeTimeout = requestAnimationFrame(() => this.resizeTextArea());
         },
 
         resizeTextArea() {
-            let element = this.textArea;
-            element.style.height = "76px";
-
-            if (element.scrollHeight < 300) {
-                element.style.height = (element.scrollHeight) + "px";
-            } else {
-                element.style.height = "300px";
-            }
+            const el = this.textArea;
+            el.style.height = '76px';
+            el.style.height = Math.min(el.scrollHeight, 300) + 'px';
         },
 
-        closeForm(form) {
-            form.querySelector('.flc_content_textarea').value = '';
-            form.querySelector('.flc_content_textarea').style.height = '76px';
-            form.querySelector('.flc_comment_meta').style.display = 'hidden';
-            document.getElementById('comment_parent').value = 0;
-            if(this.parent_comment_id) {
-                const fragment = document.createDocumentFragment();
-                // Append desired element to the fragment:
-                fragment.appendChild(document.getElementById('respond'));
-                const refElement = document.getElementById('comments');
-                const parent = refElement.parentNode;
-                parent.insertBefore(fragment, refElement);
+        maybeGetSecurityToken() {
+            if (window._fluent_comment_s_token || this.form.classList.contains('flc_tokenizing')) {
+                return;
             }
-        },
 
-        registerFormSubmit() {
-            document.getElementById('flc_comment_form').addEventListener('submit', (event) => {
-                event.preventDefault();
-                const submitBtn = event.target.querySelector('.flc_button');
-                this.toggleLoading(submitBtn);
+            setTimeout(() => {
+                if (this.form.classList.contains('flc_tokenizing')) return;
 
-                event.target.querySelectorAll('.error.text-danger').forEach(e => {
-                    e.remove();
-                });
+                this.form.classList.add('flc_tokenizing');
 
-                const form = event.target;
-
-                const data = new FormData(event.target);
-
-                data.append('_fluent_comment_s_token', window._fluent_comment_s_token);
-                data.append('comment_time', Date.now());
-
-                const request = new XMLHttpRequest();
-
-                request.open('POST', window.fluentCommentPublic.ajaxurl, true);
-                request.responseType = 'json';
-
-                var that = this;
-
-                request.onload = function () {
-                    if (this.status === 200) {
-                        that.appendComment(this.response.comment_preview);
-                        that.closeForm(form);
-                    } else {
-                        let genericError = this.response.error;
-
-                        if (!genericError && this.response.message) {
-                            genericError = this.response.message;
-                        } else if (genericError && this.response.data.status === 403) {
-                            genericError = this.response.message;
-                        }
-
-                        if (genericError) {
-                            let el = document.createElement("div");
-                            el.classList.add('error', 'text-danger');
-                            el.innerHTML = genericError;
-                            form.appendChild(el);
-                        } else {
-                            for (const property in this.response) {
-                                const field = document.getElementById('flt_' + property);
-                                if (field) {
-                                    let el = document.createElement("div");
-                                    el.classList.add('error', 'text-danger');
-                                    el.innerHTML = Object.values(this.response[property])[0];
-                                    field.parentNode.insertBefore(el, field.nextSibling);
-                                    field.parentNode.parentNode.classList.add('is-error');
-                                }
-                            }
-                        }
+                this.request(
+                    {
+                        action: 'fluent_comment_comment_token',
+                        comment_post_ID: this.postIdInput.value,
+                        comment_time: Date.now()
+                    },
+                    (response) => {
+                        window._fluent_comment_s_token = response.token;
+                        this.form.classList.remove('flc_tokenizing');
+                    },
+                    () => {
+                        window._fluent_comment_s_token = null;
+                        this.form.classList.remove('flc_tokenizing');
                     }
-                    that.toggleLoading(submitBtn);
-                    console.log('OK');
-                    window._fluent_comment_s_token = false;
-                    that.maybeGetSecurityToken();
-                };
-
-                request.send(data);
-
-            });
+                );
+            }, 2000);
         },
 
-        appendComment(html, submitFormRef) {
-            if(!this.parent_comment_id) {
-                document.querySelector('.flc_comment-list').insertAdjacentHTML('afterbegin', html)
+        handleSubmit(event) {
+            event.preventDefault();
+
+            this.toggleLoading(true);
+            this.clearErrors();
+
+            const formData = new FormData(this.form);
+            formData.append('_fluent_comment_s_token', window._fluent_comment_s_token || '');
+            formData.append('comment_time', Date.now());
+
+            this.request(
+                formData,
+                (response) => {
+                    this.appendComment(response.comment_preview);
+                    this.resetForm();
+                    this.toggleLoading(false);
+                    window._fluent_comment_s_token = null;
+                    this.maybeGetSecurityToken();
+                },
+                (response) => {
+                    if (response) {
+                        this.handleError(response);
+                    } else {
+                        this.showError('Network error. Please try again.');
+                    }
+                    this.toggleLoading(false);
+                }
+            );
+        },
+
+        toggleLoading(loading) {
+            this.submitBtn.classList.toggle('flc_loading', loading);
+            this.submitBtn.disabled = loading;
+        },
+
+        clearErrors() {
+            this.form.querySelectorAll('.error.text-danger').forEach(el => el.remove());
+            this.form.querySelectorAll('.is-error').forEach(el => el.classList.remove('is-error'));
+        },
+
+        handleError(response) {
+            const message = response?.message || response?.error;
+
+            if (message || response?.data?.status === 403) {
+                this.showError(message || 'An error occurred.');
+                return;
+            }
+
+            for (const field in response) {
+                const input = document.getElementById('flt_' + field);
+                if (input) {
+                    const errorEl = document.createElement('div');
+                    errorEl.className = 'error text-danger';
+                    errorEl.innerHTML = Object.values(response[field])[0];
+                    input.parentNode.insertBefore(errorEl, input.nextSibling);
+                    input.parentNode.parentNode.classList.add('is-error');
+                }
+            }
+        },
+
+        showError(message) {
+            const errorEl = document.createElement('div');
+            errorEl.className = 'error text-danger';
+            errorEl.innerHTML = message;
+            this.form.appendChild(errorEl);
+        },
+
+        appendComment(html) {
+            if (!this.parentCommentId) {
+                this.commentList.insertAdjacentHTML('afterbegin', html);
             } else {
-                document.getElementById('comment-'+this.parent_comment_id).insertAdjacentHTML('beforeend', html);
+                const parentComment = document.getElementById('comment-' + this.parentCommentId);
+                if (parentComment) {
+                    parentComment.insertAdjacentHTML('beforeend', html);
+                }
             }
         },
 
-        initChildForm() {
-            var that = this;
-            window.initChildComment = function (el) {
-                const commentId = el.dataset.comment_id;
-                that.parent_comment_id = commentId;
-                document.getElementById('comment_parent').value = commentId;
-                const fragment = document.createDocumentFragment();
-
-                // Append desired element to the fragment:
-                fragment.appendChild(document.getElementById('respond'));
-                document.getElementById('comment-'+commentId).appendChild(fragment);
-                setTimeout(() => {
-                    that.textArea.focus();
-                }, 500);
+        resetForm() {
+            this.textArea.value = '';
+            this.textArea.style.height = '76px';
+            if (this.metaSection) {
+                this.metaSection.style.display = 'none';
             }
+            if (this.parentInput) {
+                this.parentInput.value = 0;
+            }
+
+            if (this.parentCommentId) {
+                this.moveFormToOriginalPosition();
+                this.parentCommentId = null;
+            }
+        },
+
+        moveFormToOriginalPosition() {
+            const respond = document.getElementById('respond');
+            const comments = document.getElementById('comments');
+            if (respond && comments?.parentNode) {
+                comments.parentNode.insertBefore(respond, comments);
+            }
+        },
+
+        exposeChildCommentHandler() {
+            window.initChildComment = (el) => {
+                const commentId = el.dataset.comment_id;
+                this.parentCommentId = commentId;
+
+                if (this.parentInput) {
+                    this.parentInput.value = commentId;
+                }
+
+                const respond = document.getElementById('respond');
+                const targetComment = document.getElementById('comment-' + commentId);
+
+                if (respond && targetComment) {
+                    targetComment.appendChild(respond);
+                    setTimeout(() => this.textArea.focus(), 100);
+                }
+            };
         }
     };
 
-    commentHandler.init(commentForm);
+    CommentHandler.init(commentForm);
 });

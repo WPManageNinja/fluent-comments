@@ -3,17 +3,14 @@
 
     let { documentId, threadId, willScroll, oncreated } = $props();
 
-    let formId = $derived('comment_form_' + documentId + '_' + (threadId || 0));
+    const formId = $derived(`comment_form_${documentId}_${threadId || 0}`);
+    const { me, login_message, user_avatar } = window.fluentCommentVars;
+    const isLoggedIn = !!me;
 
     let isOpen = $state(false);
     let isSubmitting = $state(false);
-
-    let isLoggedIn = !!window.fluentCommentVars.me;
-
-    let login_message = window.fluentCommentVars.login_message;
-
-    let userAvatar = window.fluentCommentVars.user_avatar;
     let error = $state('');
+    let resizeFrame = null;
 
     let form = $state({
         content: '',
@@ -21,35 +18,32 @@
         email: ''
     });
 
+    // Scroll to form and focus textarea when replying
     $effect(() => {
-        if (!willScroll) {
-            return;
-        }
+        if (!willScroll) return;
 
         const el = document.getElementById(formId);
         if (!el) return;
-        el.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
+
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
         setTimeout(() => {
-            document.querySelector('#' + formId + ' textarea').focus({ preventScroll: true });
+            el.querySelector('textarea')?.focus({ preventScroll: true });
         }, 100);
     });
 
-    function handleOpen(event) {
+    function handleOpen() {
         isOpen = true;
     }
 
     function resizeTextArea(event) {
-        let element = event.target;
-        element.style.height = "5px";
+        if (resizeFrame) cancelAnimationFrame(resizeFrame);
 
-        if (element.scrollHeight < 300) {
-            element.style.height = (element.scrollHeight) + "px";
-        } else {
-            element.style.height = "300px";
-        }
+        resizeFrame = requestAnimationFrame(() => {
+            const el = event.target;
+            el.style.height = '5px';
+            el.style.height = Math.min(el.scrollHeight, 300) + 'px';
+        });
     }
 
     function handleSubmit(event) {
@@ -60,27 +54,29 @@
             return;
         }
 
-        let submitData = { ...form };
+        const submitData = { ...form };
         if (threadId) {
             submitData.parent_id = threadId;
         }
 
         isSubmitting = true;
         error = '';
+
         rest.post('comments/' + documentId, submitData)
             .then(response => {
                 oncreated?.(response.formatted_comment);
                 form.content = '';
                 isOpen = false;
             })
-            .catch(errors => {
-                error = errors.response.message;
+            .catch(err => {
+                error = err.response?.message || 'An error occurred';
             })
             .finally(() => {
                 isSubmitting = false;
             });
     }
 </script>
+
 <div id={formId} class="fluent_comments_form">
     {#if login_message && !isLoggedIn}
         <div class="flc_login_message">
@@ -91,14 +87,15 @@
             <div class="flc_comment_wrap">
                 <div class="flc_author_placeholder">
                     <div class="flc_comment_author">
-                        <img alt="" src={userAvatar} />
+                        <img alt="" src={user_avatar} />
                     </div>
                 </div>
                 <div class="flc_comment_form">
                     <div class="flc_form_field flc_textarea">
                         <div class="flc_comment">
                             <textarea
-                                class="flc_content_textarea {isOpen ? 'flc_text_active' : ''}"
+                                class="flc_content_textarea"
+                                class:flc_text_active={isOpen}
                                 bind:value={form.content}
                                 oninput={resizeTextArea}
                                 onfocus={handleOpen}
@@ -133,11 +130,7 @@
                         {/if}
                         <div class="flc_submit">
                             <button class="flc_button" disabled={isSubmitting} onclick={handleSubmit}>
-                                {#if isSubmitting}
-                                    Submitting
-                                {:else}
-                                    Submit Comment
-                                {/if}
+                                {isSubmitting ? 'Submitting' : 'Submit Comment'}
                             </button>
                             {#if error}
                                 <p class="flc_error">{@html error}</p>

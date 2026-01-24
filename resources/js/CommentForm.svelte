@@ -1,26 +1,27 @@
 <script>
-    import {onMount, createEventDispatcher} from 'svelte';
-    import {rest} from './functions';
+    import { rest } from './functions';
 
-    export let documentId;
-    export let threadId;
-    export let willScroll;
+    let { documentId, threadId, willScroll, oncreated } = $props();
 
-    let formId = 'comment_form_' + documentId + '_' + (threadId || 0);
+    let formId = $derived('comment_form_' + documentId + '_' + (threadId || 0));
 
-    let isOpen = false;
-    let isSubmitting = false;
-
-    const dispatch = createEventDispatcher();
+    let isOpen = $state(false);
+    let isSubmitting = $state(false);
 
     let isLoggedIn = !!window.fluentCommentVars.me;
 
     let login_message = window.fluentCommentVars.login_message;
 
     let userAvatar = window.fluentCommentVars.user_avatar;
-    let error = '';
+    let error = $state('');
 
-    onMount(() => {
+    let form = $state({
+        content: '',
+        name: '',
+        email: ''
+    });
+
+    $effect(() => {
         if (!willScroll) {
             return;
         }
@@ -32,11 +33,11 @@
             block: 'center'
         });
         setTimeout(() => {
-            document.querySelector('#' + formId + ' textarea').focus({preventScroll: true});
+            document.querySelector('#' + formId + ' textarea').focus({ preventScroll: true });
         }, 100);
     });
 
-    function handleOpen(even) {
+    function handleOpen(event) {
         isOpen = true;
     }
 
@@ -51,12 +52,6 @@
         }
     }
 
-    const form = {
-        content: '',
-        name: '',
-        email: ''
-    }
-
     function handleSubmit(event) {
         event.preventDefault();
 
@@ -65,15 +60,16 @@
             return;
         }
 
+        let submitData = { ...form };
         if (threadId) {
-            form.parent_id = threadId;
+            submitData.parent_id = threadId;
         }
 
         isSubmitting = true;
         error = '';
-        rest.post('comments/' + documentId, form)
+        rest.post('comments/' + documentId, submitData)
             .then(response => {
-                dispatch('created', response.formatted_comment);
+                oncreated?.(response.formatted_comment);
                 form.content = '';
                 isOpen = false;
             })
@@ -85,44 +81,58 @@
             });
     }
 </script>
-<div id="{formId}" class="fluent_comments_form">
+<div id={formId} class="fluent_comments_form">
     {#if login_message && !isLoggedIn}
         <div class="flc_login_message">
             <p>{@html login_message}</p>
         </div>
-    { :else }
+    {:else}
         <div class="flc_respond">
             <div class="flc_comment_wrap">
                 <div class="flc_author_placeholder">
                     <div class="flc_comment_author">
-                        <img alt="" src="{userAvatar}"/>
+                        <img alt="" src={userAvatar} />
                     </div>
                 </div>
                 <div class="flc_comment_form">
                     <div class="flc_form_field flc_textarea">
                         <div class="flc_comment">
-                        <textarea class="flc_content_textarea {isOpen ? 'flc_text_active' : ''}"
-                                  bind:value={form.content}
-                                  on:input={resizeTextArea} on:focus={handleOpen} name="comment"
-                                  title="Write your comment here..."
-                                  placeholder="Write your comment here..."></textarea>
+                            <textarea
+                                class="flc_content_textarea {isOpen ? 'flc_text_active' : ''}"
+                                bind:value={form.content}
+                                oninput={resizeTextArea}
+                                onfocus={handleOpen}
+                                name="comment"
+                                title="Write your comment here..."
+                                placeholder="Write your comment here..."
+                            ></textarea>
                         </div>
                     </div>
                     {#if isOpen}
                         {#if !isLoggedIn}
                             <div class="flc_row flc_person_form_fields">
                                 <div class="flc_form_field">
-                                    <input placeholder="Your Name" id="{formId}_name" bind:value={form.name} type="text"
-                                           class="flc_input_text"/>
+                                    <input
+                                        placeholder="Your Name"
+                                        id="{formId}_name"
+                                        bind:value={form.name}
+                                        type="text"
+                                        class="flc_input_text"
+                                    />
                                 </div>
                                 <div class="flc_form_field">
-                                    <input placeholder="Your Email Address" id="{formId}_email" bind:value={form.email}
-                                           type="email" class="flc_input_text"/>
+                                    <input
+                                        placeholder="Your Email Address"
+                                        id="{formId}_email"
+                                        bind:value={form.email}
+                                        type="email"
+                                        class="flc_input_text"
+                                    />
                                 </div>
                             </div>
                         {/if}
                         <div class="flc_submit">
-                            <button class="flc_button" disabled="{isSubmitting}" on:click={handleSubmit}>
+                            <button class="flc_button" disabled={isSubmitting} onclick={handleSubmit}>
                                 {#if isSubmitting}
                                     Submitting
                                 {:else}

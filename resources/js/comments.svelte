@@ -1,15 +1,17 @@
 <script>
-    import {rest} from './functions.js';
+    import { untrack } from 'svelte';
+    import { rest } from './functions.js';
     import CommentForm from './CommentForm.svelte';
     import CommentBlock from './CommentBlock.svelte';
-    import {onMount} from 'svelte';
 
-    export let documentId;
-    export let lazyReplace;
-    export let el;
+    let props = $props();
 
-    function handleNewComment(event) {
-        comments = [event.detail, ...comments];
+    let comments = $state([]);
+    let commentsCount = $state(0);
+    let loading = $state(true);
+
+    function handleNewComment(newComment) {
+        comments = [newComment, ...comments];
         commentsCount++;
     }
 
@@ -17,21 +19,22 @@
         commentsCount++;
     }
 
-    if(lazyReplace) {
-        for (let childItem of el.children) {
-            childItem.classList.add('flc_temp');
+    // Run initialization once, capturing initial prop values intentionally
+    untrack(() => {
+        if (props.lazyReplace && props.el) {
+            for (let childItem of props.el.children) {
+                childItem.classList.add('flc_temp');
+            }
         }
-    }
+    });
 
-    let comments = [];
-    let commentsCount = 0;
+    $effect(() => {
+        const documentId = props.documentId;
+        const lazyReplace = props.lazyReplace;
 
-    let loading = true;
-
-    onMount(() => {
         rest.get('comments/' + documentId)
             .then(response => {
-                if(lazyReplace) {
+                if (lazyReplace) {
                     document.querySelectorAll('.flc_temp').forEach(el => el.remove());
                 }
                 comments = response.comments;
@@ -49,17 +52,17 @@
 <div class="fluent_comments_wrap comments-area">
     {#if commentsCount}
         <h2 class="flc_comments-title">Latest comments ({commentsCount})</h2>
-    {:else if loading }
+    {:else if loading}
         <h2 class="flc_comments-title">Loading....</h2>
     {:else}
         <h2 class="flc_comments-title">Add your first comment to this post</h2>
     {/if}
-    {#if !loading }
-    <CommentForm on:created={handleNewComment} documentId="{documentId}"/>
-    <ul class="flc_comment-list">
-        {#each comments as comment (comment.ID)}
-            <CommentBlock on:commentCountChanged={increaseComment} documentId="{documentId}" comment="{comment}"/>
-        {/each}
-    </ul>
+    {#if !loading}
+        <CommentForm oncreated={handleNewComment} documentId={props.documentId} />
+        <ul class="flc_comment-list">
+            {#each comments as comment (comment.ID)}
+                <CommentBlock oncommentcountchanged={increaseComment} documentId={props.documentId} comment={comment} />
+            {/each}
+        </ul>
     {/if}
 </div>

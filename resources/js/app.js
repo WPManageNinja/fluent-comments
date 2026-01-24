@@ -1,3 +1,4 @@
+import { mount } from 'svelte';
 import App from './comments.svelte';
 import '../sass/app.scss';
 
@@ -8,13 +9,7 @@ if (dynamicComments.length) {
         let postId = elem.dataset.post_id;
         if (postId) {
             elem.innerHTML = '';
-
-            new App({
-                target: elem,
-                props: {
-                    documentId: postId
-                }
-            });
+            mount(App, { target: elem, props: { documentId: postId } });
         }
     });
 }
@@ -23,13 +18,9 @@ if (window.flc_post_id) {
     const el = document.getElementById('comments');
     if (el) {
         setTimeout(() => {
-            new App({
+            mount(App, {
                 target: el,
-                props: {
-                    el: el,
-                    documentId: window.flc_post_id,
-                    lazyReplace: true
-                }
+                props: { el, documentId: window.flc_post_id, lazyReplace: true }
             });
         }, 1500);
     }

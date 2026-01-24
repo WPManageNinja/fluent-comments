@@ -3,7 +3,7 @@ import Dashboard from './components/Dashboard.vue'
 
 import {ElNotification, ElMessageBox, ElLoading} from "element-plus";
 
-require('./style.scss');
+import './style.scss';
 
 const app = createApp(Dashboard);
 

@@ -4,92 +4,85 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-**All frontend assets - from project root:**
 ```bash
 pnpm install
 pnpm run build        # Production build (Vite + wp-scripts)
 pnpm run dev          # Development with watch (Vite only)
-```
-
-**Individual builds:**
-```bash
 pnpm run build:main   # Vite build only (Svelte + Vue)
 pnpm run build:block  # WordPress block only (@wordpress/scripts)
 pnpm run dev:block    # Block development with watch
 ```
 
-No test suite is configured.
+No test suite is configured. No Composer autoloader — all PHP files are manually `require_once`d in `fluent-comments.php`.
 
 ## Architecture
 
-Fluent Comments is a WordPress plugin that enhances native comments with AJAX loading and spam protection.
+Fluent Comments is a WordPress plugin that replaces native comments with AJAX-driven, spam-protected commenting. It has **three separate frontend layers** built with different frameworks:
 
 ### Backend (PHP)
 
-- **Entry point:** `fluent-comments.php` - Plugin bootstrap
+- **Entry point:** `fluent-comments.php` → boots on `plugins_loaded`, loads all PHP files manually
 - **Namespace:** `FluentComments\App\*`
-- **Structure:**
-  - `app/Hooks/Handlers/` - WordPress hook handlers
-    - `CommentsHandler.php` - Main comment functionality
-    - `AdminSettingsHandler.php` - Admin settings
-    - `CommentNotificationHandler.php` - Email notifications
-    - `BlockHandler.php` - Gutenberg block registration
-  - `app/Http/` - REST API (routes.php, Controllers/CommentsController.php)
-  - `app/Services/` - Helper, Router, Mailer, FluentWalkerComment
-  - `app/Views/` - PHP templates for comments rendering
+- **Hook registration:** `app/Hooks/hooks.php` instantiates four handlers that each call `->register()`
+- **REST routes:** Loaded only on `rest_api_init` via `app/Http/routes.php`
+- **Key handlers:**
+  - `CommentsHandler.php` — comment template override, asset enqueuing, AJAX endpoints, spam token validation, shortcode
+  - `BlockHandler.php` — Gutenberg block registration with server-side render callback
+  - `AdminSettingsHandler.php` — admin page under Comments menu, settings AJAX
+  - `CommentNotificationHandler.php` — email notifications for approvals, replies, new comments
+
+### Dual Comment Submission Paths
+
+This is the most important architectural concept: comments can be submitted through **two completely different paths** depending on theme type:
+
+1. **REST API path** (Svelte frontend, used by block/shortcode/FSE themes):
+   - `POST /wp-json/fluent-comments/comments/{id}` → `CommentsController::addComment()`
+   - Validation handled in the controller directly
+   - No security tokens needed
+
+2. **AJAX path** (native PHP template, used by classic themes):
+   - `native-comments.js` intercepts form submit → `admin-ajax.php?action=fluent_comment_post`
+   - Two-layer AES-256-CBC security tokens: `_fluent_comment_s_token` (time+postID) and `_flc_comment_sign` (postType+postID)
+   - Token requested on textarea focus after 2s delay via separate AJAX endpoint
+
+### FSE vs Classic Theme Detection
+
+`CommentsHandler::isFseTheme()` gates behavior throughout the plugin:
+- **Classic themes:** CommentsHandler enqueues assets, swaps `comments_template`, uses AJAX path with security tokens
+- **FSE themes:** BlockHandler handles everything. Token validation is skipped. Users must add the `[fluent_comments]` shortcode or the **Fluent Comments** Gutenberg block.
 
 ### Frontend
 
-- **Svelte 5** for public-facing comments (`resources/js/`)
-  - `app.js` - Entry point, mounts to `.fluent_dynamic_comments`
-  - `comments.svelte`, `CommentForm.svelte`, `CommentBlock.svelte`
-  - `functions.js` - REST API wrapper
+- **Svelte 5** (`resources/js/`) — public-facing comments UI
+  - `app.js` mounts to `.fluent_dynamic_comments` elements; also handles lazy-replace of `#comments` when `window.flc_post_id` exists (1500ms delay)
   - Uses Svelte 5 runes syntax (`$props`, `$state`, `$effect`)
+  - `functions.js` — XHR-based REST client reading from `window.fluentCommentVars.rest`
+  - `CommentBlock.svelte` recurses for threaded comments but disables reply on grandchildren (`hideReply=true`)
 
-- **Vue 3** for admin dashboard (`resources/admin/src/`)
-  - Uses Element Plus UI framework with auto-import
-  - `Dashboard.vue` - Settings management
+- **Vue 3** (`resources/admin/src/`) — admin settings dashboard
+  - Uses Element Plus with auto-import (via `unplugin-vue-components`)
+  - AJAX through jQuery to `admin-ajax.php` with action prefix `fluent-comments-admin-`
+  - Global config injected as `window.fluentCommentsVars` (note: different from frontend's `fluentCommentVars`)
 
-- **Gutenberg Block** (`resources/block/`)
-  - `block.json` - Block metadata and attributes
-  - `editor.jsx` - Block editor UI with React
-  - `editor.scss` - Editor preview styles
-  - Built with `@wordpress/scripts` for proper WordPress dependencies
-  - Supports color customization, avatars toggle, border radius
+- **React/JSX Gutenberg block** (`resources/block/`)
+  - Built with `@wordpress/scripts` (separate webpack pipeline from Vite)
+  - `save: () => null` — fully dynamic/server-rendered block
+  - Editor shows placeholder comments for visual preview
 
-### Build Output
+### Build System
 
-All compiled assets go to `/dist/`:
-- `js/app.js` - Svelte frontend
-- `js/native-comments.js` - Native comment AJAX handler
-- `js/admin_app.js` - Vue admin
-- `css/app.css` - Public styles (with CSS custom properties)
-- `css/admin_app.css` - Admin styles
-- `block/editor.jsx.js` - Gutenberg block editor (built with @wordpress/scripts)
-- `block/editor.jsx.css` - Block editor styles
-- `block/editor.jsx.asset.php` - WordPress dependencies manifest
+Two completely separate build pipelines:
+- **Vite 6** (`vite.config.js`): Builds Svelte + Vue + native-comments.js → `dist/js/` and `dist/css/`
+- **@wordpress/scripts** (webpack): Builds the Gutenberg block → `dist/block/` with WordPress dependency manifest
 
-## Key Implementation Details
+All compiled output goes to `/dist/`.
 
-- **Build system:** Vite for Svelte/Vue, @wordpress/scripts for Gutenberg block
-- **Spam protection:** Uses AES-256-CBC encrypted tokens with 5-minute expiry (LOGGED_IN_SALT/KEY)
-- **Settings:** Stored in `_fluent_comments_settings` option
-- **REST endpoints:** `/wp-json/fluent-comments/comments/{id}` (GET/POST, public access)
-- **FSE theme support:** Use `[fluent_comments]` shortcode or **Fluent Comments** block
-- **CSS Variables:** All styles use CSS custom properties for easy theming (see `resources/sass/app.scss`)
+## Key Patterns
 
-## Gutenberg Block
-
-The **Fluent Comments** block can be added to any post/page in the block editor with these options:
-
-- **Display Settings:**
-  - Show/hide title
-  - Custom title text
-  - Show/hide avatars
-  - Border radius control
-
-- **Color Settings:**
-  - Primary color
-  - Background color
-  - Text color
-  - Comment card background
+- **Gating function:** `Helper::isFluentCommentsPostType($postType)` is the central check for whether Fluent Comments is active — reads `post_types` from settings
+- **Static guard pattern:** Both `CommentsHandler::initAssets()` and `BlockHandler::enqueueAssets()` use `static $loaded` to prevent double-enqueuing
+- **Settings:** Stored in `_fluent_comments_settings` WordPress option (defaults: `post_types: ['post']`, `reject_native_comments: 'yes'`)
+- **CSS theming:** All public styles use `--fcom-*` CSS custom properties defined on `:root` in `resources/sass/app.scss`; the Gutenberg block overrides these via inline styles per-instance
+- **Custom hooks:** `fluent_comments/before_process`, `fluent_comments/after_added_comment`, `fluent_comments/mail_headers`
+- **`Arr` helper:** Laravel-derived static utility for dot-notation array access, used throughout for safe settings retrieval
+- **REST endpoints:** `GET|POST /wp-json/fluent-comments/comments/{id}` — both are public access (no capability check)

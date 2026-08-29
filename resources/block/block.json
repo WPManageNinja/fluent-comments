@@ -2,16 +2,26 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "fluent-comments/comments",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "title": "Fluent Comments",
   "category": "theme",
   "icon": "admin-comments",
   "description": "Display comments and comment form with AJAX loading and spam protection.",
-  "keywords": ["comments", "discussion", "fluent"],
+  "keywords": [
+    "comments",
+    "discussion",
+    "fluent"
+  ],
   "textdomain": "fluent-comments",
+  "usesContext": [
+    "postId"
+  ],
   "supports": {
     "html": false,
-    "align": ["wide", "full"],
+    "align": [
+      "wide",
+      "full"
+    ],
     "spacing": {
       "margin": true,
       "padding": true

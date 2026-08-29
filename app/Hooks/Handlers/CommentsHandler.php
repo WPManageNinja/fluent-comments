@@ -2,273 +2,291 @@
 
 namespace FluentComments\App\Hooks\Handlers;
 
+use FluentComments\App\Services\CommentSubmission;
+use FluentComments\App\Services\CommentsRepository;
+use FluentComments\App\Services\Frontend;
 use FluentComments\App\Services\Helper;
+use FluentComments\App\Services\SpamGuard;
 
 class CommentsHandler
 {
     public function register()
     {
-        // add_shortcode('fluent_comments', array($this, 'handleShortcode'));
+        add_filter('comments_template', [$this, 'maybeSwapCommentsTemplate'], PHP_INT_MAX - 1);
 
-        add_filter('comments_template', function ($file) {
-            global $post;
-
-            if ($post && Helper::isFluentCommentsPostType($post->post_type)) {
-                return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
-            }
-
-            return $file;
-        }, 9999999, 1);
-
-        add_action('wp_enqueue_scripts', function () {
-            if (is_admin() || !is_singular()) {
-                return;
-            }
-
-            // Check if the current post type supports comments, if not, bail.
-            global $post;
-            if (!$post || !Helper::isFluentCommentsPostType($post->post_type) || !post_type_supports($post->post_type, 'comments') || $this->isFseTheme()) {
-                return;
-            }
-
-            wp_deregister_script('comment-reply');
-
-            wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], FLUENT_COMMENTS_VERSION, 'all');
-
-            if (comments_open()) {
-                wp_enqueue_script('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/native-comments.js', [], FLUENT_COMMENTS_VERSION, true);
-                wp_localize_script('fluent_comments', 'fluentCommentPublic', [
-                    'ajaxurl' => admin_url('admin-ajax.php')
-                ]);
-            }
-        });
+        add_action('wp_enqueue_scripts', [$this, 'maybeEnqueueNativeAssets']);
 
         add_action('wp_ajax_fluent_comment_post', [$this, 'handleAjaxComment']);
         add_action('wp_ajax_nopriv_fluent_comment_post', [$this, 'handleAjaxComment']);
 
-        add_action('wp_ajax_fluent_comment_comment_token', [$this, 'handleAjaxCommentToken']);
-        add_action('wp_ajax_nopriv_fluent_comment_comment_token', [$this, 'handleAjaxCommentToken']);
+        add_action('wp_ajax_fluent_comment_session', [$this, 'handleAjaxSession']);
+        add_action('wp_ajax_nopriv_fluent_comment_session', [$this, 'handleAjaxSession']);
 
-        add_filter('pre_comment_approved', [$this, 'checkForSecurityToken'], 10, 2);
+        add_action('wp_ajax_fluent_comment_list', [$this, 'handleAjaxList']);
+        add_action('wp_ajax_nopriv_fluent_comment_list', [$this, 'handleAjaxList']);
 
         add_shortcode('fluent_comments', [$this, 'handleShortcode']);
 
-        add_action('pre_comment_on_post', function ($postId) {
-
-            if (current_user_can('moderate_comments')) {
-                return false;
-            }
-
-            $post = get_post($postId);
-            if (!$post || !Helper::willRejectNativeComments($post->post_type)) {
-                return;
-            }
-
-            // this is our post type. So we will not allow default comment
-
-            if (did_action('fluent_comments/before_process')) {
-                return;
-            }
-
-            // this is our post type. So we will not allow default comment
-            wp_die(
-                '<p>' . __('Direct Comments is disabled. Please go back and try again', 'fluent-comments') . '</p>',
-                __('Comment Submission Failure', 'fluent-comments'),
-                array(
-                    'response'  => [],
-                    'back_link' => true,
-                )
-            );
-
-        });
+        add_action('pre_comment_on_post', [$this, 'maybeRejectNativeComment']);
     }
 
-    public function handleAjaxComment()
+    /**
+     * Swap the theme's comments template for ours on classic themes.
+     *
+     * @param string $file
+     * @return string
+     */
+    public function maybeSwapCommentsTemplate($file)
     {
-        $postId = (int)$_REQUEST['comment_post_ID'];
+        $post = get_post();
+
+        if ($post && Helper::isHandlingComments($post)) {
+            return FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comments.php';
+        }
+
+        return $file;
+    }
+
+    /**
+     * Assets for the native (classic theme) comment template.
+     *
+     * @return void
+     */
+    public function maybeEnqueueNativeAssets()
+    {
+        if (is_admin() || !is_singular() || Helper::isBlockTheme()) {
+            return;
+        }
+
+        $post = get_post();
+
+        if (!$post || !Helper::isHandlingComments($post) || !post_type_supports($post->post_type, 'comments')) {
+            return;
+        }
+
+        wp_deregister_script('comment-reply');
+
+        wp_enqueue_style(
+            'fluent_comments',
+            FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css',
+            [],
+            FLUENT_COMMENTS_VERSION
+        );
+
+        if (!comments_open($post)) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'fluent_comments_native',
+            FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/native-comments.js',
+            [],
+            FLUENT_COMMENTS_VERSION,
+            true
+        );
+
+        // Nothing here may vary by visitor: this markup goes into the page
+        // cache and is served to everybody.
+        wp_localize_script('fluent_comments_native', 'fluentCommentPublic', [
+            'ajaxurl'  => admin_url('admin-ajax.php'),
+            'honeypot' => SpamGuard::getHoneypotField(),
+            'min_age'  => SpamGuard::getMinAge(),
+            'i18n'     => [
+                'network_error' => __('Network error. Please try again.', 'fluent-comments'),
+                'generic_error' => __('Something went wrong. Please try again.', 'fluent-comments'),
+            ],
+        ]);
+    }
+
+    /**
+     * Block native comment submissions, but only for posts where we have
+     * actually rendered a replacement form.
+     *
+     * @param int $postId
+     * @return void
+     */
+    public function maybeRejectNativeComment($postId)
+    {
+        // Our own submissions reach core through wp_handle_comment_submission(),
+        // which fires this action, so let ours through.
+        if (CommentSubmission::isInFlight() || SpamGuard::isTrustedUser()) {
+            return;
+        }
 
         $post = get_post($postId);
 
-        if (!$post || !comments_open($post)) {
-            wp_send_json([
-                'message' => __('Sorry, this post does not allow new comments', 'fluent-comments')
-            ], 423);
+        if (!$post || !Helper::willRejectNativeComments($post)) {
+            return;
         }
 
-        do_action('fluent_comments/before_process', $post);
+        wp_die(
+            '<p>' . esc_html__('Direct comments are disabled. Please go back and use the comment form on the post.', 'fluent-comments') . '</p>',
+            esc_html__('Comment Submission Failure', 'fluent-comments'),
+            [
+                'response'  => 403,
+                'back_link' => true,
+            ]
+        );
+    }
 
-        $commentData = wp_unslash($_REQUEST);
-        unset($commentData['url']);
+    /**
+     * admin-ajax endpoint used by the native comment form.
+     *
+     * @return void
+     */
+    public function handleAjaxComment()
+    {
+        if (!$this->isPostRequest()) {
+            $this->sendError(__('Invalid request method.', 'fluent-comments'), 405);
+        }
 
-        $comment = wp_handle_comment_submission($commentData);
+        // Nonce verification does not apply here: comments are posted by
+        // logged out visitors, so there is no session to tie a nonce to.
+        // CSRF is covered by the submission token, which is bound to an
+        // HttpOnly SameSite=Lax cookie that a cross site post can not send.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $data = wp_unslash($_POST);
+
+        $postId = isset($data['comment_post_ID']) ? absint($data['comment_post_ID']) : 0;
+
+        $comment = CommentSubmission::handle($postId, [
+            'comment' => isset($data['comment']) ? $data['comment'] : '',
+            'author'  => isset($data['author']) ? $data['author'] : '',
+            'email'   => isset($data['email']) ? $data['email'] : '',
+            'parent'  => isset($data['comment_parent']) ? $data['comment_parent'] : 0,
+            'guard'   => $data,
+        ]);
 
         if (is_wp_error($comment)) {
-            wp_send_json([
-                'message' => $comment->get_error_message()
-            ], 423);
+            $this->sendError($comment->get_error_message(), CommentSubmission::errorStatus($comment));
         }
 
-        do_action('fluent_comments/after_added_comment', $comment, $post);
+        $approved = '1' === (string)$comment->comment_approved;
 
         wp_send_json([
-            'comment_id'      => $comment->comment_ID,
-            'comment_preview' => $this->commentPreview($comment)
+            'comment_id'        => (int)$comment->comment_ID,
+            'approved'          => $approved,
+            'message'           => $approved
+                ? __('Your comment has been added.', 'fluent-comments')
+                : __('Your comment is awaiting moderation.', 'fluent-comments'),
+            // The Svelte app renders from the structured comment, the
+            // classic template injects the markup. One endpoint, both.
+            'formatted_comment' => CommentsRepository::formatComment($comment),
+            'comment_preview'   => $this->commentPreview($comment),
         ], 200);
     }
 
-    public function checkForSecurityToken($approved, $commendData)
+    /**
+     * Read a page of comments. Used for "load more" only: the first page
+     * is rendered into the document, so this is never hit on page load.
+     *
+     * @return void
+     */
+    public function handleAjaxList()
     {
-        if (is_wp_error($approved)) {
-            return $approved;
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- public read of approved comments on a public post.
+        $postId = isset($_GET['comment_post_ID']) ? absint($_GET['comment_post_ID']) : 0;
+        $page = isset($_GET['page']) ? absint($_GET['page']) : 1;
+        $perPage = isset($_GET['per_page']) ? absint($_GET['per_page']) : 0;
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+        $access = CommentSubmission::checkPostAccess(get_post($postId));
+
+        if (is_wp_error($access)) {
+            $this->sendError($access->get_error_message(), CommentSubmission::errorStatus($access));
         }
 
-        if (current_user_can('moderate_comments') || $this->isFseTheme()) {
-            return $approved;
-        }
-
-        if (empty($_REQUEST['_fluent_comment_s_token'])) {
-            return new \WP_Error('fluent_comment_s_token', 'Invalid Security Token');
-        }
-
-        $token = $this->encryptDecrypt(sanitize_text_field($_REQUEST['_fluent_comment_s_token']), 'decrypt');
-
-        if (!$token) {
-            return new \WP_Error('fluent_comment_s_token', __('Invalid Security Token', 'fluent-comments'));
-        }
-
-        $tokenParts = explode('|', $token);
-
-        if (count($tokenParts) !== 2) {
-            return new \WP_Error('fluent_comment_s_token', __('Invalid Security Token', 'fluent-comments'));
-        }
-
-        $timeStamp = $tokenParts[0];
-        $tokenPostId = $tokenParts[1];
-
-        if (time() - $timeStamp > 300) {
-            return new \WP_Error('fluent_comment_s_token', __('Security Token Expired', 'fluent-comments'));
-        }
-
-        if ($tokenPostId != $commendData['comment_post_ID']) {
-            return new \WP_Error('fluent_comment_s_token', __('Invalid post id on security token', 'fluent-comments'));
-        }
-
-        if (empty($_REQUEST['_flc_comment_sign'])) {
-            return new \WP_Error('_flc_comment_sign', __('Invalid Security Signature', 'fluent-comments'));
-        }
-
-        $commentSign = $this->encryptDecrypt(sanitize_text_field($_REQUEST['_flc_comment_sign']), 'decrypt');
-
-        $tokenParts = explode('||', $commentSign);
-
-        if (count($tokenParts) !== 2) {
-            return new \WP_Error('_flc_comment_sign', __('Invalid Security Signature', 'fluent-comments'));
-        }
-
-        $postType = $tokenParts[0];
-        $postId = $tokenParts[1];
-
-        if ($postId != $commendData['comment_post_ID']) {
-            return new \WP_Error('_flc_comment_sign', __('Invalid post id on security signature', 'fluent-comments'));
-        }
-
-        $post = get_post($postId);
-
-        if (!$post || $post->post_type != $postType) {
-            return new \WP_Error('_flc_comment_sign', __('Invalid post type on security signature', 'fluent-comments'));
-        }
-
-        return $approved;
+        wp_send_json(CommentsRepository::getPayload($postId, $page, $perPage), 200);
     }
 
+    /**
+     * Hand out a submission token and everything else about the visitor
+     * that must not be baked into a cached page.
+     *
+     * This is on admin-ajax rather than the REST API on purpose: cookie
+     * authentication works here without a nonce, so a logged in visitor is
+     * recognised even though the page they came from was served from cache.
+     *
+     * @return void
+     */
+    public function handleAjaxSession()
+    {
+        if (!$this->isPostRequest()) {
+            $this->sendError(__('Invalid request method.', 'fluent-comments'), 405);
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- public endpoint for logged out visitors; rate limited below.
+        $postId = isset($_POST['comment_post_ID']) ? absint($_POST['comment_post_ID']) : 0;
+        $post = $postId ? get_post($postId) : null;
+
+        if (!$post) {
+            $this->sendError(__('Invalid post id.', 'fluent-comments'), 404);
+        }
+
+        $rateLimit = SpamGuard::checkTokenRateLimit();
+
+        if (is_wp_error($rateLimit)) {
+            $this->sendError($rateLimit->get_error_message(), 429);
+        }
+
+        SpamGuard::recordTokenIssued();
+
+        wp_send_json(Frontend::getSessionPayload($postId), 200);
+    }
+
+    /**
+     * @return string
+     */
     public function handleShortcode()
     {
-        global $post;
+        $post = get_post();
 
         if (!$post || !post_type_supports($post->post_type, 'comments')) {
             return '';
         }
 
-        wp_enqueue_style('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css', [], FLUENT_COMMENTS_VERSION, 'all');
-        $postId = get_the_ID();
-        return $this->render($postId);
+        if (post_password_required($post)) {
+            return '';
+        }
+
+        return Frontend::renderApp($post->ID);
     }
 
+    /**
+     * Kept for backward compatibility with 2.0.x.
+     *
+     * @param int $postId
+     * @return string
+     */
     public function render($postId)
     {
-        $this->initAssets();
-        return '<div data-post_id="' . esc_attr($postId) . '" class="fluent_dynamic_comments" ><h3 style="text-align: center;">' . __('Loading..', 'fluent-comments') . '</h3></div>';
+        return Frontend::renderApp($postId);
     }
 
-    public function handleAjaxCommentToken()
+    /**
+     * @return bool
+     */
+    private function isPostRequest()
     {
-        $postId = (int)$_REQUEST['comment_post_ID'];
-
-        if (!$postId) {
-            wp_send_json([
-                'message' => 'Invalid post id'
-            ], 423);
-        }
-
-        $token = time() . '|' . $postId;
-        wp_send_json([
-            'token' => $this->encryptDecrypt($token)
-        ], 200);
+        return isset($_SERVER['REQUEST_METHOD']) && strtoupper(sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD']))) === 'POST';
     }
 
-    private function initAssets()
+    /**
+     * @param string $message
+     * @param int $status
+     * @return void
+     */
+    private function sendError($message, $status = 403)
     {
-        static $loaded;
-
-        if ($loaded) {
-            return;
-        }
-
-        $loaded = true;
-
-        wp_enqueue_script('fluent_comments', FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/app.js', [], FLUENT_COMMENTS_VERSION, true);
-
-        $vars = [
-            'slug'          => 'fluent-comments',
-            'nonce'         => wp_create_nonce('fluent-comments'),
-            'rest'          => [
-                'base_url'  => esc_url_raw(rest_url()),
-                'url'       => rest_url('fluent-comments'),
-                'nonce'     => wp_create_nonce('wp_rest'),
-                'namespace' => 'fluent-comments',
-                'version'   => '1'
-            ],
-            'i18n'          => [
-                'Dashboard' => __('Dashboard', 'fluent-comments'),
-                'Docs'      => __('Docs', 'fluent-comments'),
-            ],
-            'user_avatar'   => 'https://secure.gravatar.com/avatar/?s=96&d=mm&r=g',
-            'require_login' => get_option('comment_registration') && !get_current_user_id(),
-        ];
-
-        if (get_current_user_id()) {
-
-            $currentUser = wp_get_current_user();
-            $name = trim($currentUser->first_name . ' ' . $currentUser->last_name);
-            if (!$name) {
-                $name = $currentUser->display_name;
-            }
-
-            $vars['me'] = [
-                'id'        => $currentUser->ID,
-                'full_name' => $name,
-                'email'     => $currentUser->user_email,
-                'avatar'    => get_avatar_url($currentUser->user_email)
-            ];
-            $vars['user_avatar'] = $vars['me']['avatar'];
-        } else if ($vars['require_login']) {
-            $vars['login_message'] = __(sprintf('You must be %1slogged in%2s to post a comment.', '<a class="flc_login_link" href="' . wp_login_url(get_permalink()) . '">', '</a>'), 'fluent-comments');
-        }
-
-
-        wp_localize_script('fluent_comments', 'fluentCommentVars', $vars);
+        wp_send_json(['message' => $message], $status);
     }
 
+    /**
+     * Markup for a freshly posted comment, injected by the native form.
+     *
+     * @param \WP_Comment $comment
+     * @return string
+     */
     private function commentPreview($comment)
     {
         ob_start();
@@ -277,12 +295,12 @@ class CommentsHandler
         ?>
         <div id="comment-<?php echo (int)$comment->comment_ID; ?>" class="flc_comment fls_new_comment">
             <article class="flc_body">
-                <?php if ( get_option('show_avatars') ): ?>
-                <div class="flc_avatar">
-                    <div class="flc_comment_author">
-                        <?php echo wp_kses_post( get_avatar( $comment, 64 ) ); ?>
+                <?php if (get_option('show_avatars')) : ?>
+                    <div class="flc_avatar">
+                        <div class="flc_comment_author">
+                            <?php echo wp_kses_post(get_avatar($comment, 64)); ?>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
                 <div class="flc_comment__details">
                     <div class="crayons-card">
@@ -291,10 +309,11 @@ class CommentsHandler
                         </div>
                         <div class="flc_comment-content">
                             <?php
+                            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook.
                             echo wp_kses_post(wpautop(apply_filters('get_comment_text', $comment->comment_content, $comment)));
-                            if ('0' === $comment->comment_approved) {
+                            if ('1' !== (string)$comment->comment_approved) {
                                 ?>
-                                <p class="comment-awaiting-moderation"><?php _e('Your comment is awaiting moderation.', 'fluent-comments'); ?></p>
+                                <p class="comment-awaiting-moderation"><?php esc_html_e('Your comment is awaiting moderation.', 'fluent-comments'); ?></p>
                                 <?php
                             }
                             ?>
@@ -307,36 +326,13 @@ class CommentsHandler
         return ob_get_clean();
     }
 
-    public function encryptDecrypt($string, $action = 'encrypt')
-    {
-        // you may change these values to your own
-        $secret_key = (defined('LOGGED_IN_SALT') && '' !== LOGGED_IN_SALT) ? LOGGED_IN_SALT : 'this-is-a-fallback-salt-but-not-secure';
-        $secret_iv = (defined('LOGGED_IN_KEY') && '' !== LOGGED_IN_KEY) ? LOGGED_IN_KEY : 'this-is-a-fallback-key-but-not-secure';
-
-        $output = false;
-        $encrypt_method = "AES-256-CBC";
-        $key = hash('sha256', $secret_key);
-        $iv = substr(hash('sha256', $secret_iv), 0, 16);
-
-        if ($action == 'encrypt') {
-            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-            $output = base64_encode($output);
-        } else if ($action == 'decrypt') {
-            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-        }
-
-        return $output;
-    }
-
+    /**
+     * @deprecated 2.1.0 Use Helper::isBlockTheme().
+     *
+     * @return bool
+     */
     public function isFseTheme()
     {
-        if (function_exists('wp_is_block_theme')) {
-            return (bool)wp_is_block_theme();
-        }
-        if (function_exists('gutenberg_is_fse_theme')) {
-            return (bool)gutenberg_is_fse_theme();
-        }
-
-        return false;
+        return Helper::isBlockTheme();
     }
 }

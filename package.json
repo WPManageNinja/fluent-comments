@@ -1,6 +1,6 @@
 {
-  "name": "fluent-conversations",
-  "version": "1.0.0",
+  "name": "fluent-comments",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",

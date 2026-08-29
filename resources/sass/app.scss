@@ -217,6 +217,13 @@
   padding: var(--fcom-spacing-sm) var(--fcom-spacing-md);
 }
 
+// Held for moderation, and anything else that is not an error
+.flc_notice {
+  margin: var(--fcom-spacing-sm) 0 !important;
+  background: var(--fcom-secondary-content-bg);
+  padding: var(--fcom-spacing-sm) var(--fcom-spacing-md);
+}
+
 // Child comments indentation
 .flc_comment-list.flc_child_comments {
   margin-left: var(--fcom-child-indent);
@@ -354,4 +361,31 @@ p.comment-awaiting-moderation {
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+// Honeypot: kept out of sight without display:none, which bots skip.
+.flc_hp_field {
+  position: absolute !important;
+  left: -9999px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+.flc_loading_placeholder {
+  text-align: center;
+  color: var(--fcom-text-off);
+}
+
+.flc_comments_closed {
+  color: var(--fcom-secondary-text);
+  font-style: italic;
+  margin-bottom: var(--fcom-spacing-lg);
+}
+
+.flc_load_more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--fcom-spacing-lg);
 }

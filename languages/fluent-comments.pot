@@ -1,276 +1,456 @@
-#, fuzzy
+# Copyright (C) 2026 WPManageNinja Team
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Fluent Comments\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-06 15:23+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: FluentComments 2.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fluent-comments\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: \n"
-"Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.6; wp-6.3.1\n"
-"X-Domain: fluent-comments"
+"POT-Creation-Date: 2026-08-29T14:13:19+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: fluent-comments\n"
 
-#. 1: Comment date, 2: Comment time.
-#: app/Services/FluentWalkerComment.php:42
-#, php-format
-msgid "%1$s at %2$s"
+#. Plugin Name of the plugin
+#: fluent-comments.php
+msgid "FluentComments"
 msgstr ""
 
-#: app/Views/comments.php:31
-msgid "Add your first comment to this post"
+#. Plugin URI of the plugin
+#: fluent-comments.php
+msgid "https://github.com/WPManageNinja/fluent-comments"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:344
-msgid "Best regards,"
+#. Description of the plugin
+#: fluent-comments.php
+msgid "Simple Comments Plugin for WordPress to fight with spams and trolls"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:130
+#. Author of the plugin
+#: fluent-comments.php
+msgid "WPManageNinja Team"
+msgstr ""
+
+#. Author URI of the plugin
+#: fluent-comments.php
+msgid "https://wpmanageninja.com"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:26
+#: app/Hooks/Handlers/AdminSettingsHandler.php:27
+#: app/Hooks/Handlers/AdminSettingsHandler.php:160
+#: resources/block/editor.jsx:123
+msgid "Fluent Comments"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:98
+msgid "Settings cannot be empty."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:117
+msgid "Settings saved successfully."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:161
+msgid "You are using a block theme and the Comments block replacement is turned off, so your posts are still using the default WordPress comment form."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:165
+msgid "Review settings"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:168
+msgid "Dismiss"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:200
+msgid "You do not have permission to do this action."
+msgstr ""
+
+#: app/Hooks/Handlers/AdminSettingsHandler.php:206
+msgid "Invalid nonce."
+msgstr ""
+
+#: app/Hooks/Handlers/BlockHandler.php:143
+msgid "Fluent Comments will appear here on the frontend."
+msgstr ""
+
+#. translators: post title.
+#: app/Hooks/Handlers/CommentNotificationHandler.php:162
 #, php-format
 msgid "Comment Approved: %s"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:232
+#. translators: post title.
+#: app/Hooks/Handlers/CommentNotificationHandler.php:167
+#, php-format
+msgid "New Comment on Your Post: %s"
+msgstr ""
+
+#. translators: post title.
+#: app/Hooks/Handlers/CommentNotificationHandler.php:172
+#, php-format
+msgid "New Reply to Your Comment in: %s"
+msgstr ""
+
+#. translators: %s: name of the person receiving the email.
+#: app/Hooks/Handlers/CommentNotificationHandler.php:218
+#: app/Hooks/Handlers/CommentNotificationHandler.php:257
+#: app/Hooks/Handlers/CommentNotificationHandler.php:299
+#, php-format
+msgid "Hi %s,"
+msgstr ""
+
+#. translators: post title
+#: app/Hooks/Handlers/CommentNotificationHandler.php:219
+#, php-format
+msgid "Your comment on \"%s\" has been approved and is now live on our site."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:227
+msgid "Your Comment:"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:243
+msgid "View Your Comment"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:248
+msgid "Thank you for engaging with our content! We appreciate your thoughtful contribution to the discussion."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:249
+#: app/Hooks/Handlers/CommentNotificationHandler.php:291
+msgid "Keep the conversation going by sharing your thoughts on other posts too."
+msgstr ""
+
+#. translators: post title
+#: app/Hooks/Handlers/CommentNotificationHandler.php:258
+#, php-format
+msgid "You have received a new comment on your post \"%s\""
+msgstr ""
+
+#. translators: comment author's name
+#: app/Hooks/Handlers/CommentNotificationHandler.php:266
 #, php-format
 msgid "Comment from: %s"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:76
+#: app/Hooks/Handlers/CommentNotificationHandler.php:284
+#: app/Hooks/Handlers/CommentNotificationHandler.php:326
+msgid "View the Comment"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:290
+msgid "Engaging with your readers helps build a strong community around your content. Consider replying to keep the conversation going!"
+msgstr ""
+
+#. translators: 1: post title, 2: comment author name
+#: app/Hooks/Handlers/CommentNotificationHandler.php:300
+#, php-format
+msgid "There's a new comment in the discussion on \"%1$s\" by %2$s, where you previously participated."
+msgstr ""
+
+#. translators: comment author's name
+#: app/Hooks/Handlers/CommentNotificationHandler.php:308
+#, php-format
+msgid "Latest comment by %s"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:317
+msgid "The conversation is continuing, and your insights might be valuable to the discussion. Join back in and share your thoughts!"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:338
+msgid "💡 Why we're notifying you:"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:341
+msgid "You're receiving this because you previously commented on this post. We believe ongoing discussions create more value for everyone involved."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentNotificationHandler.php:378
+msgid "Best regards,"
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:95
+msgid "Network error. Please try again."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:96
+#: app/Services/Frontend.php:325
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:123
+msgid "Direct comments are disabled. Please go back and use the comment form on the post."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:124
 msgid "Comment Submission Failure"
 msgstr ""
 
-#: app/Views/comments.php:67
-msgid "Comments"
+#: app/Hooks/Handlers/CommentsHandler.php:140
+#: app/Hooks/Handlers/CommentsHandler.php:215
+msgid "Invalid request method."
 msgstr ""
 
-#: app/Views/comments.php:80
-msgid "Comments are closed."
+#: app/Hooks/Handlers/CommentsHandler.php:170
+msgid "Your comment has been added."
 msgstr ""
 
-#. 1: comment count number
-#: app/Views/comments.php:18
+#: app/Hooks/Handlers/CommentsHandler.php:171
+#: app/Hooks/Handlers/CommentsHandler.php:316
+#: app/Services/FluentWalkerComment.php:66
+#: app/Services/Frontend.php:323
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#: app/Hooks/Handlers/CommentsHandler.php:223
+msgid "Invalid post id."
+msgstr ""
+
+#. translators: %s: human readable time difference, e.g. "3 days".
+#: app/Services/CommentsRepository.php:92
 #, php-format
-msgctxt "comments title"
-msgid "%1$s Comment"
-msgid_plural "%1$s Comments"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:242
-msgid "Dashboard"
+msgid "%s ago"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:75
-msgid "Direct Comments is disabled. Please go back and try again"
+#: app/Services/CommentSubmission.php:100
+msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:243
-msgid "Docs"
+#: app/Services/CommentSubmission.php:328
+#: app/Services/CommentSubmission.php:340
+msgid "Invalid post."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:348
+msgid "This post is password protected."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:377
+msgid "The comment you are replying to could not be found."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:385
+msgid "Replies to this comment are not allowed."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:464
+#: app/Services/SpamGuard.php:314
+msgid "Your comment could not be posted."
+msgstr ""
+
+#. translators: 1: comment date, 2: comment time.
+#: app/Services/FluentWalkerComment.php:39
+#, php-format
+msgid "%1$s at %2$s"
 msgstr ""
 
 #: app/Services/FluentWalkerComment.php:56
 msgid "Edit"
 msgstr ""
 
-#: app/Views/comment_form.php:52
-msgid "Email Address"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:256
-msgid ""
-"Engaging with your readers helps build a strong community around your "
-"content. Consider replying to keep the conversation going!"
-msgstr ""
-
-#: app/Views/comment_form.php:36 app/Views/comment_form.php:37
-msgid "Enter your comment here..."
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:20
-#: app/Hooks/Handlers/AdminSettingsHandler.php:21
-msgid "Fluent Comments"
-msgstr ""
-
-#. Name of the plugin
-msgid "FluentComments"
-msgstr ""
-
-#: app/Views/comment_form.php:45
-msgid "Full Name"
-msgstr ""
-
-#. URI of the plugin
-msgid "https://github.com/WPManageNinja/fluent-comments"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://wpmanageninja.com"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:172
-msgid "Invalid post id on security signature"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:153
-msgid "Invalid post id on security token"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:178
-msgid "Invalid post type on security signature"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:157
-#: app/Hooks/Handlers/CommentsHandler.php:165
-msgid "Invalid Security Signature"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:136
-#: app/Hooks/Handlers/CommentsHandler.php:142
-msgid "Invalid Security Token"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:215
-#: app/Hooks/Handlers/CommentNotificationHandler.php:257
-msgid ""
-"Keep the conversation going by sharing your thoughts on other posts too."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:274
-#, php-format
-msgid "Latest comment by %s"
-msgstr ""
-
-#: app/Views/comments.php:27
-msgid "Latest comments"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:200
-msgid "Loading.."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:134
-#, php-format
-msgid "New Comment on Your Post: %s"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:138
-#, php-format
-msgid "New Reply to Your Comment in: %s"
-msgstr ""
-
-#: app/Views/comments.php:52
-msgid "Newer Comments"
-msgstr ""
-
-#: app/Views/comments.php:53
-msgid "Older Comments"
-msgstr ""
-
-#: app/Views/comments.php:14
-msgid "One Comment"
-msgstr ""
-
-#: app/Views/comment_form.php:63
-msgid "Post Comment"
-msgstr ""
-
-#: app/Services/FluentWalkerComment.php:76
+#: app/Services/FluentWalkerComment.php:79
+#: app/Services/FluentWalkerComment.php:82
+#: app/Services/Frontend.php:320
+#: resources/block/editor.jsx:160
+#: resources/block/editor.jsx:178
 msgid "Reply"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:149
-msgid "Security Token Expired"
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:73
-msgid "Settings cannot be empty."
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:90
-msgid "Settings saved successfully."
-msgstr ""
-
-#. Description of the plugin
-msgid "Simple Comments Plugin for WordPress to fight with spams and trolls"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:94
-msgid "Sorry, this post does not allow new comments"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:214
-msgid ""
-"Thank you for engaging with our content! We appreciate your thoughtful "
-"contribution to the discussion."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:345
+#. translators: %1$s: opening link tag, %2$s: closing link tag.
+#: app/Services/Frontend.php:247
+#: app/Views/comment_form.php:20
 #, php-format
-msgid "The %s Team"
+msgid "You must be %1$slogged in%2$s to post a comment."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:283
-msgid ""
-"The conversation is continuing, and your insights might be valuable to the "
-"discussion. Join back in and share your thoughts!"
+#: app/Services/Frontend.php:312
+msgid "Latest comments ({count})"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:266
-#, php-format
-msgid ""
-"There's a new comment in the discussion on \"%1$s\" by %2$s, where you "
-"previously participated."
+#: app/Services/Frontend.php:313
+#: app/Views/comments.php:22
+#: resources/block/editor.jsx:54
+msgid "Add your first comment to this post"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:250
-#: app/Hooks/Handlers/CommentNotificationHandler.php:292
-msgid "View the Comment"
+#: app/Services/Frontend.php:314
+msgid "Loading…"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:209
-msgid "View Your Comment"
+#: app/Services/Frontend.php:315
+#: resources/block/editor.jsx:137
+msgid "Write your comment here..."
 msgstr ""
 
-#. Author of the plugin
-msgid "WPManageNinja Team"
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:97
-msgid "You do not have permission to do this action."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:224
-#, php-format
-msgid "You have received a new comment on your post \"%s\""
-msgstr ""
-
-#: app/Services/FluentWalkerComment.php:66
-#: app/Hooks/Handlers/CommentsHandler.php:296
-msgid "Your comment is awaiting moderation."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:185
-#, php-format
-msgid "Your comment on \"%s\" has been approved and is now live on our site."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:193
-msgid "Your Comment:"
-msgstr ""
-
-#: app/Views/comment_form.php:54
-msgid "Your Email Address"
-msgstr ""
-
-#: app/Views/comment_form.php:47
+#: app/Services/Frontend.php:316
+#: app/Views/comment_form.php:73
 msgid "Your Name"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentNotificationHandler.php:304
-msgid "💡 Why we're notifying you:"
+#: app/Services/Frontend.php:317
+#: app/Views/comment_form.php:80
+msgid "Your Email Address"
+msgstr ""
+
+#: app/Services/Frontend.php:318
+msgid "Submit Comment"
+msgstr ""
+
+#: app/Services/Frontend.php:319
+msgid "Submitting"
+msgstr ""
+
+#: app/Services/Frontend.php:321
+msgid "Load more comments"
+msgstr ""
+
+#: app/Services/Frontend.php:322
+#: app/Views/comments.php:63
+msgid "Comments are closed."
+msgstr ""
+
+#: app/Services/Frontend.php:324
+msgid "Please write your comment first."
+msgstr ""
+
+#: app/Services/Frontend.php:326
+#: app/Views/comment_form.php:61
+msgid "Leave this field empty"
+msgstr ""
+
+#: app/Services/Frontend.php:327
+msgid "You must be logged in to post a comment."
+msgstr ""
+
+#: app/Services/SpamGuard.php:190
+#: app/Services/SpamGuard.php:243
+msgid "Your session has expired. Please reload the page and try again."
+msgstr ""
+
+#: app/Services/SpamGuard.php:479
+msgid "You are posting too quickly. Please slow down and try again later."
+msgstr ""
+
+#: app/Services/SpamGuard.php:647
+msgid "Your comment could not be verified. Please reload the page and try again."
+msgstr ""
+
+#. translators: %s: comment count.
+#: app/Views/comments.php:16
+#, php-format
+msgid "Latest comment (%s)"
+msgid_plural "Latest comments (%s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: app/Views/comments.php:43
+msgid "Newer Comments"
+msgstr ""
+
+#: app/Views/comments.php:44
+msgid "Older Comments"
+msgstr ""
+
+#: app/Views/comments.php:52
+msgid "Comments"
+msgstr ""
+
+#: app/Views/comment_form.php:34
+msgid "Enter your comment here..."
+msgstr ""
+
+#: app/Views/comment_form.php:71
+msgid "Full Name"
+msgstr ""
+
+#: app/Views/comment_form.php:78
+msgid "Email Address"
+msgstr ""
+
+#: app/Views/comment_form.php:97
+msgid "Post Comment"
+msgstr ""
+
+#: resources/block/editor.jsx:53
+msgid "Latest comments"
+msgstr ""
+
+#: resources/block/editor.jsx:59
+msgid "Display Settings"
+msgstr ""
+
+#: resources/block/editor.jsx:61
+msgid "Show Title"
+msgstr ""
+
+#: resources/block/editor.jsx:68
+msgid "Title (with comments)"
+msgstr ""
+
+#: resources/block/editor.jsx:72
+msgid "Use {count} to show comment count"
+msgstr ""
+
+#: resources/block/editor.jsx:75
+msgid "Title (no comments)"
+msgstr ""
+
+#: resources/block/editor.jsx:83
+msgid "Show Avatars"
+msgstr ""
+
+#: resources/block/editor.jsx:88
+msgid "Border Radius"
+msgstr ""
+
+#: resources/block/editor.jsx:97
+msgid "Color Settings"
+msgstr ""
+
+#: resources/block/editor.jsx:103
+msgid "Primary Color"
+msgstr ""
+
+#: resources/block/editor.jsx:108
+msgid "Text Color"
+msgstr ""
+
+#: resources/block/editor.jsx:113
+msgid "Card Background"
+msgstr ""
+
+#: resources/block/editor.jsx:140
+msgid "Submit"
+msgstr ""
+
+#: resources/block/block.json
+msgctxt "block title"
+msgid "Fluent Comments"
+msgstr ""
+
+#: resources/block/block.json
+msgctxt "block description"
+msgid "Display comments and comment form with AJAX loading and spam protection."
+msgstr ""
+
+#: resources/block/block.json
+msgctxt "block keyword"
+msgid "comments"
+msgstr ""
+
+#: resources/block/block.json
+msgctxt "block keyword"
+msgid "discussion"
+msgstr ""
+
+#: resources/block/block.json
+msgctxt "block keyword"
+msgid "fluent"
 msgstr ""

@@ -1,6 +1,15 @@
+import { ajax } from './ajax';
+import { getSession, invalidateSession, readHashedCookie } from './session';
+
 document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('flc_comment_form');
     if (!commentForm) return;
+
+    const config = window.fluentCommentPublic || {};
+    const strings = config.i18n || {};
+
+    const TOKEN_FIELD = '_flc_token';
+    const MIN_TOKEN_AGE = (config.min_age || 2) * 1000;
 
     const CommentHandler = {
         form: null,
@@ -12,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
         postIdInput: null,
         parentCommentId: null,
         resizeTimeout: null,
+        token: null,
+        tokenIssuedAt: 0,
+        sessionRequest: null,
 
         init(form) {
             this.form = form;
@@ -22,36 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
             this.parentInput = document.getElementById('comment_parent');
             this.postIdInput = form.querySelector('input[name="comment_post_ID"]');
 
+            this.prefillAuthor();
             this.bindEvents();
             this.exposeChildCommentHandler();
         },
 
-        request(data, onSuccess, onError) {
-            const formData = data instanceof FormData ? data : this.objectToFormData(data);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', window.fluentCommentPublic.ajaxurl, true);
-            xhr.responseType = 'json';
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    onSuccess?.(xhr.response);
-                } else {
-                    onError?.(xhr.response);
+        /**
+         * The saved name and email are not printed into the markup, because
+         * the markup is cached and shared. Fill them from the visitor's own
+         * cookies here instead.
+         */
+        prefillAuthor() {
+            this.form.querySelectorAll('[data-flc_prefill]').forEach((input) => {
+                const value = readHashedCookie(input.dataset.flc_prefill);
+                if (value) {
+                    input.value = value;
                 }
-            };
-
-            xhr.onerror = () => onError?.(null);
-
-            xhr.send(formData);
-        },
-
-        objectToFormData(obj) {
-            const formData = new FormData();
-            for (const key in obj) {
-                formData.append(key, obj[key]);
-            }
-            return formData;
+            });
         },
 
         bindEvents() {
@@ -59,11 +58,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.textArea.addEventListener('focus', this.handleTextAreaFocus.bind(this));
                 this.textArea.addEventListener('input', this.handleTextAreaInput.bind(this));
             }
+
             this.form.addEventListener('submit', this.handleSubmit.bind(this));
+
+            // Reply links are rendered by the walker, so listen on the document
+            // rather than wiring an inline handler onto every comment.
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest?.('.fls_child_comment_reply');
+                if (!link) return;
+
+                event.preventDefault();
+                this.startChildComment(link);
+            });
         },
 
         handleTextAreaFocus() {
-            this.maybeGetSecurityToken();
+            this.loadSession();
             if (this.metaSection) {
                 this.metaSection.style.display = 'block';
             }
@@ -82,62 +92,101 @@ document.addEventListener('DOMContentLoaded', () => {
             el.style.height = Math.min(el.scrollHeight, 300) + 'px';
         },
 
-        maybeGetSecurityToken() {
-            if (window._fluent_comment_s_token || this.form.classList.contains('flc_tokenizing')) {
+        /**
+         * The token comes from its own request so a blind POST never has
+         * one, and it is bound to an HttpOnly cookie set by that same
+         * response, so a cross site post can not produce a matching pair.
+         */
+        loadSession() {
+            if (this.token) {
+                return Promise.resolve();
+            }
+
+            if (this.sessionRequest) {
+                return this.sessionRequest;
+            }
+
+            const postId = this.postIdInput.value;
+
+            this.sessionRequest = getSession(postId)
+                .then((session) => {
+                    this.token = session.token;
+                    this.tokenIssuedAt = Date.now();
+                    this.renderExtraFields(session.fields_html);
+                })
+                .catch(() => {
+                    this.token = null;
+                })
+                .finally(() => {
+                    this.sessionRequest = null;
+                });
+
+            return this.sessionRequest;
+        },
+
+        /**
+         * Fields contributed through fluent_comments/form_fields. They
+         * arrive with the session rather than in the (cached) page, so
+         * anything per-request in them is fresh.
+         */
+        renderExtraFields(html) {
+            const slot = this.form.querySelector('.flc_extra_fields');
+
+            if (!slot || !html || slot.dataset.rendered) {
                 return;
             }
 
-            setTimeout(() => {
-                if (this.form.classList.contains('flc_tokenizing')) return;
+            slot.innerHTML = html;
+            slot.dataset.rendered = '1';
 
-                this.form.classList.add('flc_tokenizing');
-
-                this.request(
-                    {
-                        action: 'fluent_comment_comment_token',
-                        comment_post_ID: this.postIdInput.value,
-                        comment_time: Date.now()
-                    },
-                    (response) => {
-                        window._fluent_comment_s_token = response.token;
-                        this.form.classList.remove('flc_tokenizing');
-                    },
-                    () => {
-                        window._fluent_comment_s_token = null;
-                        this.form.classList.remove('flc_tokenizing');
-                    }
-                );
-            }, 2000);
+            // Injected after load, so anything binding on DOMContentLoaded
+            // has already missed it. This is how it gets told.
+            document.dispatchEvent(
+                new CustomEvent('fluent-comments:fields-rendered', {
+                    detail: { container: slot, form: this.form }
+                })
+            );
         },
 
-        handleSubmit(event) {
+        async handleSubmit(event) {
             event.preventDefault();
 
             this.toggleLoading(true);
             this.clearErrors();
 
-            const formData = new FormData(this.form);
-            formData.append('_fluent_comment_s_token', window._fluent_comment_s_token || '');
-            formData.append('comment_time', Date.now());
+            const postId = this.postIdInput.value;
 
-            this.request(
-                formData,
-                (response) => {
-                    this.appendComment(response.comment_preview);
-                    this.resetForm();
-                    this.toggleLoading(false);
-                    window._fluent_comment_s_token = null;
-                    this.maybeGetSecurityToken();
-                },
-                (response) => {
-                    if (response) {
-                        this.handleError(response);
-                    } else {
-                        this.showError('Network error. Please try again.');
-                    }
-                    this.toggleLoading(false);
+            try {
+                await this.loadSession();
+
+                const age = Date.now() - this.tokenIssuedAt;
+                if (this.token && age < MIN_TOKEN_AGE) {
+                    await new Promise((resolve) => setTimeout(resolve, MIN_TOKEN_AGE - age));
                 }
-            );
+
+                const formData = new FormData(this.form);
+                formData.append(TOKEN_FIELD, this.token || '');
+
+                const response = await ajax('fluent_comment_post', formData);
+
+                // Tokens are single use.
+                this.token = null;
+                invalidateSession(postId);
+
+                this.appendComment(response.comment_preview);
+                this.resetForm();
+            } catch (response) {
+                this.token = null;
+                invalidateSession(postId);
+
+                if (response) {
+                    this.showError(response.message || strings.generic_error);
+                } else {
+                    this.showError(strings.network_error);
+                }
+            } finally {
+                this.toggleLoading(false);
+            }
         },
 
         toggleLoading(loading) {
@@ -146,34 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         clearErrors() {
-            this.form.querySelectorAll('.error.text-danger').forEach(el => el.remove());
-            this.form.querySelectorAll('.is-error').forEach(el => el.classList.remove('is-error'));
-        },
-
-        handleError(response) {
-            const message = response?.message || response?.error;
-
-            if (message || response?.data?.status === 403) {
-                this.showError(message || 'An error occurred.');
-                return;
-            }
-
-            for (const field in response) {
-                const input = document.getElementById('flt_' + field);
-                if (input) {
-                    const errorEl = document.createElement('div');
-                    errorEl.className = 'error text-danger';
-                    errorEl.innerHTML = Object.values(response[field])[0];
-                    input.parentNode.insertBefore(errorEl, input.nextSibling);
-                    input.parentNode.parentNode.classList.add('is-error');
-                }
-            }
+            this.form.querySelectorAll('.error.text-danger').forEach((el) => el.remove());
+            this.form.querySelectorAll('.is-error').forEach((el) => el.classList.remove('is-error'));
         },
 
         showError(message) {
             const errorEl = document.createElement('div');
             errorEl.className = 'error text-danger';
-            errorEl.innerHTML = message;
+            errorEl.setAttribute('role', 'alert');
+            errorEl.textContent = message || '';
             this.form.appendChild(errorEl);
         },
 
@@ -191,9 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
         resetForm() {
             this.textArea.value = '';
             this.textArea.style.height = '76px';
+
             if (this.metaSection) {
                 this.metaSection.style.display = 'none';
             }
+
             if (this.parentInput) {
                 this.parentInput.value = 0;
             }
@@ -212,23 +244,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
+        startChildComment(el) {
+            const commentId = el.dataset.comment_id;
+            this.parentCommentId = commentId;
+
+            if (this.parentInput) {
+                this.parentInput.value = commentId;
+            }
+
+            const respond = document.getElementById('respond');
+            const targetComment = document.getElementById('comment-' + commentId);
+
+            if (respond && targetComment) {
+                targetComment.appendChild(respond);
+                setTimeout(() => this.textArea.focus(), 100);
+            }
+        },
+
+        // Kept so pages cached with the 2.0 markup keep working.
         exposeChildCommentHandler() {
-            window.initChildComment = (el) => {
-                const commentId = el.dataset.comment_id;
-                this.parentCommentId = commentId;
-
-                if (this.parentInput) {
-                    this.parentInput.value = commentId;
-                }
-
-                const respond = document.getElementById('respond');
-                const targetComment = document.getElementById('comment-' + commentId);
-
-                if (respond && targetComment) {
-                    targetComment.appendChild(respond);
-                    setTimeout(() => this.textArea.focus(), 100);
-                }
-            };
+            window.initChildComment = (el) => this.startChildComment(el);
         }
     };
 

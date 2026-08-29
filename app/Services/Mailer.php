@@ -48,11 +48,18 @@ class Mailer
 
     public function to($email, $name = '')
     {
+        $email = sanitize_email($email);
+
+        // Comment author names end up in a mail header, so strip anything
+        // that could be used to inject one.
+        $name = trim(str_replace(['"', "\r", "\n"], '', (string)$name));
+
         if ($name) {
-            $this->to = $name . ' <' . $email . '>';
+            $this->to = '"' . $name . '" <' . $email . '>';
         } else {
             $this->to = $email;
         }
+
         return $this;
     }
 

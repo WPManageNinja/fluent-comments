@@ -100,9 +100,19 @@ class CommentNotificationHandler
             return; // comment is not approved
         }
 
-        if (!Helper::isFluentCommentsPostType($post->post_type)) {
+        if (!$post || !Helper::isFluentCommentsPostType($post->post_type)) {
             return; // not a fluent comments post type
         }
+
+        // The native form reaches this through both 'comment_post' and
+        // 'fluent_comments/after_added_comment', so only notify once.
+        static $notified = [];
+
+        if (isset($notified[$comment->comment_ID])) {
+            return;
+        }
+
+        $notified[$comment->comment_ID] = true;
 
         $settings = Helper::getCommentSettings();
         $sentEmailIds = [];
@@ -148,14 +158,17 @@ class CommentNotificationHandler
     {
         if ($type == 'approved') {
             // Send approval notification
+            /* translators: post title. */
             $subject = sprintf(__('Comment Approved: %s', 'fluent-comments'), $post->post_title);
             $emailBody = $this->getEmailBody($comment, $post, $type);
         } else if ($type == 'to_post_author') {
             // Send notification to post author
+            /* translators: post title. */
             $subject = sprintf(__('New Comment on Your Post: %s', 'fluent-comments'), $post->post_title);
             $emailBody = $this->getEmailBody($comment, $post, $type);
         } else if ($type == 'to_comment_parents') {
             // Send notification to comment parents
+            /* translators: post title. */
             $subject = sprintf(__('New Reply to Your Comment in: %s', 'fluent-comments'), $post->post_title);
             $emailBody = $this->getEmailBody($comment, $post, $type);
         } else {
@@ -165,7 +178,7 @@ class CommentNotificationHandler
         $emailBody = (string)$this->wrapBody($emailBody);
 
         foreach ($receivers as $receiver) {
-            $body = str_replace('{{receiver_name}}', $receiver['name'], $emailBody);
+            $body = str_replace('{{receiver_name}}', esc_html($receiver['name']), $emailBody);
             $mailer = new Mailer($receiver['email'], $subject, $body);
             if ($receiver['name']) {
                 $mailer->to($receiver['email'], $receiver['name']);
@@ -202,8 +215,8 @@ class CommentNotificationHandler
         if ($type == 'approved') {
             ob_start();
             ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e(sprintf('Hi %s,', '{{receiver_name}}')); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php echo wp_kses_post(sprintf(__('Your comment on "%s" has been approved and is now live on our site.', 'fluent-comments'), '<b>' . $post->post_title . '</b>')); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: post title */ echo wp_kses_post(sprintf(__('Your comment on "%s" has been approved and is now live on our site.', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>')); ?></p>
 
             <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
                    style="background-color:rgb(249,250,251);border-radius:8px;padding:20px;margin-bottom:24px">
@@ -211,7 +224,7 @@ class CommentNotificationHandler
                 <tr>
                     <td>
                         <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php esc_html_e('Your Comment:', 'fluent-comments'); ?></h3>
+                            <?php esc_html_e('Your Comment:', 'fluent-comments'); ?>
                         </p>
                         <p style="font-size:14px;color:rgb(21,128,61);margin-bottom:0px;margin-top:0px;font-style:italic;line-height:24px"><?php echo esc_html($comment->comment_content); ?></p>
                     </td>
@@ -225,7 +238,7 @@ class CommentNotificationHandler
                     <tbody>
                     <tr>
                         <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo $comment->comment_ID; ?>"
+                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
                                style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
                                target="_blank"><?php esc_html_e('View Your Comment', 'fluent-comments'); ?></a></td>
                     </tr>
@@ -241,8 +254,8 @@ class CommentNotificationHandler
         if ($type == 'to_post_author') {
             ob_start();
             ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e(sprintf('Hi %s,', '{{receiver_name}}')); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php echo wp_kses_post(sprintf(__('You have received a new comment on your post "%s"', 'fluent-comments'), '<b>' . $post->post_title . '</b>')); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: post title */ echo wp_kses_post(sprintf(__('You have received a new comment on your post "%s"', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>')); ?></p>
 
             <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
                    style="background-color:rgb(249,250,251);border-radius:8px;padding:20px;margin-bottom:24px">
@@ -250,7 +263,7 @@ class CommentNotificationHandler
                 <tr>
                     <td>
                         <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php echo esc_html(sprintf(__('Comment from: %s', 'fluent-comments'), $comment->comment_author)); ?>
+                            <?php /* translators: comment author's name */ echo esc_html(sprintf(__('Comment from: %s', 'fluent-comments'), $comment->comment_author)); ?>
                         </p>
                         <p style="font-size:14px;color:rgb(55,65,81);font-style:italic;margin-bottom:0px;margin-top:0px;line-height:24px">
                             <?php echo wp_kses_post($comment->comment_content); ?>
@@ -266,7 +279,7 @@ class CommentNotificationHandler
                     <tbody>
                     <tr>
                         <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo $comment->comment_ID; ?>"
+                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
                                style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
                                target="_blank"><?php esc_html_e('View the Comment', 'fluent-comments'); ?></a></td>
                     </tr>
@@ -283,8 +296,8 @@ class CommentNotificationHandler
         if ($type == 'to_comment_parents') {
             ob_start();
             ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e(sprintf('Hi %s,', '{{receiver_name}}')); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php echo wp_kses_post(sprintf(__('There\'s a new comment in the discussion on "%1$s" by %2$s, where you previously participated.', 'fluent-comments'), '<b>' . $post->post_title . '</b>', $comment->comment_author)); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
+            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: 1: post title, 2: comment author name */ echo wp_kses_post(sprintf(__('There\'s a new comment in the discussion on "%1$s" by %2$s, where you previously participated.', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>', esc_html($comment->comment_author))); ?></p>
 
             <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
                    style="border-left-width:4px;border-color:rgb(34,197,94);padding-left:16px;margin-bottom:24px;background-color:rgb(240,253,244);border-top-right-radius:8px;border-bottom-right-radius:8px;padding-top:16px;padding-bottom:16px">
@@ -292,7 +305,7 @@ class CommentNotificationHandler
                 <tr>
                     <td>
                         <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php echo esc_html(sprintf(__('Latest comment by %s', 'fluent-comments'), $comment->comment_author)); ?>                        </p>
+                            <?php /* translators: comment author's name */ echo esc_html(sprintf(__('Latest comment by %s', 'fluent-comments'), $comment->comment_author)); ?></p>
                         <p style="font-size:14px;color:rgb(55,65,81);font-style:italic;margin-bottom:0px;margin-top:0px;line-height:24px">
                             <?php echo wp_kses_post($comment->comment_content); ?>
                         </p>
@@ -308,7 +321,7 @@ class CommentNotificationHandler
                     <tbody>
                     <tr>
                         <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo $comment->comment_ID; ?>"
+                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
                                style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
                                target="_blank"><?php esc_html_e('View the Comment', 'fluent-comments'); ?></a></td>
                     </tr>
@@ -325,7 +338,7 @@ class CommentNotificationHandler
                             <?php esc_html_e('💡 Why we\'re notifying you:', 'fluent-comments'); ?>
                         </p>
                         <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:0px;margin-top:0px;line-height:24px">
-                            <?php esc_html_e('You\'re receiving this because you previously commented on this post. We believe ongoing discussions create more value for everyone involved.'); ?>
+                            <?php esc_html_e('You\'re receiving this because you previously commented on this post. We believe ongoing discussions create more value for everyone involved.', 'fluent-comments'); ?>
                         </p></td>
                 </tr>
                 </tbody>
@@ -378,7 +391,6 @@ class CommentNotificationHandler
             </tbody>
         </table>
         </body>
-        <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
         </html>
         <?php
         return ob_get_clean();

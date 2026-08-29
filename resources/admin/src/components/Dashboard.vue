@@ -22,7 +22,16 @@
                                 Enable spam protection for comments for the selected post types.
                             </el-checkbox>
                         </div>
-                        <p>We highly recommend to enable this. If you enable, then all comments posted to WordPress default comment form will be rejected for the selected Post Types. This will block the spam comments by bot.</p>
+                        <p>We highly recommend enabling this. Comments posted directly to the default WordPress comment form will be rejected for the selected post types, which blocks bots that post straight to <code>wp-comments-post.php</code>. It only applies where FluentComments actually renders its own form, so it can never leave a post without a way to comment.</p>
+                    </el-form-item>
+
+                    <el-form-item v-if="appVars.using_block_theme == 'yes'" label="Block Theme">
+                        <div style="display: block; width: 100%; margin-bottom: 0px;">
+                            <el-checkbox true-value="yes" false-value="no" v-model="settings.block_theme_takeover">
+                                Replace the theme's Comments block with FluentComments.
+                            </el-checkbox>
+                        </div>
+                        <p>Your theme is a block (FSE) theme, so its templates render the WordPress Comments block. With this on, FluentComments takes that spot automatically and you don't need to edit any template. Turn it off only if you want to place the FluentComments block or the <code>[fluent_comments]</code> shortcode yourself.</p>
                     </el-form-item>
 
                     <div class="fluent_content_box">
@@ -65,19 +74,21 @@
                 </el-form>
             </div>
         </div>
-        <div v-if="appVars.using_block_theme == 'yes'"  class="fbeta_dashboard">
+        <div v-if="appVars.using_block_theme == 'yes'" class="fbeta_dashboard">
             <div class="fluent_header">
                 <h1 style="margin-bottom: 10px;">
-                    FSE Theme Compitability
+                    Block Theme Compatibility
                 </h1>
             </div>
             <div class="fluent_content">
-                <p>
-                    As you are using a FSE theme, you can use the <strong>FluentComments</strong> shortcode to display comments and secure comment form in your posts.
-                    <br />
-                    Please replace your Comments block with the shortcode in target post types templates.
+                <p v-if="settings.block_theme_takeover === 'yes'">
+                    FluentComments is replacing the Comments block in your theme's templates, so nothing else is needed.
                 </p>
-                <p><b>FluentComments Shortcode:</b> [fluent_comments]</p>
+                <p v-else>
+                    The Comments block replacement is turned off, so your posts are still using the default WordPress
+                    comment form. Add the <strong>Fluent Comments</strong> block to your templates, or use the shortcode below.
+                </p>
+                <p><b>FluentComments Shortcode:</b> <code>[fluent_comments]</code></p>
             </div>
         </div>
     </div>

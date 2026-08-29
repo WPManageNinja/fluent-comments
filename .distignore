@@ -1,0 +1,22 @@
+# Files that must not ship in the WordPress.org release package.
+/.git
+/.github
+/.gitignore
+/.distignore
+/.claude
+/.DS_Store
+/CLAUDE.md
+/node_modules
+/package.json
+/pnpm-lock.yaml
+/tests
+/vite.config.js
+/svelte.config.js
+/svn
+# Front-end sources. Only the compiled /dist output and the block manifest ship.
+/resources/js
+/resources/admin
+/resources/sass
+/resources/block/editor.jsx
+/resources/block/editor.scss
+.DS_Store

@@ -283,6 +283,16 @@ export default {
                         this.discussion = Object.assign({}, response.discussion);
                     }
 
+                    // And fold the result back into the page-load snapshot.
+                    // There is no keep-alive on the router view, so leaving
+                    // for Emails and coming back rebuilds this page from
+                    // window.fluentCommentsVars - which, without this, still
+                    // holds what the page was rendered with. The switch the
+                    // owner just turned off comes back on, and the next save
+                    // writes it over the server's value. $syncToggles solves
+                    // the same problem in the Emails -> Settings direction.
+                    this.$syncSettings(this.settings, this.discussion);
+
                     // The deep watchers fire on the assignment above, so the
                     // flag has to be cleared after they have run.
                     this.$nextTick(() => {

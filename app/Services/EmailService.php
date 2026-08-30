@@ -169,7 +169,19 @@ class EmailService
             return;
         }
 
-        $settings = Helper::getCommentSettings();
+        // The stored row, not the defaults-merged one. Writing the merged
+        // array would materialise all five keys on an install that has never
+        // saved the settings screen, and Helper::isConfigured() reads exactly
+        // that to decide whether the setup notice has been answered. Flipping
+        // one email switch would then silence a notice about post types and
+        // native rejection that the owner had never seen. getCommentSettings()
+        // parses this against the defaults, so a partial row still resolves.
+        $settings = get_option('_fluent_comments_settings', []);
+
+        if (!is_array($settings)) {
+            $settings = [];
+        }
+
         $settings[$key] = $enabled ? 'yes' : 'no';
 
         update_option('_fluent_comments_settings', $settings);

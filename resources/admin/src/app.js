@@ -101,6 +101,21 @@ app.mixin({
             Object.assign(window.fluentCommentsVars.settings, response.toggles.settings || {});
             Object.assign(window.fluentCommentsVars.discussion, response.toggles.discussion || {});
         },
+        /**
+         * The same fold, in the other direction: what the Settings tab just
+         * saved becomes the snapshot it is rebuilt from next time. The tab
+         * is destroyed on every route change, so without this a save is
+         * visible on screen but gone the moment you navigate away and back.
+         */
+        $syncSettings(settings, discussion) {
+            // Cloned, not assigned by reference: post_types is an array, and
+            // handing the live one to the global would let an unsaved edit
+            // on the next visit rewrite the snapshot behind the save button.
+            const clone = (value) => JSON.parse(JSON.stringify(value || {}));
+
+            Object.assign(window.fluentCommentsVars.settings, clone(settings));
+            Object.assign(window.fluentCommentsVars.discussion, clone(discussion));
+        },
         convertToText,
         $t,
         $_n,

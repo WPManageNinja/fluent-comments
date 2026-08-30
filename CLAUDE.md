@@ -18,6 +18,7 @@ php tests/SpamGuardTest.php        # token + scoring logic
 php tests/HookIsolationTest.php    # foreign comment-hook isolation
 php tests/NativeRejectionTest.php  # who gets rejected, and who never does
 php tests/CommentEmailTest.php     # smartcode escaping + where "is this sent" lives
+php tests/CommentNotificationTest.php  # who receives an email, and who never does
 ```
 
 ```bash

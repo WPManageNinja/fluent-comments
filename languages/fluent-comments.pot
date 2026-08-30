@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T16:00:00+00:00\n"
+"POT-Creation-Date: 2026-08-30T17:01:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -30,7 +30,7 @@ msgstr ""
 
 #. Description of the plugin
 #: fluent-comments.php
-msgid "Simple Comments Plugin for WordPress to fight with spams and trolls"
+msgid "AJAX comments with layered spam protection and no CAPTCHA, plus a full email notification system."
 msgstr ""
 
 #. Author of the plugin
@@ -85,7 +85,7 @@ msgid "Comment Submission Failure"
 msgstr ""
 
 #: app/Hooks/Handlers/CommentsHandler.php:140
-#: app/Hooks/Handlers/CommentsHandler.php:215
+#: app/Hooks/Handlers/CommentsHandler.php:223
 msgid "Invalid request method."
 msgstr ""
 
@@ -94,13 +94,13 @@ msgid "Your comment has been added."
 msgstr ""
 
 #: app/Hooks/Handlers/CommentsHandler.php:171
-#: app/Hooks/Handlers/CommentsHandler.php:316
+#: app/Hooks/Handlers/CommentsHandler.php:333
 #: app/Services/FluentWalkerComment.php:66
 #: app/Services/Frontend.php:323
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:223
+#: app/Hooks/Handlers/CommentsHandler.php:231
 msgid "Invalid post id."
 msgstr ""
 
@@ -150,28 +150,28 @@ msgstr ""
 msgid "%s ago"
 msgstr ""
 
-#: app/Services/CommentSubmission.php:100
+#: app/Services/CommentSubmission.php:106
 msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:328
-#: app/Services/CommentSubmission.php:340
+#: app/Services/CommentSubmission.php:334
+#: app/Services/CommentSubmission.php:346
 msgid "Invalid post."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:348
+#: app/Services/CommentSubmission.php:354
 msgid "This post is password protected."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:377
+#: app/Services/CommentSubmission.php:383
 msgid "The comment you are replying to could not be found."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:385
+#: app/Services/CommentSubmission.php:391
 msgid "Replies to this comment are not allowed."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:464
+#: app/Services/CommentSubmission.php:470
 #: app/Services/SpamGuard.php:314
 msgid "Your comment could not be posted."
 msgstr ""
@@ -224,245 +224,245 @@ msgstr ""
 msgid "Switching this off is the same as clearing \"A comment is held for moderation\" on Settings > Discussion."
 msgstr ""
 
-#: app/Services/EmailService.php:453
-#: app/Services/EmailService.php:490
+#: app/Services/EmailService.php:465
+#: app/Services/EmailService.php:502
 msgid "Comment"
 msgstr ""
 
-#: app/Services/EmailService.php:454
+#: app/Services/EmailService.php:466
 msgid "Comment author"
 msgstr ""
 
-#: app/Services/EmailService.php:455
+#: app/Services/EmailService.php:467
 msgid "Comment author email"
 msgstr ""
 
-#: app/Services/EmailService.php:456
+#: app/Services/EmailService.php:468
 msgid "Comment author website"
 msgstr ""
 
-#: app/Services/EmailService.php:457
+#: app/Services/EmailService.php:469
 msgid "Comment date"
 msgstr ""
 
-#: app/Services/EmailService.php:458
+#: app/Services/EmailService.php:470
 msgid "Comment time"
 msgstr ""
 
-#: app/Services/EmailService.php:459
+#: app/Services/EmailService.php:471
 msgid "Link to the comment"
 msgstr ""
 
-#: app/Services/EmailService.php:465
+#: app/Services/EmailService.php:477
 msgid "Comment author IP"
 msgstr ""
 
-#: app/Services/EmailService.php:466
+#: app/Services/EmailService.php:478
 msgid "Approve link"
 msgstr ""
 
-#: app/Services/EmailService.php:467
+#: app/Services/EmailService.php:479
 msgid "Mark as spam link"
 msgstr ""
 
-#: app/Services/EmailService.php:468
+#: app/Services/EmailService.php:480
 msgid "Move to trash link"
 msgstr ""
 
-#: app/Services/EmailService.php:469
+#: app/Services/EmailService.php:481
 msgid "Moderation queue link"
 msgstr ""
 
-#: app/Services/EmailService.php:479
+#: app/Services/EmailService.php:491
 msgid "Recipient"
 msgstr ""
 
-#: app/Services/EmailService.php:481
+#: app/Services/EmailService.php:493
 msgid "Their name"
 msgstr ""
 
-#: app/Services/EmailService.php:482
+#: app/Services/EmailService.php:494
 msgid "Their email"
 msgstr ""
 
-#: app/Services/EmailService.php:495
+#: app/Services/EmailService.php:507
 msgid "Post"
 msgstr ""
 
-#: app/Services/EmailService.php:497
+#: app/Services/EmailService.php:509
 msgid "Post title"
 msgstr ""
 
-#: app/Services/EmailService.php:498
+#: app/Services/EmailService.php:510
 msgid "Post author"
 msgstr ""
 
-#: app/Services/EmailService.php:499
+#: app/Services/EmailService.php:511
 msgid "Post date"
 msgstr ""
 
-#: app/Services/EmailService.php:500
+#: app/Services/EmailService.php:512
 msgid "Post URL"
 msgstr ""
 
-#: app/Services/EmailService.php:501
+#: app/Services/EmailService.php:513
 msgid "Edit post URL"
 msgstr ""
 
-#: app/Services/EmailService.php:506
+#: app/Services/EmailService.php:518
 msgid "Site"
 msgstr ""
 
-#: app/Services/EmailService.php:508
+#: app/Services/EmailService.php:520
 msgid "Site title"
 msgstr ""
 
-#: app/Services/EmailService.php:509
+#: app/Services/EmailService.php:521
 msgid "Site tagline"
 msgstr ""
 
-#: app/Services/EmailService.php:510
+#: app/Services/EmailService.php:522
 msgid "Admin email"
 msgstr ""
 
-#: app/Services/EmailService.php:511
+#: app/Services/EmailService.php:523
 msgid "Site URL"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:525
+#: app/Services/EmailService.php:537
 #, php-format
 msgid "Your comment on %s is now live"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:530
+#: app/Services/EmailService.php:542
 #, php-format
 msgid "New reply in the discussion on %s"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:535
+#: app/Services/EmailService.php:547
 #, php-format
 msgid "New comment on %s"
 msgstr ""
 
 #. translators: 1: site title placeholder, 2: post title placeholder.
-#: app/Services/EmailService.php:540
+#: app/Services/EmailService.php:552
 #, php-format
 msgid "[%1$s] Comment on %2$s"
 msgstr ""
 
 #. translators: 1: site title placeholder, 2: post title placeholder.
-#: app/Services/EmailService.php:545
+#: app/Services/EmailService.php:557
 #, php-format
 msgid "[%1$s] Please moderate a comment on %2$s"
 msgstr ""
 
 #. translators: %s is the recipient's name placeholder.
-#: app/Services/EmailService.php:561
-#: app/Services/EmailService.php:575
-#: app/Services/EmailService.php:589
+#: app/Services/EmailService.php:573
+#: app/Services/EmailService.php:587
+#: app/Services/EmailService.php:601
 #, php-format
 msgid "Hi %s,"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:564
+#: app/Services/EmailService.php:576
 #, php-format
 msgid "Your comment on <strong>%s</strong> has been approved and is now live."
 msgstr ""
 
-#: app/Services/EmailService.php:567
+#: app/Services/EmailService.php:579
 msgid "View your comment"
 msgstr ""
 
-#: app/Services/EmailService.php:569
+#: app/Services/EmailService.php:581
 msgid "Thanks for taking the time to write it."
 msgstr ""
 
 #. translators: 1: comment author placeholder, 2: post title placeholder.
-#: app/Services/EmailService.php:578
+#: app/Services/EmailService.php:590
 #, php-format
 msgid "%1$s replied in a discussion you took part in on <strong>%2$s</strong>."
 msgstr ""
 
-#: app/Services/EmailService.php:581
+#: app/Services/EmailService.php:593
 msgid "Read the reply"
 msgstr ""
 
-#: app/Services/EmailService.php:583
+#: app/Services/EmailService.php:595
 msgid "You are getting this because you commented on this post."
 msgstr ""
 
 #. translators: 1: comment author placeholder, 2: post title placeholder.
-#: app/Services/EmailService.php:592
+#: app/Services/EmailService.php:604
 #, php-format
 msgid "%1$s left a comment on your post <strong>%2$s</strong>."
 msgstr ""
 
-#: app/Services/EmailService.php:595
-#: app/Services/EmailService.php:610
+#: app/Services/EmailService.php:607
+#: app/Services/EmailService.php:622
 msgid "View the comment"
 msgstr ""
 
-#: app/Services/EmailService.php:597
+#: app/Services/EmailService.php:609
 msgid "Replying keeps the conversation going."
 msgstr ""
 
-#: app/Services/EmailService.php:602
-#: app/Services/EmailService.php:620
+#: app/Services/EmailService.php:614
+#: app/Services/EmailService.php:632
 msgid "Hi there,"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:605
+#: app/Services/EmailService.php:617
 #, php-format
 msgid "A new comment was posted on <strong>%s</strong>."
 msgstr ""
 
 #. translators: 1: comment author placeholder, 2: comment author email placeholder.
-#: app/Services/EmailService.php:607
+#: app/Services/EmailService.php:619
 #, php-format
 msgid "From %1$s (%2$s)"
 msgstr ""
 
 #. translators: %s is the trash link placeholder.
-#: app/Services/EmailService.php:614
+#: app/Services/EmailService.php:626
 #, php-format
 msgid "Move it to the trash: %s"
 msgstr ""
 
 #. translators: %s is the post title placeholder.
-#: app/Services/EmailService.php:623
+#: app/Services/EmailService.php:635
 #, php-format
 msgid "A comment on <strong>%s</strong> is waiting for your review."
 msgstr ""
 
 #. translators: 1: comment author placeholder, 2: comment author email placeholder, 3: author IP placeholder.
-#: app/Services/EmailService.php:625
+#: app/Services/EmailService.php:637
 #, php-format
 msgid "From %1$s (%2$s) at %3$s"
 msgstr ""
 
-#: app/Services/EmailService.php:628
+#: app/Services/EmailService.php:640
 msgid "Approve it"
 msgstr ""
 
 #. translators: %s is the spam link placeholder.
-#: app/Services/EmailService.php:632
+#: app/Services/EmailService.php:644
 #, php-format
 msgid "Mark as spam: %s"
 msgstr ""
 
 #. translators: %s is the trash link placeholder.
-#: app/Services/EmailService.php:634
+#: app/Services/EmailService.php:646
 #, php-format
 msgid "Move to the trash: %s"
 msgstr ""
 
 #. translators: %s is the moderation queue link placeholder.
-#: app/Services/EmailService.php:636
+#: app/Services/EmailService.php:648
 #, php-format
 msgid "See everything waiting: %s"
 msgstr ""
@@ -551,11 +551,11 @@ msgstr ""
 msgid "You must be logged in to post a comment."
 msgstr ""
 
-#: app/Services/Helper.php:206
+#: app/Services/Helper.php:225
 msgid "You do not have permission to do this action."
 msgstr ""
 
-#: app/Services/Helper.php:212
+#: app/Services/Helper.php:231
 msgid "Invalid nonce."
 msgstr ""
 

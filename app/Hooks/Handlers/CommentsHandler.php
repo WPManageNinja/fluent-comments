@@ -171,7 +171,15 @@ class CommentsHandler
                 : __('Your comment is awaiting moderation.', 'fluent-comments'),
             // The Svelte app renders from the structured comment, the
             // classic template injects the markup. One endpoint, both.
-            'formatted_comment' => CommentsRepository::formatComment($comment),
+            //
+            // The depth has to be the real one. Left at the default of 1, a
+            // reply accepted at the bottom of a thread comes back claiming
+            // to be top level and renders a Reply link that the server will
+            // refuse - an error the visitor can only clear by reloading.
+            'formatted_comment' => CommentsRepository::formatComment(
+                $comment,
+                CommentSubmission::getCommentDepth($comment)
+            ),
             'comment_preview'   => $this->commentPreview($comment),
         ], 200);
     }
@@ -221,6 +229,15 @@ class CommentsHandler
 
         if (!$post) {
             $this->sendError(__('Invalid post id.', 'fluent-comments'), 404);
+        }
+
+        // The same check the list and submit endpoints make. Without it a
+        // draft or private post answers with a token and, through
+        // renderFormFields(), whatever an extension echoes for it.
+        $access = CommentSubmission::checkPostAccess($post);
+
+        if (is_wp_error($access)) {
+            $this->sendError($access->get_error_message(), CommentSubmission::errorStatus($access));
         }
 
         $rateLimit = SpamGuard::checkTokenRateLimit();

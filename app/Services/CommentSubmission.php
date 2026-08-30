@@ -88,9 +88,15 @@ class CommentSubmission
             return $access;
         }
 
+        // The post type gate belongs here as much as it does on the render
+        // side. Without it this endpoint is a second way into every public
+        // comment-supporting post type on the site - and one that strips
+        // that post type's own validators on the way through, because
+        // suppressForeignHooks() runs below regardless.
         $accepts = apply_filters(
             'fluent_comments/accepts_submission',
-            post_type_supports($post->post_type, 'comments'),
+            Helper::isFluentCommentsPostType($post->post_type)
+            && post_type_supports($post->post_type, 'comments'),
             $post
         );
 

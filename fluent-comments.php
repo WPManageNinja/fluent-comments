@@ -4,7 +4,7 @@ defined('ABSPATH') or die;
 /*
 Plugin Name:  FluentComments
 Plugin URI:   https://github.com/WPManageNinja/fluent-comments
-Description:  Simple Comments Plugin for WordPress to fight with spams and trolls
+Description:  AJAX comments with layered spam protection and no CAPTCHA, plus a full email notification system.
 Version:      2.1.0
 Author:       WPManageNinja Team
 Author URI:   https://wpmanageninja.com

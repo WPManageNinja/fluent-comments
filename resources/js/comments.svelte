@@ -16,7 +16,11 @@
     const vars = window.fluentCommentVars;
     const i18n = vars.i18n;
 
-    const avatarsEnabled = showAvatars && vars.show_avatars !== false;
+    // $derived rather than a const: showAvatars is a prop, and reading one
+    // into plain module state captures its first value and never updates.
+    // Fixed at mount() today, but the warning is the compiler pointing at a
+    // real trap for whoever makes this component reactive later.
+    const avatarsEnabled = $derived(showAvatars && vars.show_avatars !== false);
 
     let comments = $state([]);
     let commentsCount = $state(0);
@@ -37,8 +41,21 @@
             : (titleNoComments || i18n.title_no_comments)
     );
 
+    /**
+     * The server paginates by offset. Anything prepended since the first
+     * page was drawn - this visitor's own comment, or somebody else's -
+     * shifts that window, so the next page can repeat a comment we already
+     * hold. Two of the same ID in a keyed {#each} corrupts the list rather
+     * than throwing, so merge on ID instead of concatenating.
+     */
+    function mergeComments(existing, incoming) {
+        const seen = new Set(existing.map((comment) => comment.ID));
+
+        return [...existing, ...incoming.filter((comment) => !seen.has(comment.ID))];
+    }
+
     function applyResponse(response, append) {
-        comments = append ? [...comments, ...response.comments] : response.comments;
+        comments = append ? mergeComments(comments, response.comments) : response.comments;
         commentsCount = parseInt(response.count, 10) || 0;
         commentsOpen = !!response.comments_open;
         hasMore = !!response.has_more;

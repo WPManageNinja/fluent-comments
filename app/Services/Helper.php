@@ -39,9 +39,18 @@ class Helper
      * There is no activation hook, so a fresh install has no option row and
      * getCommentSettings() quietly serves the defaults - which already put
      * FluentComments in charge of `post` with native rejection on. That is a
-     * live plugin nobody has looked at yet, so the absence of the row is what
-     * the setup notice keys on. Saving writes every key, so a saved option is
-     * never empty.
+     * live plugin nobody has looked at yet, so the state of the row is what
+     * the setup notice keys on.
+     *
+     * The test is a key the settings screen writes, not merely a non-empty
+     * row, because the Emails list writes this option too - one key at a
+     * time, through EmailService::setEnabled(). Materialising the row by
+     * flipping an email switch would otherwise retire a notice about post
+     * types and native rejection that the owner had never read.
+     *
+     * The two keys below are the ones setEnabled() can never write, and both
+     * 2.0.0 and 2.1.0 write them on every save, so an install that was
+     * already configured stays configured across the upgrade.
      *
      * @return bool
      */
@@ -49,7 +58,17 @@ class Helper
     {
         $settings = get_option('_fluent_comments_settings', null);
 
-        return is_array($settings) && !empty($settings);
+        if (!is_array($settings) || empty($settings)) {
+            return false;
+        }
+
+        foreach (['post_types', 'reject_native_comments'] as $key) {
+            if (array_key_exists($key, $settings)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -14,21 +14,35 @@ if (!function_exists('fluent_comments_delete_plugin_data')) {
 
         delete_option('_fluent_comments_settings');
 
+        // Email bodies, subjects and the template design - logo, colours,
+        // footer, From and Reply-To. Left behind, a reinstall silently comes
+        // back up with the previous owner's customised emails.
+        delete_option('_fluent_comments_email_settings');
+
         // Direct queries: there is no API for deleting a meta key or a set of
         // transients across every user, and this runs once on uninstall.
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        // Legacy: the dismissible placement notice was removed in 2.1.1 and
+        // Legacy: the dismissible placement notice was removed in 2.1.0 and
         // nothing writes this key any more, but installs that saw it still
         // carry the per-user flag.
         $wpdb->query(
             "DELETE FROM {$wpdb->usermeta} WHERE meta_key = '_fluent_comments_dismissed_block_notice'"
         );
 
-        // Rate limit counters are transients, so clear the leftovers.
+        // Which comments we have already sent notifications for.
+        $wpdb->query(
+            "DELETE FROM {$wpdb->commentmeta} WHERE meta_key LIKE '\_fcom\_sent\_%'"
+        );
+
+        // Rate limit counters and spent submission tokens are transients, so
+        // clear the leftovers. Both carry a TTL and expire on their own, but
+        // the rows sit in wp_options until something asks for them.
         $wpdb->query(
             "DELETE FROM {$wpdb->options}
              WHERE option_name LIKE '\_transient\_flc\_rl\_%'
-                OR option_name LIKE '\_transient\_timeout\_flc\_rl\_%'"
+                OR option_name LIKE '\_transient\_timeout\_flc\_rl\_%'
+                OR option_name LIKE '\_transient\_flc\_spent\_%'
+                OR option_name LIKE '\_transient\_timeout\_flc\_spent\_%'"
         );
         // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     }

@@ -4,3 +4,5 @@ dist
 .DS_Store
 svn
 .gstack/
+build
+builds

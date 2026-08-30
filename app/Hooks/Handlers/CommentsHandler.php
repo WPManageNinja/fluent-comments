@@ -13,6 +13,7 @@ class CommentsHandler
     public function register()
     {
         add_filter('comments_template', [$this, 'maybeSwapCommentsTemplate'], PHP_INT_MAX - 1);
+        add_filter('comments_template_query_args', [$this, 'onlyApprovedComments']);
 
         add_action('wp_enqueue_scripts', [$this, 'maybeEnqueueNativeAssets']);
 
@@ -102,6 +103,44 @@ class CommentsHandler
                 'email_invalid'     => $strings['email_invalid'],
             ],
         ]);
+    }
+
+    /**
+     * Drop core's include_unapproved from the query the classic template
+     * renders from.
+     *
+     * comments_template() adds the current user, or the email address in
+     * the visitor's comment cookie, to include_unapproved so that somebody
+     * can see their own comment while it waits for moderation. That is the
+     * right call for an uncached page and the wrong one for this plugin:
+     * our markup is written on the assumption that it goes into a full page
+     * cache and is then served to other people, and one visitor's held
+     * comment is exactly the kind of thing that must not travel that way.
+     *
+     * Nothing is really lost. A comment posted in this session is still
+     * shown immediately - the script appends what the submit returned - so
+     * the only case that changes is reloading the page later and finding
+     * your own held comment gone from the list. The Svelte front end has
+     * always worked this way; CommentsRepository asks for approved
+     * comments and nothing else.
+     *
+     * Scoped to the posts we render, so a theme's own comment template on
+     * any other post type keeps core's behaviour.
+     *
+     * @param array $args
+     * @return array
+     */
+    public function onlyApprovedComments($args)
+    {
+        $post = get_post();
+
+        if (!$post || !Helper::isHandlingComments($post)) {
+            return $args;
+        }
+
+        unset($args['include_unapproved']);
+
+        return $args;
     }
 
     /**

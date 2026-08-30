@@ -26,6 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
         token: null,
         tokenIssuedAt: 0,
         sessionRequest: null,
+        // Null until the session answers. sessionOk stays false if it never
+        // did, which is how the identity check below knows to keep quiet
+        // and let the server be the one to decide.
+        me: null,
+        sessionOk: false,
 
         init(form) {
             this.form = form;
@@ -56,31 +61,68 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         /**
-         * The form is rendered with the generic avatar, because the markup
-         * is cached and shared and a user's gravatar URL is a hash of their
-         * email address. Swap in the real one once the session - which is
-         * never cached - says who is looking.
+         * Everything about the form that depends on who is looking.
+         *
+         * The template renders one neutral form, because it goes into the
+         * page cache and is served to everybody. This is the only place
+         * that knows whether this particular visitor is signed in, may
+         * comment at all, and what their avatar is - the session response
+         * is never cached.
          */
-        applyAvatar(me) {
-            if (!me || !me.avatar) {
+        applySession(session) {
+            const root = this.form.closest('.flc_comment_respond') || document;
+            const notice = root.querySelector('[data-flc_login_required]');
+            const wrap = root.querySelector('[data-flc_form_wrap]');
+            const identity = this.form.querySelector('[data-flc_identity_fields]');
+
+            // login_message is present exactly when comments are restricted
+            // to registered users and this visitor is not one, so it is the
+            // signal as well as the wording.
+            if (session.login_message) {
+                if (notice) {
+                    notice.innerHTML = session.login_message;
+                    notice.hidden = false;
+                }
+
+                if (wrap) {
+                    wrap.hidden = true;
+                }
+
                 return;
             }
 
-            const img = this.form.closest('.flc_respond')?.querySelector('[data-flc_avatar]');
+            if (session.me) {
+                if (session.me.avatar) {
+                    const img = root.querySelector('[data-flc_avatar]');
 
-            if (img) {
-                img.src = me.avatar;
+                    if (img) {
+                        img.src = session.me.avatar;
+                    }
+                }
+
+                return;
+            }
+
+            // Signed out and allowed to comment: they need somewhere to put
+            // a name and an email, which we always require of them.
+            if (identity) {
+                identity.hidden = false;
             }
         },
 
         /**
-         * The name and email inputs are only rendered for a logged out
-         * visitor, so their absence is how we know not to ask.
-         *
          * @return {string} An error message, or '' when there is nothing
          *                  to complain about.
          */
         identityProblem() {
+            // Both inputs are always in the markup now, so their presence
+            // says nothing. Only complain when the session came back and
+            // said this visitor is signed out; if it never answered, the
+            // server is better placed to judge than we are.
+            if (!this.sessionOk || this.me) {
+                return '';
+            }
+
             const name = this.form.querySelector('[name="author"]');
             const email = this.form.querySelector('[name="email"]');
 
@@ -148,8 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then((session) => {
                     this.token = session.token;
                     this.tokenIssuedAt = Date.now();
+                    this.me = session.me || null;
+                    this.sessionOk = true;
                     this.renderExtraFields(session.fields_html);
-                    this.applyAvatar(session.me);
+                    this.applySession(session);
                 })
                 .catch(() => {
                     this.token = null;
@@ -208,6 +252,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     // a field the visitor cannot see is worse than useless.
                     if (this.metaSection) {
                         this.metaSection.style.display = 'block';
+                    }
+
+                    const identityFields = this.form.querySelector('[data-flc_identity_fields]');
+
+                    if (identityFields) {
+                        identityFields.hidden = false;
                     }
 
                     this.showError(identity);

@@ -8,7 +8,6 @@ if (!$post) {
 }
 
 $showAvatars = (bool)get_option('show_avatars');
-$currentUser = get_current_user_id() ? wp_get_current_user() : false;
 // The generic avatar, never this visitor's. get_avatar_url() on a user
 // id returns a hash of their email address, and this markup goes into
 // the page cache - so the logged in visitor who happened to prime the
@@ -16,31 +15,35 @@ $currentUser = get_current_user_id() ? wp_get_current_user() : false;
 // script swaps in the real one from the session, which is uncached.
 $defaultAvatar = get_avatar_url('', ['default' => get_option('avatar_default', 'mystery')]);
 
-if (get_option('comment_registration') && !$currentUser) {
-    printf(
-        '<p class="flc_comment_login_required">%s</p>',
-        wp_kses_post(
-            sprintf(
-            /* translators: %1$s: opening link tag, %2$s: closing link tag. */
-                __('You must be %1$slogged in%2$s to post a comment.', 'fluent-comments'),
-                '<a class="flc_login_link" href="' . esc_url(wp_login_url(get_permalink())) . '">',
-                '</a>'
-            )
-        )
-    );
-    return;
-}
+// Whether this visitor is signed in is NOT decided here, and nothing below
+// branches on it. This markup goes into the page cache and is then served
+// to everybody, so a branch taken for whoever happened to prime the cache
+// becomes a branch taken for all of them: the login notice shown to signed
+// in readers, or the name and email fields missing for anonymous ones, who
+// then cannot comment at all.
+//
+// So one neutral form is rendered, with both the login notice and the
+// identity fields present but hidden, and the script reveals whichever the
+// session says applies. The session is the only thing here that knows who
+// is asking, and it is never cached. Nothing is lost without JavaScript:
+// the form posts through admin-ajax either way, so a browser that never
+// runs the script was never going to submit a comment.
+$loginMessage = sprintf(
+/* translators: %1$s: opening link tag, %2$s: closing link tag. */
+    __('You must be %1$slogged in%2$s to post a comment.', 'fluent-comments'),
+    '<a class="flc_login_link" href="' . esc_url(wp_login_url(get_permalink())) . '">',
+    '</a>'
+);
 
-// The commenter's saved name and email are deliberately NOT printed here.
-// They come from the comment_author_* cookies, and this markup goes into
-// the page cache, so rendering them server side hands one visitor's name
-// and email address to everybody the cached copy is served to. The script
-// fills the fields from the same cookies, in the browser, instead.
+// The commenter's saved name and email are deliberately NOT printed here
+// either, for the same reason. They come from the comment_author_* cookies,
+// and the script fills the fields from those, in the browser.
 $commentPlaceholder = __('Enter your comment here...', 'fluent-comments');
 $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
 ?>
 <div class="flc_comment_respond" id="respond">
-    <div class="flc_respond">
+    <p class="flc_comment_login_required" data-flc_login_required hidden><?php echo wp_kses_post($loginMessage); ?></p>
+    <div class="flc_respond" data-flc_form_wrap>
         <div class="flc_comment_wrap">
             <?php if ($showAvatars) : ?>
                 <div class="flc_author_placeholder">
@@ -69,8 +72,8 @@ $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
                                autocomplete="off"/>
                     </div>
                     <div style="display: none" class="flc_comment_meta">
-                        <?php if (!$currentUser) : ?>
-                            <div class="flc_row flc_person_form_fields">
+                        <?php // Hidden until the session says this visitor is signed out. Revealed rather than removed: see the note at the top of this file. ?>
+                            <div class="flc_row flc_person_form_fields" data-flc_identity_fields hidden>
                                 <div class="flc_form_field">
                                     <label class="flc_sr-only"
                                            for="flc_person_name"><?php esc_html_e('Full Name', 'fluent-comments'); ?></label>
@@ -86,7 +89,6 @@ $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
                                            name="email" id="flc_person_email" type="email" class="flc_input_text"/>
                                 </div>
                             </div>
-                        <?php endif; ?>
                         <?php
                         // Extension slot. Filled from the session request
                         // rather than rendered here, so anything per-request

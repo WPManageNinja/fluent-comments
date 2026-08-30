@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T17:28:54+00:00\n"
+"POT-Creation-Date: 2026-08-30T17:43:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -67,40 +67,40 @@ msgstr ""
 msgid "FluentComments will appear here on the frontend."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:97
+#: app/Hooks/Handlers/CommentsHandler.php:98
 msgid "Network error. Please try again."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:98
+#: app/Hooks/Handlers/CommentsHandler.php:99
 #: app/Services/Frontend.php:329
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:129
+#: app/Hooks/Handlers/CommentsHandler.php:168
 msgid "Direct comments are disabled. Please go back and use the comment form on the post."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:130
+#: app/Hooks/Handlers/CommentsHandler.php:169
 msgid "Comment Submission Failure"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:146
-#: app/Hooks/Handlers/CommentsHandler.php:229
+#: app/Hooks/Handlers/CommentsHandler.php:185
+#: app/Hooks/Handlers/CommentsHandler.php:268
 msgid "Invalid request method."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:176
+#: app/Hooks/Handlers/CommentsHandler.php:215
 msgid "Your comment has been added."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:177
-#: app/Hooks/Handlers/CommentsHandler.php:339
+#: app/Hooks/Handlers/CommentsHandler.php:216
+#: app/Hooks/Handlers/CommentsHandler.php:378
 #: app/Services/FluentWalkerComment.php:66
 #: app/Services/Frontend.php:323
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:237
+#: app/Hooks/Handlers/CommentsHandler.php:276
 msgid "Invalid post id."
 msgstr ""
 
@@ -497,7 +497,7 @@ msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag.
 #: app/Services/Frontend.php:247
-#: app/Views/comment_form.php:25
+#: app/Views/comment_form.php:33
 #, php-format
 msgid "You must be %1$slogged in%2$s to post a comment."
 msgstr ""
@@ -523,12 +523,12 @@ msgid "Write your comment here..."
 msgstr ""
 
 #: app/Services/Frontend.php:316
-#: app/Views/comment_form.php:78
+#: app/Views/comment_form.php:81
 msgid "Your Name"
 msgstr ""
 
 #: app/Services/Frontend.php:317
-#: app/Views/comment_form.php:85
+#: app/Views/comment_form.php:88
 msgid "Your Email Address"
 msgstr ""
 
@@ -554,7 +554,7 @@ msgid "Please write your comment first."
 msgstr ""
 
 #: app/Services/Frontend.php:330
-#: app/Views/comment_form.php:66
+#: app/Views/comment_form.php:69
 msgid "Leave this field empty"
 msgstr ""
 
@@ -1213,19 +1213,19 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: app/Views/comment_form.php:39
+#: app/Views/comment_form.php:41
 msgid "Enter your comment here..."
 msgstr ""
 
-#: app/Views/comment_form.php:76
+#: app/Views/comment_form.php:79
 msgid "Full Name"
 msgstr ""
 
-#: app/Views/comment_form.php:83
+#: app/Views/comment_form.php:86
 msgid "Email Address"
 msgstr ""
 
-#: app/Views/comment_form.php:102
+#: app/Views/comment_form.php:104
 msgid "Post Comment"
 msgstr ""
 

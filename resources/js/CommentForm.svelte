@@ -25,6 +25,10 @@
     let me = $state(null);
     let loginMessage = $state('');
     let sessionResolved = $state(false);
+    // Distinct from sessionResolved, which is true even when the request
+    // failed. Only a session that actually answered tells us anything about
+    // who is asking.
+    let sessionOk = $state(false);
 
     // Markup contributed through the fluent_comments/form_fields action.
     // It travels with the session rather than in the (cached) page, so
@@ -75,6 +79,7 @@
             .then((session) => {
                 token = session.token;
                 tokenIssuedAt = Date.now();
+                sessionOk = true;
                 me = session.me || null;
                 loginMessage = session.login_message || '';
                 fieldsHtml = session.fields_html || '';
@@ -158,7 +163,7 @@
             // not know whether this visitor is signed in - and a signed in
             // one is never asked for either field. The server checks this
             // again either way; this is only to save a round trip.
-            if (!isLoggedIn) {
+            if (sessionOk && !isLoggedIn) {
                 const identity = identityError(form, i18n);
 
                 if (identity) {

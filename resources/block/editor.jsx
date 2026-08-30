@@ -50,7 +50,10 @@ const Edit = ({ attributes, setAttributes }) => {
         },
     });
 
-    const defaultTitleWithComments = __('Latest comments', 'fluent-comments');
+    // The same string Frontend::getStrings() defaults to. Anything else
+    // means the preview renders a title the front end never will, and the
+    // .pot carries two msgids for one piece of copy.
+    const defaultTitleWithComments = __('Latest comments ({count})', 'fluent-comments');
     const defaultTitleNoComments = __('Add your first comment to this post', 'fluent-comments');
 
     return (
@@ -68,7 +71,7 @@ const Edit = ({ attributes, setAttributes }) => {
                                 label={__('Title (with comments)', 'fluent-comments')}
                                 value={titleWithComments}
                                 onChange={(value) => setAttributes({ titleWithComments: value })}
-                                placeholder={defaultTitleWithComments + ' ({count})'}
+                                placeholder={defaultTitleWithComments}
                                 help={__('Use {count} to show comment count', 'fluent-comments')}
                             />
                             <TextControl
@@ -125,7 +128,7 @@ const Edit = ({ attributes, setAttributes }) => {
                     <div className="flc-preview-content">
                         {showTitle && (
                             <h2 className="flc-preview-title">
-                                {(titleWithComments || defaultTitleWithComments).replace('{count}', '3')} (3)
+                                {(titleWithComments || defaultTitleWithComments).replace('{count}', '3')}
                             </h2>
                         )}
 
@@ -150,10 +153,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                 <div className="flc-preview-comment-body">
                                     <div className="flc-preview-comment-card">
                                         <div className="flc-preview-comment-meta">
-                                            <strong>Captain Placeholder</strong>
-                                            <span className="flc-preview-time">2 days ago</span>
+                                            <strong>{__('Captain Placeholder', 'fluent-comments')}</strong>
+                                            <span className="flc-preview-time">{__('2 days ago', 'fluent-comments')}</span>
                                         </div>
-                                        <p>This is just a preview! Your real comments will look even better. Trust me, I'm a placeholder.</p>
+                                        <p>{__("This is just a preview! Your real comments will look even better. Trust me, I'm a placeholder.", 'fluent-comments')}</p>
                                     </div>
                                     <div className="flc-preview-reply-link">
                                         <ReplyIcon />
@@ -168,10 +171,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                 <div className="flc-preview-comment-body">
                                     <div className="flc-preview-comment-card">
                                         <div className="flc-preview-comment-meta">
-                                            <strong>Demo McTestface</strong>
-                                            <span className="flc-preview-time">5 hours ago</span>
+                                            <strong>{__('Demo McTestface', 'fluent-comments')}</strong>
+                                            <span className="flc-preview-time">{__('5 hours ago', 'fluent-comments')}</span>
                                         </div>
-                                        <p>I'm not a real person, but if I were, I'd say this comment section looks fantastic!</p>
+                                        <p>{__("I'm not a real person, but if I were, I'd say this comment section looks fantastic!", 'fluent-comments')}</p>
                                     </div>
                                     <div className="flc-preview-reply-link">
                                         <ReplyIcon />
@@ -184,10 +187,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                         <div className="flc-preview-comment-body">
                                             <div className="flc-preview-comment-card">
                                                 <div className="flc-preview-comment-meta">
-                                                    <strong>Reply Bot 3000</strong>
-                                                    <span className="flc-preview-time">just now</span>
+                                                    <strong>{__('Reply Bot 3000', 'fluent-comments')}</strong>
+                                                    <span className="flc-preview-time">{__('just now', 'fluent-comments')}</span>
                                                 </div>
-                                                <p>Beep boop! Nested replies work great too!</p>
+                                                <p>{__('Beep boop! Nested replies work great too!', 'fluent-comments')}</p>
                                             </div>
                                         </div>
                                     </div>

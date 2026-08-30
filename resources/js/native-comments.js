@@ -54,6 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         },
 
+        /**
+         * The form is rendered with the generic avatar, because the markup
+         * is cached and shared and a user's gravatar URL is a hash of their
+         * email address. Swap in the real one once the session - which is
+         * never cached - says who is looking.
+         */
+        applyAvatar(me) {
+            if (!me || !me.avatar) {
+                return;
+            }
+
+            const img = this.form.closest('.flc_respond')?.querySelector('[data-flc_avatar]');
+
+            if (img) {
+                img.src = me.avatar;
+            }
+        },
+
         bindEvents() {
             if (this.textArea) {
                 this.textArea.addEventListener('focus', this.handleTextAreaFocus.bind(this));
@@ -112,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.token = session.token;
                     this.tokenIssuedAt = Date.now();
                     this.renderExtraFields(session.fields_html);
+                    this.applyAvatar(session.me);
                 })
                 .catch(() => {
                     this.token = null;

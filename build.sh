@@ -112,11 +112,34 @@ CONST_VERSION="$(grep -m1 "FLUENT_COMMENTS_VERSION'" "$MAIN_FILE" \
 [[ "$CONST_VERSION" == "$VERSION" ]] \
     || die "Version header says $VERSION but FLUENT_COMMENTS_VERSION says $CONST_VERSION."
 
+# `|| true` because of `set -e`: with no match, grep exits 1 and kills the
+# whole command substitution before the comparison below ever runs, so a
+# readme with no Stable tag line at all died silently with no message.
 STABLE_TAG="$(grep -m1 -E '^[[:space:]]*Stable tag:' "$ROOT/readme.txt" \
-    | sed -E 's/.*Stable tag:[[:space:]]*//' | tr -d '[:space:]')"
+    | sed -E 's/.*Stable tag:[[:space:]]*//' | tr -d '[:space:]' || true)"
 
 [[ "$STABLE_TAG" == "$VERSION" ]] \
     || die "Version is $VERSION but readme.txt Stable tag is ${STABLE_TAG:-<missing>}."
+
+# package.json is what npm and the build scripts report, and block.json's
+# version is what register_block_type() hands the browser for cache busting
+# on the editor assets -- a stale one ships quietly and the editor keeps
+# loading yesterday's bundle. Neither is fatal to a site, which is exactly
+# why they drift if nothing checks them.
+check_json_version() {
+    local file="$1" label="$2" found
+
+    [[ -f "$ROOT/$file" ]] || die "$file not found."
+
+    found="$(grep -m1 -E '^[[:space:]]*"version"[[:space:]]*:' "$ROOT/$file" \
+        | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/' || true)"
+
+    [[ "$found" == "$VERSION" ]] \
+        || die "Version is $VERSION but $label says ${found:-<missing>}."
+}
+
+check_json_version "package.json" "package.json"
+check_json_version "resources/block/block.json" "resources/block/block.json"
 
 readonly VERSION
 readonly STAGE="$OUT_DIR/.stage"

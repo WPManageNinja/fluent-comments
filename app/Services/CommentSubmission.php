@@ -150,23 +150,30 @@ class CommentSubmission
 
         $hold = $verdict['action'] === SpamGuard::ACTION_HOLD;
 
-        if ($hold) {
-            add_filter('pre_comment_approved', [self::class, 'holdForModeration'], PHP_INT_MAX);
-        }
-
-        // Core stamps the comment with REMOTE_ADDR, which is the proxy on a
-        // site that sits behind one. Record what the guard resolved instead,
-        // otherwise every comment shares an address and moderating by IP
-        // becomes useless.
-        self::suppressForeignHooks();
-
-        add_filter('preprocess_comment', [self::class, 'stampAuthorIp'], PHP_INT_MAX);
-
-        self::$inFlight = true;
-
-        do_action('fluent_comments/before_process', $post);
-
+        // The try opens here rather than at the insert. Everything below it
+        // mutates state that outlives this function - the two hook
+        // registries, two filters of our own, the in-flight flag - and
+        // 'fluent_comments/before_process' hands control to somebody else's
+        // code in the middle of that. A callback that throws used to skip
+        // the finally altogether, leaving every other plugin's comment
+        // validation stripped for the rest of the request.
         try {
+            if ($hold) {
+                add_filter('pre_comment_approved', [self::class, 'holdForModeration'], PHP_INT_MAX);
+            }
+
+            // Core stamps the comment with REMOTE_ADDR, which is the proxy on a
+            // site that sits behind one. Record what the guard resolved instead,
+            // otherwise every comment shares an address and moderating by IP
+            // becomes useless.
+            self::suppressForeignHooks();
+
+            add_filter('preprocess_comment', [self::class, 'stampAuthorIp'], PHP_INT_MAX);
+
+            self::$inFlight = true;
+
+            do_action('fluent_comments/before_process', $post);
+
             $comment = wp_handle_comment_submission($commentData);
         } finally {
             self::$inFlight = false;

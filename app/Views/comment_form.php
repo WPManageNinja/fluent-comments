@@ -9,7 +9,12 @@ if (!$post) {
 
 $showAvatars = (bool)get_option('show_avatars');
 $currentUser = get_current_user_id() ? wp_get_current_user() : false;
-$userAvatar = get_avatar_url($currentUser ? $currentUser->ID : '', ['default' => get_option('avatar_default', 'mystery')]);
+// The generic avatar, never this visitor's. get_avatar_url() on a user
+// id returns a hash of their email address, and this markup goes into
+// the page cache - so the logged in visitor who happened to prime the
+// cache would have their gravatar served to everybody after them. The
+// script swaps in the real one from the session, which is uncached.
+$defaultAvatar = get_avatar_url('', ['default' => get_option('avatar_default', 'mystery')]);
 
 if (get_option('comment_registration') && !$currentUser) {
     printf(
@@ -40,7 +45,7 @@ $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
             <?php if ($showAvatars) : ?>
                 <div class="flc_author_placeholder">
                     <div class="flc_comment_author">
-                        <img src="<?php echo esc_url($userAvatar); ?>" alt=""/>
+                        <img data-flc_avatar src="<?php echo esc_url($defaultAvatar); ?>" alt=""/>
                     </div>
                 </div>
             <?php endif; ?>

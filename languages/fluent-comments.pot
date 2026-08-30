@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T17:01:55+00:00\n"
+"POT-Creation-Date: 2026-08-30T17:14:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -154,24 +154,24 @@ msgstr ""
 msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:334
-#: app/Services/CommentSubmission.php:346
+#: app/Services/CommentSubmission.php:341
+#: app/Services/CommentSubmission.php:353
 msgid "Invalid post."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:354
+#: app/Services/CommentSubmission.php:361
 msgid "This post is password protected."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:383
+#: app/Services/CommentSubmission.php:390
 msgid "The comment you are replying to could not be found."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:391
+#: app/Services/CommentSubmission.php:398
 msgid "Replies to this comment are not allowed."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:470
+#: app/Services/CommentSubmission.php:477
 #: app/Services/SpamGuard.php:314
 msgid "Your comment could not be posted."
 msgstr ""
@@ -487,12 +487,13 @@ msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag.
 #: app/Services/Frontend.php:247
-#: app/Views/comment_form.php:20
+#: app/Views/comment_form.php:25
 #, php-format
 msgid "You must be %1$slogged in%2$s to post a comment."
 msgstr ""
 
 #: app/Services/Frontend.php:312
+#: dist/block/editor.jsx.js:1
 msgid "Latest comments ({count})"
 msgstr ""
 
@@ -512,12 +513,12 @@ msgid "Write your comment here..."
 msgstr ""
 
 #: app/Services/Frontend.php:316
-#: app/Views/comment_form.php:73
+#: app/Views/comment_form.php:78
 msgid "Your Name"
 msgstr ""
 
 #: app/Services/Frontend.php:317
-#: app/Views/comment_form.php:80
+#: app/Views/comment_form.php:85
 msgid "Your Email Address"
 msgstr ""
 
@@ -543,7 +544,7 @@ msgid "Please write your comment first."
 msgstr ""
 
 #: app/Services/Frontend.php:326
-#: app/Views/comment_form.php:61
+#: app/Views/comment_form.php:66
 msgid "Leave this field empty"
 msgstr ""
 
@@ -1206,24 +1207,20 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: app/Views/comment_form.php:34
+#: app/Views/comment_form.php:39
 msgid "Enter your comment here..."
 msgstr ""
 
-#: app/Views/comment_form.php:71
+#: app/Views/comment_form.php:76
 msgid "Full Name"
 msgstr ""
 
-#: app/Views/comment_form.php:78
+#: app/Views/comment_form.php:83
 msgid "Email Address"
 msgstr ""
 
-#: app/Views/comment_form.php:97
+#: app/Views/comment_form.php:102
 msgid "Post Comment"
-msgstr ""
-
-#: dist/block/editor.jsx.js:1
-msgid "Latest comments"
 msgstr ""
 
 #: dist/block/editor.jsx.js:1
@@ -1272,4 +1269,40 @@ msgstr ""
 
 #: dist/block/editor.jsx.js:1
 msgid "Submit"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "Captain Placeholder"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "2 days ago"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "This is just a preview! Your real comments will look even better. Trust me, I'm a placeholder."
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "Demo McTestface"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "5 hours ago"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "I'm not a real person, but if I were, I'd say this comment section looks fantastic!"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "Reply Bot 3000"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "just now"
+msgstr ""
+
+#: dist/block/editor.jsx.js:1
+msgid "Beep boop! Nested replies work great too!"
 msgstr ""

@@ -130,14 +130,135 @@ class Frontend
                 data-title_with_comments="<?php echo esc_attr($titleWithComments); ?>"
                 data-title_no_comments="<?php echo esc_attr($titleNoComments); ?>"
             >
-                <?php if (!empty($attributes['showTitle'])) : ?>
-                    <h2 class="flc_comments-title"><?php echo esc_html($placeholderTitle); ?></h2>
-                <?php endif; ?>
-                <p class="flc_loading_placeholder"><?php echo esc_html($strings['loading']); ?></p>
+                <?php
+                // Real markup, not a spinner. app.js empties this container
+                // before mounting, so a browser ends up with the Svelte
+                // version either way - but a crawler that never runs the
+                // script still gets the comments.
+                //
+                // The wrapper and the heading are here rather than outside
+                // because that is where comments.svelte puts them. Matching
+                // its structure is what keeps the swap from moving the page
+                // around under the reader.
+                ?>
+                <div class="fluent_comments_wrap comments-area">
+                    <?php if (!empty($attributes['showTitle'])) : ?>
+                        <h2 class="flc_comments-title"><?php echo esc_html($placeholderTitle); ?></h2>
+                    <?php endif; ?>
+                    <?php
+                    echo self::renderCommentList( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped per field in the renderer.
+                        $bootstrap['comments'],
+                        (int)$bootstrap['max_depth'],
+                        !empty($bootstrap['comments_open']),
+                        !empty($attributes['showAvatars'])
+                    );
+                    ?>
+                </div>
             </div>
         </div>
         <?php
         return ob_get_clean();
+    }
+
+    /**
+     * The first page of comments, as HTML, for the document.
+     *
+     * The payload has always been in the page - CommentsRepository fills a
+     * <script type="application/json"> block so that mounting costs no
+     * uncached request. But a script block is data, not content: to anything
+     * that does not run JavaScript the post read "Loading...", and the
+     * comments were invisible. Google renders JS eventually; the crawlers
+     * behind AI answers and link previews largely do not, and comments are
+     * exactly the long tail text worth having indexed.
+     *
+     * So the same payload is also rendered here, and app.js empties the
+     * container before mounting over it. The classic template never had this
+     * problem - wp_list_comments() writes real markup - so this is the block
+     * and shortcode path catching up with it.
+     *
+     * The markup deliberately matches CommentBlock.svelte element for
+     * element. Anything else and the page visibly reflows the moment the
+     * script runs. Both are driven by the one array CommentsRepository
+     * returns, so there is one source of truth for the data even though
+     * there are two renderers for it.
+     *
+     * @param array $comments Formatted comments from CommentsRepository.
+     * @param int $maxDepth
+     * @param bool $commentsOpen
+     * @param bool $showAvatars
+     * @param int $depth
+     * @return string
+     */
+    public static function renderCommentList($comments, $maxDepth, $commentsOpen, $showAvatars, $depth = 1)
+    {
+        if (!$comments) {
+            return '';
+        }
+
+        $strings = self::getStrings();
+        $classes = $depth > 1 ? 'flc_comment-list flc_child_comments' : 'flc_comment-list';
+
+        $out = '<ul class="' . esc_attr($classes) . '">';
+
+        foreach ($comments as $comment) {
+            $id = (int)$comment['ID'];
+            $commentDepth = isset($comment['depth']) ? (int)$comment['depth'] : $depth;
+            $canReply = $commentsOpen && $commentDepth < $maxDepth;
+
+            $out .= '<li class="flc_comment" id="comment_' . $id . '">';
+            $out .= '<article class="flc_body">';
+
+            if ($showAvatars) {
+                $out .= '<div class="flc_avatar"><div class="flc_comment_author">'
+                    . '<img alt="" src="' . esc_url($comment['avatar']) . '" loading="lazy" decoding="async" />'
+                    . '</div></div>';
+            }
+
+            $out .= '<div class="flc_comment__details"><div class="crayons-card">';
+            $out .= '<div class="comment__header">';
+            $out .= '<b class="fn"><a href="#comment_' . $id . '" class="url">' . esc_html($comment['author']) . '</a></b>';
+            $out .= '<span class="flc_dot" role="presentation">&bull;</span>';
+            $out .= '<time datetime="' . esc_attr($comment['date']) . '">' . esc_html($comment['human_date']) . '</time>';
+            $out .= '</div>';
+
+            // Already through the comment_text filters, which is core's own
+            // kses pass - the same content the JSON block carries.
+            $out .= '<div class="flc_comment-content">' . wp_kses_post($comment['content']);
+
+            if (!empty($comment['unapproved'])) {
+                $out .= '<p class="comment-awaiting-moderation">' . esc_html($strings['awaiting_moderation']) . '</p>';
+            }
+
+            $out .= '</div></div>';
+
+            if ($canReply) {
+                $out .= '<div class="comment_footer"><a href="#reply">'
+                    . '<svg xmlns="http://www.w3.org/2000/svg" width="24" fill="currentColor" height="24" role="img"'
+                    . ' aria-labelledby="reply-icon-' . $id . '" class="crayons-icon reaction-icon not-reacted">'
+                    . '<title id="reply-icon-' . $id . '">' . esc_html($strings['reply']) . '</title>'
+                    . '<path d="M10.5 5h3a6 6 0 110 12v2.625c-3.75-1.5-9-3.75-9-8.625a6 6 0 016-6zM12 15.5h1.5a4.501'
+                    . ' 4.501 0 001.722-8.657A4.5 4.5 0 0013.5 6.5h-3A4.5 4.5 0 006 11c0 2.707 1.846 4.475 6 6.36V15.5z">'
+                    . '</path></svg>'
+                    . '<span class="reply_text">' . esc_html($strings['reply']) . '</span>'
+                    . '</a></div>';
+            }
+
+            $out .= '</div></article>';
+
+            if (!empty($comment['children'])) {
+                $out .= self::renderCommentList(
+                    $comment['children'],
+                    $maxDepth,
+                    $commentsOpen,
+                    $showAvatars,
+                    $commentDepth + 1
+                );
+            }
+
+            $out .= '</li>';
+        }
+
+        return $out . '</ul>';
     }
 
     /**

@@ -42,6 +42,12 @@ document.querySelectorAll('.fluent_dynamic_comments').forEach((elem) => {
         bootstrap: readBootstrap(elem.dataset.bootstrap)
     };
 
+    // PHP rendered the first page into this container as real markup, so
+    // that anything not running a script - crawlers, link previews - sees
+    // the comments rather than a spinner. In a browser it is scaffolding:
+    // clear it and let Svelte own the DOM from here. Frontend::renderCommentList()
+    // matches CommentBlock.svelte element for element so the swap does not
+    // reflow the page.
     elem.innerHTML = '';
     mount(App, { target: elem, props });
 });

@@ -46,7 +46,7 @@
                     <span class="flc_dot" role="presentation">•</span>
                     <time datetime={comment.date}>{comment.human_date}</time>
                 </div>
-                <div class="comment-content">
+                <div class="flc_comment-content">
                     <!-- eslint-disable-next-line svelte/no-at-html-tags -- run through the WordPress comment_text filters -->
                     {@html comment.content}
                     {#if comment.unapproved}

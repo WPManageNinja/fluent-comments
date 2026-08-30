@@ -1,5 +1,6 @@
 import { ajax } from './ajax';
 import { getSession, invalidateSession, readHashedCookie } from './session';
+import { identityError } from './validate.js';
 import { autosizeTextArea } from './autosize';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,6 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (img) {
                 img.src = me.avatar;
             }
+        },
+
+        /**
+         * The name and email inputs are only rendered for a logged out
+         * visitor, so their absence is how we know not to ask.
+         *
+         * @return {string} An error message, or '' when there is nothing
+         *                  to complain about.
+         */
+        identityProblem() {
+            const name = this.form.querySelector('[name="author"]');
+            const email = this.form.querySelector('[name="email"]');
+
+            if (!name || !email) {
+                return '';
+            }
+
+            return identityError({ name: name.value, email: email.value }, strings);
         },
 
         bindEvents() {
@@ -176,6 +195,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 await this.loadSession();
+
+                // After the session, because that is what tells us whether
+                // this visitor is signed in - and a signed in one is never
+                // asked for a name or an email. The server checks again
+                // regardless; this only saves a round trip.
+                const identity = this.identityProblem();
+
+                if (identity) {
+                    // The name and email inputs live in a section that stays
+                    // hidden until the textarea is focused. Complaining about
+                    // a field the visitor cannot see is worse than useless.
+                    if (this.metaSection) {
+                        this.metaSection.style.display = 'block';
+                    }
+
+                    this.showError(identity);
+                    return;
+                }
 
                 const age = Date.now() - this.tokenIssuedAt;
                 if (this.token && age < MIN_TOKEN_AGE) {

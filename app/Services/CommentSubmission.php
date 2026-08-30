@@ -148,6 +148,15 @@ class CommentSubmission
 
         $commentData = apply_filters('fluent_comments/comment_data', $commentData, $guardData, $post);
 
+        // Checked after the filter above, so an extension that supplies an
+        // identity - a social login, say - is honoured rather than second
+        // guessed.
+        $identity = self::validateIdentity($commentData);
+
+        if (is_wp_error($identity)) {
+            return $identity;
+        }
+
         $hold = $verdict['action'] === SpamGuard::ACTION_HOLD;
 
         // The try opens here rather than at the insert. Everything below it
@@ -333,6 +342,57 @@ class CommentSubmission
      * @param \WP_Post|null $post
      * @return true|\WP_Error
      */
+    /**
+     * A logged out visitor gives us a name and a working email address, or
+     * the comment does not go in.
+     *
+     * This is FluentComments' own rule, not core's. Core enforces
+     * require_name_email, a site can switch that off, and plenty have -
+     * which leaves a comment thread of anonymous entries with no way to
+     * notify anybody, no Gravatar, and nothing to moderate on. Every one of
+     * our three emails is addressed by comment_author_email, so an
+     * identityless comment silently opts its author out of the reply
+     * notifications the rest of the thread gets.
+     *
+     * So the option is no longer on our settings screen and this check does
+     * not consult it. Core's copy is left exactly where it was, still owned
+     * by Settings > Discussion, still governing core's own form on post
+     * types we do not handle.
+     *
+     * Nothing is asked of a logged in commenter: core fills both fields
+     * from their account and ignores whatever was posted.
+     *
+     * @param array $commentData
+     * @return true|\WP_Error
+     */
+    public static function validateIdentity(array $commentData)
+    {
+        if (get_current_user_id()) {
+            return true;
+        }
+
+        $author = isset($commentData['author']) ? trim((string)$commentData['author']) : '';
+        $email = isset($commentData['email']) ? trim((string)$commentData['email']) : '';
+
+        if ('' === $author || '' === $email) {
+            return new \WP_Error(
+                'require_name_email',
+                __('Please enter your name and email address.', 'fluent-comments'),
+                ['status' => 400]
+            );
+        }
+
+        if (!is_email($email)) {
+            return new \WP_Error(
+                'require_valid_email',
+                __('Please enter a valid email address.', 'fluent-comments'),
+                ['status' => 400]
+            );
+        }
+
+        return true;
+    }
+
     public static function checkPostAccess($post)
     {
         if (!$post) {

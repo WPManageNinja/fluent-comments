@@ -1,6 +1,7 @@
 <script>
     import { ajax, errorMessage } from './ajax';
     import { getSession, invalidateSession, readHashedCookie } from './session';
+    import { identityError } from './validate.js';
     import { autosizeTextArea } from './autosize';
 
     let { documentId, threadId, willScroll, oncreated, showAvatar = true } = $props();
@@ -152,6 +153,19 @@
 
         try {
             await loadSession();
+
+            // Only once the session has answered, because until then we do
+            // not know whether this visitor is signed in - and a signed in
+            // one is never asked for either field. The server checks this
+            // again either way; this is only to save a round trip.
+            if (!isLoggedIn) {
+                const identity = identityError(form, i18n);
+
+                if (identity) {
+                    error = identity;
+                    return;
+                }
+            }
 
             // A comment submitted sooner after the token was issued than a
             // person could plausibly type scores against itself, so absorb

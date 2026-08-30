@@ -143,11 +143,6 @@
                     </div>
 
                     <div class="flc_side_row">
-                        <span>{{ $t('Require a name and email') }}</span>
-                        <el-switch v-model="discussion.require_name_email" active-value="yes" inactive-value="no" size="small" />
-                    </div>
-
-                    <div class="flc_side_row">
                         <span>{{ $t('Logged in users only') }}</span>
                         <el-switch v-model="discussion.comment_registration" active-value="yes" inactive-value="no" size="small" />
                     </div>

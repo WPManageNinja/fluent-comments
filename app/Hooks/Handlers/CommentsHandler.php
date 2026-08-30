@@ -85,6 +85,8 @@ class CommentsHandler
             true
         );
 
+        $strings = Frontend::getStrings();
+
         // Nothing here may vary by visitor: this markup goes into the page
         // cache and is served to everybody.
         wp_localize_script('fluent_comments_native', 'fluentCommentPublic', [
@@ -94,6 +96,10 @@ class CommentsHandler
             'i18n'     => [
                 'network_error' => __('Network error. Please try again.', 'fluent-comments'),
                 'generic_error' => __('Something went wrong. Please try again.', 'fluent-comments'),
+                // Both forms validate identity with the same shared module,
+                // so they read the wording from the same place too.
+                'identity_required' => $strings['identity_required'],
+                'email_invalid'     => $strings['email_invalid'],
             ],
         ]);
     }

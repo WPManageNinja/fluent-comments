@@ -322,6 +322,10 @@ class Frontend
             'comments_closed'      => __('Comments are closed.', 'fluent-comments'),
             'awaiting_moderation'  => __('Your comment is awaiting moderation.', 'fluent-comments'),
             'content_required'     => __('Please write your comment first.', 'fluent-comments'),
+            // The server decides this, in CommentSubmission::validateIdentity().
+            // These two only save the visitor a round trip.
+            'identity_required'    => __('Please enter your name and email address.', 'fluent-comments'),
+            'email_invalid'        => __('Please enter a valid email address.', 'fluent-comments'),
             'generic_error'        => __('Something went wrong. Please try again.', 'fluent-comments'),
             'honeypot_label'       => __('Leave this field empty', 'fluent-comments'),
             'login_required'       => __('You must be logged in to post a comment.', 'fluent-comments'),

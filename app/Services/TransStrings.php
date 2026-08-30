@@ -116,7 +116,6 @@ class TransStrings
             'Reply nesting depth' => __('Reply nesting depth', 'fluent-comments'),
             'Reply-To email' => __('Reply-To email', 'fluent-comments'),
             'Reply-To name' => __('Reply-To name', 'fluent-comments'),
-            'Require a name and email' => __('Require a name and email', 'fluent-comments'),
             'Reset it with' => __('Reset it with', 'fluent-comments'),
             'Save changes' => __('Save changes', 'fluent-comments'),
             'Scheduling and appointments inside WordPress.' => __('Scheduling and appointments inside WordPress.', 'fluent-comments'),

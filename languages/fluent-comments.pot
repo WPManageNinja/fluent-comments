@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T17:14:55+00:00\n"
+"POT-Creation-Date: 2026-08-30T17:22:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -67,40 +67,40 @@ msgstr ""
 msgid "FluentComments will appear here on the frontend."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:95
+#: app/Hooks/Handlers/CommentsHandler.php:97
 msgid "Network error. Please try again."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:96
-#: app/Services/Frontend.php:325
+#: app/Hooks/Handlers/CommentsHandler.php:98
+#: app/Services/Frontend.php:329
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:123
+#: app/Hooks/Handlers/CommentsHandler.php:129
 msgid "Direct comments are disabled. Please go back and use the comment form on the post."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:124
+#: app/Hooks/Handlers/CommentsHandler.php:130
 msgid "Comment Submission Failure"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:140
-#: app/Hooks/Handlers/CommentsHandler.php:223
+#: app/Hooks/Handlers/CommentsHandler.php:146
+#: app/Hooks/Handlers/CommentsHandler.php:229
 msgid "Invalid request method."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:170
+#: app/Hooks/Handlers/CommentsHandler.php:176
 msgid "Your comment has been added."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:171
-#: app/Hooks/Handlers/CommentsHandler.php:333
+#: app/Hooks/Handlers/CommentsHandler.php:177
+#: app/Hooks/Handlers/CommentsHandler.php:339
 #: app/Services/FluentWalkerComment.php:66
 #: app/Services/Frontend.php:323
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:231
+#: app/Hooks/Handlers/CommentsHandler.php:237
 msgid "Invalid post id."
 msgstr ""
 
@@ -154,24 +154,34 @@ msgstr ""
 msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:341
-#: app/Services/CommentSubmission.php:353
+#: app/Services/CommentSubmission.php:380
+#: app/Services/Frontend.php:327
+msgid "Please enter your name and email address."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:388
+#: app/Services/Frontend.php:328
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: app/Services/CommentSubmission.php:401
+#: app/Services/CommentSubmission.php:413
 msgid "Invalid post."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:361
+#: app/Services/CommentSubmission.php:421
 msgid "This post is password protected."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:390
+#: app/Services/CommentSubmission.php:450
 msgid "The comment you are replying to could not be found."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:398
+#: app/Services/CommentSubmission.php:458
 msgid "Replies to this comment are not allowed."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:477
+#: app/Services/CommentSubmission.php:537
 #: app/Services/SpamGuard.php:314
 msgid "Your comment could not be posted."
 msgstr ""
@@ -543,12 +553,12 @@ msgstr ""
 msgid "Please write your comment first."
 msgstr ""
 
-#: app/Services/Frontend.php:326
+#: app/Services/Frontend.php:330
 #: app/Views/comment_form.php:66
 msgid "Leave this field empty"
 msgstr ""
 
-#: app/Services/Frontend.php:327
+#: app/Services/Frontend.php:331
 msgid "You must be logged in to post a comment."
 msgstr ""
 
@@ -954,236 +964,232 @@ msgid "Reply-To name"
 msgstr ""
 
 #: app/Services/TransStrings.php:119
-msgid "Require a name and email"
-msgstr ""
-
-#: app/Services/TransStrings.php:120
 msgid "Reset it with"
 msgstr ""
 
-#: app/Services/TransStrings.php:121
+#: app/Services/TransStrings.php:120
 msgid "Save changes"
 msgstr ""
 
-#: app/Services/TransStrings.php:122
+#: app/Services/TransStrings.php:121
 msgid "Scheduling and appointments inside WordPress."
 msgstr ""
 
-#: app/Services/TransStrings.php:123
+#: app/Services/TransStrings.php:122
 msgid "Send it"
 msgstr ""
 
-#: app/Services/TransStrings.php:124
+#: app/Services/TransStrings.php:123
 msgid "Send straight to trash"
 msgstr ""
 
-#: app/Services/TransStrings.php:125
+#: app/Services/TransStrings.php:124
 msgid "Sender"
 msgstr ""
 
-#: app/Services/TransStrings.php:126
+#: app/Services/TransStrings.php:125
 msgid "Sent by FluentComments, only for comments on the post types it runs on."
 msgstr ""
 
-#: app/Services/TransStrings.php:127
+#: app/Services/TransStrings.php:126
 msgid "Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:128
+#: app/Services/TransStrings.php:127
 msgid "Settings &rsaquo; Discussion"
 msgstr ""
 
-#: app/Services/TransStrings.php:129
+#: app/Services/TransStrings.php:128
 msgid "Shown above the message. Left off if you leave this empty."
 msgstr ""
 
-#: app/Services/TransStrings.php:130
+#: app/Services/TransStrings.php:129
 msgid "Shown against a real comment from your site where there is one."
 msgstr ""
 
-#: app/Services/TransStrings.php:131
+#: app/Services/TransStrings.php:130
 msgid "Sits under the message. Leave it empty for your site name and address."
 msgstr ""
 
-#: app/Services/TransStrings.php:132
+#: app/Services/TransStrings.php:131
 msgid "Something is wrong!"
 msgstr ""
 
-#: app/Services/TransStrings.php:133
+#: app/Services/TransStrings.php:132
 msgid "Something wrong?"
 msgstr ""
 
-#: app/Services/TransStrings.php:134
+#: app/Services/TransStrings.php:133
 msgid "Source on GitHub"
 msgstr ""
 
-#: app/Services/TransStrings.php:135
+#: app/Services/TransStrings.php:134
 msgid "Still using the default Comments block"
 msgstr ""
 
-#: app/Services/TransStrings.php:136
+#: app/Services/TransStrings.php:135
 msgid "Subject"
 msgstr ""
 
-#: app/Services/TransStrings.php:137
+#: app/Services/TransStrings.php:136
 msgid "Subject line"
 msgstr ""
 
-#: app/Services/TransStrings.php:138
+#: app/Services/TransStrings.php:137
 msgid "Subject:"
 msgstr ""
 
-#: app/Services/TransStrings.php:139
+#: app/Services/TransStrings.php:138
 msgid "Support questions go to the wordpress.org forum. Bugs and pull requests go to GitHub, where they get read faster."
 msgstr ""
 
-#: app/Services/TransStrings.php:140
+#: app/Services/TransStrings.php:139
 msgid "System"
 msgstr ""
 
-#: app/Services/TransStrings.php:141
+#: app/Services/TransStrings.php:140
 msgid "Template"
 msgstr ""
 
-#: app/Services/TransStrings.php:142
+#: app/Services/TransStrings.php:141
 msgid "Template design"
 msgstr ""
 
-#: app/Services/TransStrings.php:143
+#: app/Services/TransStrings.php:142
 msgid "The frame every FluentComments email is rendered into, and the addresses they come from."
 msgstr ""
 
-#: app/Services/TransStrings.php:144
+#: app/Services/TransStrings.php:143
 msgid "The preview beside this repaints as you drag."
 msgstr ""
 
 #. translators: 1: the "Core" chip, 2: a link reading "Settings > Discussion"
-#: app/Services/TransStrings.php:146
+#: app/Services/TransStrings.php:145
 #, php-format
 msgid "The switches take effect as you set them, so there is nothing to save on this page. The two above marked %1$s are the same WordPress options as %2$s."
 msgstr ""
 
-#: app/Services/TransStrings.php:147
+#: app/Services/TransStrings.php:146
 msgid "The wording FluentComments ships with is sent."
 msgstr ""
 
-#: app/Services/TransStrings.php:148
+#: app/Services/TransStrings.php:147
 msgid "Their first comment waits, the rest go straight through."
 msgstr ""
 
-#: app/Services/TransStrings.php:149
+#: app/Services/TransStrings.php:148
 msgid "These post types use the FluentComments form instead of the WordPress one."
 msgstr ""
 
-#: app/Services/TransStrings.php:150
+#: app/Services/TransStrings.php:149
 msgid "This email"
 msgstr ""
 
-#: app/Services/TransStrings.php:151
+#: app/Services/TransStrings.php:150
 msgid "This one goes to several people at once, so there is no single recipient to greet."
 msgstr ""
 
-#: app/Services/TransStrings.php:152
+#: app/Services/TransStrings.php:151
 msgid "This preview could not be built."
 msgstr ""
 
-#: app/Services/TransStrings.php:153
+#: app/Services/TransStrings.php:152
 msgid "To the people who comment"
 msgstr ""
 
-#: app/Services/TransStrings.php:154
+#: app/Services/TransStrings.php:153
 msgid "To you"
 msgstr ""
 
-#: app/Services/TransStrings.php:155
+#: app/Services/TransStrings.php:154
 msgid "Unsaved changes"
 msgstr ""
 
-#: app/Services/TransStrings.php:156
+#: app/Services/TransStrings.php:155
 msgid "Use this image"
 msgstr ""
 
-#: app/Services/TransStrings.php:157
+#: app/Services/TransStrings.php:156
 msgid "Waits in the moderation queue for you."
 msgstr ""
 
-#: app/Services/TransStrings.php:158
+#: app/Services/TransStrings.php:157
 msgid "What gets sent"
 msgstr ""
 
-#: app/Services/TransStrings.php:159
+#: app/Services/TransStrings.php:158
 msgid "When to hold a comment"
 msgstr ""
 
-#: app/Services/TransStrings.php:160
+#: app/Services/TransStrings.php:159
 msgid "Where FluentComments runs"
 msgstr ""
 
-#: app/Services/TransStrings.php:161
+#: app/Services/TransStrings.php:160
 msgid "Where FluentComments runs, and the rules every comment is held to. Notification emails are on the Emails tab."
 msgstr ""
 
-#: app/Services/TransStrings.php:162
+#: app/Services/TransStrings.php:161
 msgid "Who can comment"
 msgstr ""
 
-#: app/Services/TransStrings.php:163
+#: app/Services/TransStrings.php:162
 msgid "WordPress applies these to every comment, ours included."
 msgstr ""
 
-#: app/Services/TransStrings.php:164
+#: app/Services/TransStrings.php:163
 msgid "WordPress builds this one itself, as plain text, and FluentComments leaves it alone. There is nothing here to preview."
 msgstr ""
 
-#: app/Services/TransStrings.php:165
+#: app/Services/TransStrings.php:164
 msgid "WordPress default"
 msgstr ""
 
-#: app/Services/TransStrings.php:166
+#: app/Services/TransStrings.php:165
 msgid "WordPress sends its own notice, untouched. Nothing here changes it."
 msgstr ""
 
-#: app/Services/TransStrings.php:167
+#: app/Services/TransStrings.php:166
 msgid "WordPress sends these two itself, and these are its own switches. Leave the wording alone and they go out exactly as they do today; write your own and FluentComments rewrites them on the way out, on its post types only."
 msgstr ""
 
-#: app/Services/TransStrings.php:168
+#: app/Services/TransStrings.php:167
 msgid "Wording"
 msgstr ""
 
-#: app/Services/TransStrings.php:169
+#: app/Services/TransStrings.php:168
 msgid "Write your own instead"
 msgstr ""
 
-#: app/Services/TransStrings.php:170
+#: app/Services/TransStrings.php:169
 msgid "You are getting this because you commented on our site."
 msgstr ""
 
-#: app/Services/TransStrings.php:171
+#: app/Services/TransStrings.php:170
 msgid "Your own"
 msgstr ""
 
-#: app/Services/TransStrings.php:172
+#: app/Services/TransStrings.php:171
 msgid "Your site"
 msgstr ""
 
-#: app/Services/TransStrings.php:173
+#: app/Services/TransStrings.php:172
 msgid "Your subject and body below are sent instead of the default."
 msgstr ""
 
-#: app/Services/TransStrings.php:174
+#: app/Services/TransStrings.php:173
 msgid "[fluent_comments] shortcode found"
 msgstr ""
 
-#: app/Services/TransStrings.php:175
+#: app/Services/TransStrings.php:174
 msgid "start from the default"
 msgstr ""
 
-#: app/Services/TransStrings.php:176
+#: app/Services/TransStrings.php:175
 msgid "template design"
 msgstr ""
 
-#: app/Services/TransStrings.php:177
+#: app/Services/TransStrings.php:176
 msgid "★ Leave a review"
 msgstr ""
 

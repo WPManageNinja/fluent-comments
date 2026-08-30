@@ -19,6 +19,7 @@ php tests/HookIsolationTest.php    # foreign comment-hook isolation
 php tests/NativeRejectionTest.php  # who gets rejected, and who never does
 php tests/CommentEmailTest.php     # smartcode escaping + where "is this sent" lives
 php tests/CommentNotificationTest.php  # who receives an email, and who never does
+php tests/RequiredIdentityTest.php     # our own name + email rule, independent of core
 ```
 
 ```bash
@@ -63,7 +64,9 @@ Both normalize their payload and hand it to **`CommentSubmission::handle()`**, w
 
 **Never call `wp_insert_comment()` directly here.** It does not fire `comment_post`, where core's moderation and post-author notification emails hook, and it skips all of core's validation. An earlier version of the REST path did, and silently lost both.
 
-`CommentSubmission` additionally enforces what core does not: that a reply's parent belongs to the same post, and that the thread is within `thread_comments_depth`.
+`CommentSubmission` additionally enforces what core does not: that a reply's parent belongs to the same post, that the thread is within `thread_comments_depth`, and that a logged out commenter gave a name and a valid email address.
+
+**That last one is ours, and it has no switch.** Core's `require_name_email` can be turned off; ours cannot, so the option is deliberately absent from `DiscussionSettings::BOOLEANS` and from the settings screen. `CommentSubmission::validateIdentity()` never reads it. Core's copy is left exactly where it was, still owned by `Settings › Discussion` and still governing core's own form on post types we do not handle. The reason is that every one of our three emails is addressed by `comment_author_email`: an anonymous comment silently opts its author out of the reply notifications the rest of the thread gets, and leaves nothing to moderate on. `resources/js/validate.js` is the same rule client side, shared by both front ends so it is written once — but it only saves a round trip, it never decides.
 
 ### We Own the Form — Foreign Hooks Are Isolated
 
@@ -397,7 +400,7 @@ All compiled output goes to `/dist/`.
 - **Static guard pattern:** `Frontend::enqueueAssets()` uses `static $loaded` to prevent double-enqueuing
 - **Reading comments:** `CommentsRepository::getPayload()` — used by both `fluent_comment_list` and the server-rendered bootstrap, so the two cannot drift
 - **Settings:** Stored in `_fluent_comments_settings` WordPress option (defaults: `post_types: ['post']`, `reject_native_comments: 'yes'`). Email content and template design live separately in `_fluent_comments_email_settings`; the on/off switches for the emails stay in `_fluent_comments_settings` and in core's options — see **Emails**.
-- **Core Discussion settings** (`DiscussionSettings`): a chosen handful of WordPress's own options — the word lists, the hold rules, threading, who may comment, the two core notification toggles — read and written **in place** via `get_option`/`update_option`, never copied into our option. Core enforces every one of them in `wp_allow_comment()`/`check_comment()` regardless of which form a comment came from, so this screen and Settings › Discussion cannot disagree. `update_option()` runs core's `sanitize_option()`, which trims and dedupes the word lists — which is why the save response returns a fresh `DiscussionSettings::get()` and the UI replaces its state with it rather than keeping what was typed. The UI marks every one of these with a `WordPress` chip.
+- **Core Discussion settings** (`DiscussionSettings`): a chosen handful of WordPress's own options — the word lists, the hold rules, threading, who may comment, the two core notification toggles — read and written **in place** (but not `require_name_email`, see above) via `get_option`/`update_option`, never copied into our option. Core enforces every one of them in `wp_allow_comment()`/`check_comment()` regardless of which form a comment came from, so this screen and Settings › Discussion cannot disagree. `update_option()` runs core's `sanitize_option()`, which trims and dedupes the word lists — which is why the save response returns a fresh `DiscussionSettings::get()` and the UI replaces its state with it rather than keeping what was typed. The UI marks every one of these with a `WordPress` chip.
 - **Branding:** the product is **FluentComments**, one word, everywhere it is shown to a user. `fluent-comments` stays the slug, text domain, and shortcode prefix.
 - **CSS theming:** All public styles use `--fcom-*` CSS custom properties defined on `:root` in `resources/sass/app.scss`; the Gutenberg block overrides these via inline styles per-instance
 - **`Arr` helper:** Laravel-derived static utility for dot-notation array access, used throughout for safe settings retrieval

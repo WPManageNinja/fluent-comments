@@ -23,7 +23,11 @@ class DiscussionSettings
      * options-discussion.php posts.
      */
     const BOOLEANS = [
-        'require_name_email',
+        // require_name_email is deliberately absent. FluentComments always
+        // requires a name and an email from a logged out commenter -
+        // CommentSubmission::validateIdentity() - so there is nothing for
+        // this screen to offer. Core's option is untouched and still governs
+        // core's own form on post types we do not handle.
         'comment_registration',
         'close_comments_for_old_posts',
         'thread_comments',

@@ -24,6 +24,12 @@ php tests/CommentEmailTest.php     # smartcode escaping + where "is this sent" l
 npm run i18n          # rescrape $t() from the Vue admin into TransStrings.php
 ```
 
+```bash
+./build.sh            # the release zip, into builds/
+./build.sh --pot      # ...regenerating languages/fluent-comments.pot first
+./build.sh --help     # the rest of the flags
+```
+
 All run standalone against a stubbed WordPress surface — no install needed.
 
 No PHPUnit setup. No Composer autoloader — all PHP files are manually `require_once`d in `fluent-comments.php`.
@@ -339,6 +345,42 @@ listed twice, against a minified file.
 was already `i18n.reply` against `Frontend::getStrings()` before any of
 this, and those strings ride the cache-safe `fluentCommentVars` payload.
 Add a key there rather than reaching for `$t`.
+
+### Releasing
+
+`build.sh`, the same shape as the other Fluent plugins. It builds the
+frontend, stages, and zips into `builds/`.
+
+**The zip is a whitelist, not an exclude list.** `PAYLOAD` names every
+top-level entry that ships; anything new in the repo root is left out and
+*reported* rather than quietly included. Getting that backwards is how
+`resources/` and `node_modules` end up in a release. `resources/` is a
+source tree and stays behind except for `resources/block/block.json`, which
+`register_block_type()` reads at runtime by path — it is in `PAYLOAD_FILES`
+for that reason.
+
+`.distignore` is the exclude-list equivalent for `wp dist-archive`. It is
+kept for anyone reaching for that, but **`build.sh` is the release path and
+its `PAYLOAD` is the authoritative answer**; two lists describing one
+decision will drift.
+
+**It deletes `dist/` before building.** `vite.config.js` sets
+`emptyOutDir: false`, because the block's separate webpack pipeline writes
+into the same `dist/` and would be wiped by the Vite build that runs first.
+Nothing else clears it, so Vite's content-hashed chunks accumulate across
+builds — the first run of this script dropped a `session-*.js` that had
+been orphaned for some time and would otherwise have shipped.
+
+**A version mismatch is fatal, not a warning.** The header, the
+`FLUENT_COMMENTS_VERSION` constant and the readme's `Stable tag` are read
+by three different things — WordPress, our own code, and WordPress.org —
+and disagreeing means either a plugin that reports a different version
+depending on who asks, or the wrong tag rolled out to every install.
+
+The staged copy gets an `index.php` in every directory that lacks one.
+These were being added by hand, which drifts: three existed across sixteen
+directories, so `app/Hooks`, `app/Services`, `app/Views` and all of `dist/`
+were listable on a server with directory indexes on.
 
 ### Build System
 

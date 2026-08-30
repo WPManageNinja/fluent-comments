@@ -1,4 +1,8 @@
 # Files that must not ship in the WordPress.org release package.
+#
+# For `wp dist-archive` only. build.sh is the release path and works the other
+# way round -- an explicit PAYLOAD whitelist, which is the authoritative answer
+# on what ships. Keep this in step with it, or prefer build.sh.
 /.git
 /.github
 /.gitignore

@@ -216,7 +216,7 @@ Only do that when your origin server cannot be reached directly, bypassing the p
 
 == Changelog ==
 
-= 2.1.0 (Date: Aug 30, 2026) =
+= 2.1.0 (Date: Aug 31, 2026) =
 * New: an Emails screen. All five comment notification emails can be edited, previewed against a real comment, and switched on or off from one place.
 * New: a shared email template designer for your logo, colors, footer text and From address.
 * New: a FluentComments block for block (FSE) themes. The settings screen tells you which post types still need it.
@@ -224,7 +224,14 @@ Only do that when your origin server cannot be reached directly, bypassing the p
 * New: the most useful WordPress Discussion settings now sit on the FluentComments screen.
 * New: a rebuilt admin screen with light, dark and system appearance modes.
 * Improved: much stronger spam protection, and a suspicious comment is now held for moderation instead of being turned away.
+* Improved: comments are now written into the page itself instead of being fetched by JavaScript after it loads, so search engines and link previews can read them.
 * Improved: the whole front end is translatable. Previously it was hard coded English.
+* Changed: a name and email address are now always required from commenters who are not logged in, whatever the WordPress "Comment author must fill out name and email" setting says. That setting has been removed from the FluentComments screen; it still applies to any post type FluentComments is not handling. Every notification email is addressed by the commenter's email, so an anonymous comment quietly opts its author out of the replies everyone else in the thread receives.
+* Fixed: comments that WordPress or Akismet marked as spam or trash could still trigger notification emails containing their contents.
+* Fixed: re-approving a comment sent its notifications a second time.
+* Fixed: pingbacks and trackbacks were emailed as if somebody had left a comment.
+* Fixed: comments could be submitted on post types FluentComments was not switched on for.
+* Fixed: on a cached site, the comment form could be served to the wrong visitor - showing a logged in reader the login notice, or leaving an anonymous one without the name and email fields.
 * Fixed: comment times were saved in server time instead of UTC.
 * Fixed: post authors got two emails for the same comment.
 * Fixed: the comment form showed on posts with comments closed.
@@ -250,4 +257,4 @@ Only do that when your origin server cannot be reached directly, bypassing the p
 == Upgrade Notice ==
 
 = 2.1.0 =
-All five comment notification emails can now be edited and previewed on one screen, there is a block for FSE themes, and spam protection is much stronger. Note: if another anti-spam or CAPTCHA plugin adds a field to your comment form, its check no longer runs.
+All five comment notification emails can now be edited and previewed on one screen, there is a block for FSE themes, spam protection is much stronger, and comments are now readable by search engines. Two things to know: a name and email address are now always required from commenters who are not logged in, whatever your WordPress Discussion setting says; and if another anti-spam or CAPTCHA plugin adds a field to your comment form, its check no longer runs.

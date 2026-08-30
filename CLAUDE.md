@@ -212,7 +212,9 @@ Assume every page is served from a full-page cache to somebody else. This shapes
 
 - **Nothing visitor-specific goes into HTML.** No user identity, no `wp_get_current_commenter()` values, no token. All of it comes from `Frontend::getSessionPayload()` via `fluent_comment_session`, which is never cached.
 - **The session is fetched on intent, not on load.** A visitor who only reads costs the site zero uncached requests.
-- **The first page of comments is server-rendered** into a `<script type="application/json">` by `Frontend::renderApp()` and hydrated by `app.js`. Fetching it on mount would turn every view of every post into an uncached WordPress boot.
+- **The first page of comments is server-rendered twice**, by `Frontend::renderApp()`: into a `<script type="application/json">` block that `app.js` hydrates from, and as real HTML through `Frontend::renderCommentList()`. Fetching it on mount would turn every view of every post into an uncached WordPress boot, which is what the JSON is for. The HTML is for everything that never runs the script — a `<script>` block is data, not content, so without it a crawler saw a comments section reading "Loading…". The classic template never had this problem; `wp_list_comments()` writes real markup.
+
+  `renderCommentList()` matches `CommentBlock.svelte` element for element, and `app.js` empties the container before mounting. **If you change one, change the other**: they are two renderers over the one array `CommentsRepository` returns, and when they disagree the page visibly reflows the moment the script runs. Verified at 1865px on both sides. The cost is ~885 bytes gzipped for a page of comments, because the markup is nearly all repeated structure.
 - The native template's name/email fields are filled by JS from the `comment_author_*` cookies (`readHashedCookie` in `session.js`), never printed server-side.
 
 ### The Setup Notice

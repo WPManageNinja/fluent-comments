@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fluent-comments/comments",
   "version": "2.1.0",
-  "title": "Fluent Comments",
+  "title": "FluentComments",
   "category": "theme",
   "icon": "admin-comments",
   "description": "Display comments and comment form with AJAX loading and spam protection.",

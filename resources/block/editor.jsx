@@ -120,7 +120,7 @@ const Edit = ({ attributes, setAttributes }) => {
                 <div className="fluent-comments-editor-preview">
                     <div className="flc-preview-header">
                         <CommentIcon />
-                        <span>{__('Fluent Comments', 'fluent-comments')}</span>
+                        <span>{__('FluentComments', 'fluent-comments')}</span>
                     </div>
                     <div className="flc-preview-content">
                         {showTitle && (

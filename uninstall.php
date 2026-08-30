@@ -17,6 +17,9 @@ if (!function_exists('fluent_comments_delete_plugin_data')) {
         // Direct queries: there is no API for deleting a meta key or a set of
         // transients across every user, and this runs once on uninstall.
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        // Legacy: the dismissible placement notice was removed in 2.1.1 and
+        // nothing writes this key any more, but installs that saw it still
+        // carry the per-user flag.
         $wpdb->query(
             "DELETE FROM {$wpdb->usermeta} WHERE meta_key = '_fluent_comments_dismissed_block_notice'"
         );

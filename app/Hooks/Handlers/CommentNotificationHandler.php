@@ -2,9 +2,18 @@
 
 namespace FluentComments\App\Hooks\Handlers;
 
+use FluentComments\App\Services\EmailService;
 use FluentComments\App\Services\Helper;
 use FluentComments\App\Services\Mailer;
 
+/**
+ * The three emails FluentComments sends to the people who comment.
+ *
+ * None of the content lives here any more. Subject and body come from
+ * EmailService, which is the same place the Emails screen reads and writes,
+ * so what a site owner previews is what gets sent. This file is only about
+ * who receives what, and when.
+ */
 class CommentNotificationHandler
 {
     public function register()
@@ -48,11 +57,11 @@ class CommentNotificationHandler
             return; // not a fluent comments post type
         }
 
-        $settings = Helper::getCommentSettings();
         $sentEmailIds = [];
-        if ($settings['email_on_comment_approval'] === 'yes') {
+
+        if (EmailService::isEnabled('comment_approved')) {
             $sentEmailIds[$comment->comment_author_email] = $comment->comment_author_email;
-            $this->sendEmail($comment, $post, 'approved', [
+            $this->sendEmail($comment, $post, 'comment_approved', [
                 [
                     'email' => $comment->comment_author_email,
                     'name'  => $comment->comment_author,
@@ -60,38 +69,8 @@ class CommentNotificationHandler
             ]);
         }
 
-        // sent to post author
-        if ($settings['email_to_author'] === 'yes') {
-            $author = get_userdata($post->post_author);
-            if ($author) {
-                $email = $author->user_email;
-                if (!isset($sentEmailIds[$email])) {
-                    $sentEmailIds[$email] = $email;
-                    $this->sendEmail($comment, $post, 'to_post_author', [
-                        [
-                            'email' => $email,
-                            'name'  => $author->display_name,
-                        ]
-                    ]);
-                }
-            }
-        }
-
-        // sent to comment parents
-        if ($comment->comment_parent && $settings['email_on_reply'] === 'yes') {
-            $parentComments = $this->getCommentParents($comment);
-
-            $receivers = [];
-            foreach ($parentComments as $emailid => $parentComment) {
-                if (!isset($sentEmailIds[$emailid])) {
-                    $receivers[] = $parentComment;
-                }
-            }
-
-            if ($receivers) {
-                $this->sendEmail($comment, $post, 'to_comment_parents', $receivers);
-            }
-        }
+        $this->notifyPostAuthor($comment, $post, $sentEmailIds);
+        $this->notifyThread($comment, $post, $sentEmailIds);
     }
 
     public function maybeSendNewCommentNotification(\WP_Comment $comment, $post)
@@ -114,76 +93,100 @@ class CommentNotificationHandler
 
         $notified[$comment->comment_ID] = true;
 
-        $settings = Helper::getCommentSettings();
-        $sentEmailIds = [];
+        // Nobody is told about their own comment.
+        $sentEmailIds = [
+            $comment->comment_author_email => $comment->comment_author_email,
+        ];
 
-        $sentEmailIds[$comment->comment_author_email] = $comment->comment_author_email;
-
-        // sent to post author
-        if ($settings['email_to_author'] === 'yes') {
-            $author = get_userdata($post->post_author);
-            if ($author) {
-                $email = $author->user_email;
-                if (!isset($sentEmailIds[$email])) {
-                    $sentEmailIds[$email] = $email;
-                    $this->sendEmail($comment, $post, 'to_post_author', [
-                        [
-                            'email' => $email,
-                            'name'  => $author->display_name,
-                        ]
-                    ]);
-                }
-            }
-        }
-
-        // sent to comment parents
-        if ($comment->comment_parent && $settings['email_on_reply'] === 'yes') {
-            $parentComments = $this->getCommentParents($comment);
-
-            $receivers = [];
-            foreach ($parentComments as $emailid => $parentComment) {
-                if (!isset($sentEmailIds[$emailid])) {
-                    $receivers[] = $parentComment;
-                }
-            }
-
-            if ($receivers) {
-                $this->sendEmail($comment, $post, 'to_comment_parents', $receivers);
-            }
-        }
-
+        $this->notifyPostAuthor($comment, $post, $sentEmailIds);
+        $this->notifyThread($comment, $post, $sentEmailIds);
     }
 
-    public function sendEmail($comment, $post, $type, $receivers = [])
+    /**
+     * @param \WP_Comment $comment
+     * @param \WP_Post $post
+     * @param array $sentEmailIds carried by reference, so one person never
+     *                            gets two of these for the same comment
+     * @return void
+     */
+    private function notifyPostAuthor($comment, $post, &$sentEmailIds)
     {
-        if ($type == 'approved') {
-            // Send approval notification
-            /* translators: post title. */
-            $subject = sprintf(__('Comment Approved: %s', 'fluent-comments'), $post->post_title);
-            $emailBody = $this->getEmailBody($comment, $post, $type);
-        } else if ($type == 'to_post_author') {
-            // Send notification to post author
-            /* translators: post title. */
-            $subject = sprintf(__('New Comment on Your Post: %s', 'fluent-comments'), $post->post_title);
-            $emailBody = $this->getEmailBody($comment, $post, $type);
-        } else if ($type == 'to_comment_parents') {
-            // Send notification to comment parents
-            /* translators: post title. */
-            $subject = sprintf(__('New Reply to Your Comment in: %s', 'fluent-comments'), $post->post_title);
-            $emailBody = $this->getEmailBody($comment, $post, $type);
-        } else {
-            return; // unknown type
+        if (!EmailService::isEnabled('new_comment_to_post_author')) {
+            return;
         }
 
-        $emailBody = (string)$this->wrapBody($emailBody);
+        $author = get_userdata($post->post_author);
 
-        foreach ($receivers as $receiver) {
-            $body = str_replace('{{receiver_name}}', esc_html($receiver['name']), $emailBody);
-            $mailer = new Mailer($receiver['email'], $subject, $body);
-            if ($receiver['name']) {
-                $mailer->to($receiver['email'], $receiver['name']);
+        if (!$author || isset($sentEmailIds[$author->user_email])) {
+            return;
+        }
+
+        $sentEmailIds[$author->user_email] = $author->user_email;
+
+        $this->sendEmail($comment, $post, 'new_comment_to_post_author', [
+            [
+                'email' => $author->user_email,
+                'name'  => $author->display_name,
+            ]
+        ]);
+    }
+
+    /**
+     * @param \WP_Comment $comment
+     * @param \WP_Post $post
+     * @param array $sentEmailIds
+     * @return void
+     */
+    private function notifyThread($comment, $post, &$sentEmailIds)
+    {
+        if (!$comment->comment_parent || !EmailService::isEnabled('reply_to_participants')) {
+            return;
+        }
+
+        $receivers = [];
+
+        foreach ($this->getCommentParents($comment) as $emailId => $parentComment) {
+            if (isset($sentEmailIds[$emailId])) {
+                continue;
             }
 
+            $sentEmailIds[$emailId] = $emailId;
+            $receivers[] = $parentComment;
+        }
+
+        if ($receivers) {
+            $this->sendEmail($comment, $post, 'reply_to_participants', $receivers);
+        }
+    }
+
+    /**
+     * @param \WP_Comment $comment
+     * @param \WP_Post $post
+     * @param string $emailId
+     * @param array $receivers
+     * @return void
+     */
+    public function sendEmail($comment, $post, $emailId, $receivers = [])
+    {
+        if (!isset(EmailService::TOGGLES[$emailId])) {
+            return;
+        }
+
+        foreach ($receivers as $receiver) {
+            if (empty($receiver['email'])) {
+                continue;
+            }
+
+            // Rendered per recipient rather than once: {{receiver.name}} is
+            // a different value for each of them.
+            $rendered = EmailService::render($emailId, [
+                'comment'  => $comment,
+                'post'     => $post,
+                'receiver' => $receiver,
+            ]);
+
+            $mailer = new Mailer('', $rendered['subject'], $rendered['body']);
+            $mailer->to($receiver['email'], $receiver['name']);
             $mailer->send();
         }
     }
@@ -209,191 +212,4 @@ class CommentNotificationHandler
 
         return $parentComments;
     }
-
-    private function getEmailBody(\WP_Comment $comment, $post, $type)
-    {
-        if ($type == 'approved') {
-            ob_start();
-            ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: post title */ echo wp_kses_post(sprintf(__('Your comment on "%s" has been approved and is now live on our site.', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>')); ?></p>
-
-            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                   style="background-color:rgb(249,250,251);border-radius:8px;padding:20px;margin-bottom:24px">
-                <tbody>
-                <tr>
-                    <td>
-                        <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php esc_html_e('Your Comment:', 'fluent-comments'); ?>
-                        </p>
-                        <p style="font-size:14px;color:rgb(21,128,61);margin-bottom:0px;margin-top:0px;font-style:italic;line-height:24px"><?php echo esc_html($comment->comment_content); ?></p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div style="text-align: center;">
-                <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                       style="text-align:center;margin-bottom:32px">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
-                               style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
-                               target="_blank"><?php esc_html_e('View Your Comment', 'fluent-comments'); ?></a></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e('Thank you for engaging with our content! We appreciate your thoughtful contribution to the discussion.', 'fluent-comments'); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e('Keep the conversation going by sharing your thoughts on other posts too.', 'fluent-comments'); ?></p>
-            <?php
-            return ob_get_clean();
-        }
-
-        if ($type == 'to_post_author') {
-            ob_start();
-            ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: post title */ echo wp_kses_post(sprintf(__('You have received a new comment on your post "%s"', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>')); ?></p>
-
-            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                   style="background-color:rgb(249,250,251);border-radius:8px;padding:20px;margin-bottom:24px">
-                <tbody>
-                <tr>
-                    <td>
-                        <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php /* translators: comment author's name */ echo esc_html(sprintf(__('Comment from: %s', 'fluent-comments'), $comment->comment_author)); ?>
-                        </p>
-                        <p style="font-size:14px;color:rgb(55,65,81);font-style:italic;margin-bottom:0px;margin-top:0px;line-height:24px">
-                            <?php echo wp_kses_post($comment->comment_content); ?>
-                        </p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div style="text-align: center;">
-                <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                       style="text-align:center;margin-bottom:32px">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
-                               style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
-                               target="_blank"><?php esc_html_e('View the Comment', 'fluent-comments'); ?></a></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e('Engaging with your readers helps build a strong community around your content. Consider replying to keep the conversation going!', 'fluent-comments'); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e('Keep the conversation going by sharing your thoughts on other posts too.', 'fluent-comments'); ?></p>
-            <?php
-            return ob_get_clean();
-        }
-
-        if ($type == 'to_comment_parents') {
-            ob_start();
-            ?>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: %s: name of the person receiving the email. */ printf(esc_html__('Hi %s,', 'fluent-comments'), '{{receiver_name}}'); ?></p>
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php /* translators: 1: post title, 2: comment author name */ echo wp_kses_post(sprintf(__('There\'s a new comment in the discussion on "%1$s" by %2$s, where you previously participated.', 'fluent-comments'), '<b>' . esc_html($post->post_title) . '</b>', esc_html($comment->comment_author))); ?></p>
-
-            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                   style="border-left-width:4px;border-color:rgb(34,197,94);padding-left:16px;margin-bottom:24px;background-color:rgb(240,253,244);border-top-right-radius:8px;border-bottom-right-radius:8px;padding-top:16px;padding-bottom:16px">
-                <tbody>
-                <tr>
-                    <td>
-                        <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php /* translators: comment author's name */ echo esc_html(sprintf(__('Latest comment by %s', 'fluent-comments'), $comment->comment_author)); ?></p>
-                        <p style="font-size:14px;color:rgb(55,65,81);font-style:italic;margin-bottom:0px;margin-top:0px;line-height:24px">
-                            <?php echo wp_kses_post($comment->comment_content); ?>
-                        </p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <p style="font-size:16px;color:rgb(55,65,81);margin-bottom:16px;margin-top:0px;line-height:24px"><?php esc_html_e('The conversation is continuing, and your insights might be valuable to the discussion. Join back in and share your thoughts!', 'fluent-comments'); ?></p>
-            <div style="text-align: center;">
-                <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                       style="text-align:center;margin-bottom:32px">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <a href="<?php echo esc_url(get_the_permalink($post)); ?>#comment-<?php echo (int) $comment->comment_ID; ?>"
-                               style="background-color:rgb(37,99,235);color:rgb(255,255,255);padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;border-radius:6px;font-size:16px;font-weight:600;text-decoration-line:none;box-sizing:border-box;display:inline-block"
-                               target="_blank"><?php esc_html_e('View the Comment', 'fluent-comments'); ?></a></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-                   style="background-color:rgb(249,250,251);border-radius:8px;padding:16px;margin-bottom:24px">
-                <tbody>
-                <tr>
-                    <td>
-                        <p style="font-size:14px;color:rgb(55,65,81);margin-bottom:8px;margin-top:0px;font-weight:600;line-height:24px">
-                            <?php esc_html_e('💡 Why we\'re notifying you:', 'fluent-comments'); ?>
-                        </p>
-                        <p style="font-size:14px;color:rgb(75,85,99);margin-bottom:0px;margin-top:0px;line-height:24px">
-                            <?php esc_html_e('You\'re receiving this because you previously commented on this post. We believe ongoing discussions create more value for everyone involved.', 'fluent-comments'); ?>
-                        </p></td>
-                </tr>
-                </tbody>
-            </table>
-            <?php
-            return ob_get_clean();
-        }
-
-        return '';
-    }
-
-    private function wrapBody($body)
-    {
-        ob_start();
-        ?>
-        <html dir="ltr" lang="en">
-        <head>
-            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-            <meta name="x-apple-disable-message-reformatting">
-        </head>
-        <body
-            style='background-color:rgb(243,244,246);font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";padding-top:40px;padding-bottom:40px'>
-        <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-               style="background-color:rgb(255,255,255);border-radius:8px;padding-left:32px;padding-right:32px;padding-top:40px;padding-bottom:40px;margin-left:auto;margin-right:auto;max-width:600px">
-            <tbody>
-            <tr style="width:100%">
-                <td>
-                    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-                        <tbody>
-                        <tr>
-                            <td>
-                                <?php
-                                echo $body; //phpcs:ignore
-                                ?>
-                                <hr style="border-color:rgb(209,213,219);margin-top:32px;margin-bottom:32px;width:100%;border:none;border-top:1px solid #eaeaea">
-                                <p style="font-size:12px;color:rgb(107,114,128);margin-bottom:8px;margin-top:0px;line-height:24px">
-                                    <?php esc_html_e('Best regards,', 'fluent-comments'); ?><br>
-                                    <?php echo esc_html(get_bloginfo('name')); ?>
-                                </p>
-                                <p style="font-size:12px;color:rgb(107,114,128);margin-bottom:16px;margin-top:0px;line-height:24px">
-                                    <a href="<?php echo esc_url(home_url()); ?>"
-                                       style="color:rgb(37,99,235);text-decoration-line:none"
-                                       target="_blank"><?php echo esc_url(home_url()); ?></a></p>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        </body>
-        </html>
-        <?php
-        return ob_get_clean();
-    }
-
 }

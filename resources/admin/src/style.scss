@@ -2,134 +2,14 @@
 @import "element-plus/theme-chalk/el-loading.css";
 @import "element-plus/theme-chalk/el-message-box.css";
 
-.fbeta_dashboard {
-  max-width: 960px;
-  margin: 50px auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+// Element Plus's own dark palette, keyed on `html.dark` - its API, which
+// theme.js sets alongside the ecosystem's `fluent_theme_dark`. It carries
+// the couple of hundred --el-* values the dark block below does not remap;
+// without it a dropdown, a notification or a message box would stay white
+// on a dark page.
+@import "element-plus/theme-chalk/dark/css-vars.css";
 
-  * {
-    box-sizing: border-box;
-  }
-
-  .fluent_header {
-    border-bottom: 1px solid #eaeaea;
-    padding: 10px 20px;
-
-    h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    p {
-      margin: 0;
-      font-size: 14px;
-      color: #666;
-    }
-  }
-
-  .fluent_content {
-    padding: 20px 20px;
-  }
-
-  .fluent_plugin {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 0 -20px;
-    padding: 15px 20px;
-    gap: 10px;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.02);
-    }
-
-    .fluent_plugin_statuses {
-      margin-top: 5px;
-
-      > * {
-        margin-right: 10px;
-        margin-bottom: 10px;
-      }
-    }
-
-    &:first-child {
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .fluent_plugin_name {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-
-      img {
-        width: 64px;
-        height: 64px;
-        border-radius: 10%;
-      }
-
-      h3 {
-        font-size: 18px;
-        color: #333;
-        margin: 0;
-      }
-
-      p {
-        font-size: 14px;
-        color: #666;
-        margin: 0;
-      }
-    }
-
-    // css for max width 667px
-    @media (max-width: 667px) {
-      flex-direction: column;
-      align-items: flex-start;
-      .fluent_plugin_name {
-        margin-bottom: 10px;
-        img {
-          width: 48px;
-          height: 48px;
-        }
-      }
-    }
-  }
-
-}
-
-
-.el-form-item {
-  .el-input__inner {
-    min-height: auto;
-    --el-input-inner-height: calc(var(--el-input-height, 32px) - 2px);
-    width: 100%;
-    flex-grow: 1;
-    -webkit-appearance: none;
-    color: var(--el-input-text-color, var(--el-text-color-regular));
-    font-size: inherit;
-    height: var(--el-input-inner-height);
-    line-height: var(--el-input-inner-height);
-    padding: 0;
-    outline: 0;
-    border: none;
-    background: 0 0;
-    box-sizing: border-box;
-
-    &:focus {
-      border-color: inherit;
-      box-shadow: none;
-      outline: inherit;
-    }
-  }
-  .el-form-item__label {
-    font-weight: bold;
-  }
-}
-
+// Notifications, kept where they were: bottom right, left aligned text.
 .el-notification__content {
   text-align: left !important;
 }
@@ -139,18 +19,1250 @@
   bottom: 10px;
 }
 
+/**
+ * Shared FluentCart / FluentBooking admin look: the #F3F5FA page ground, the
+ * white full bleed top bar, and light / dark off one switch. Tokens are
+ * copied rather than imported, because FluentCart carries them on Tailwind
+ * and this screen is one page of plain SCSS.
+ *
+ * The type is deliberately not theirs. FluentCart pulls Inter off Google
+ * Fonts; this screen uses the stack WordPress already sets on the admin body
+ * (wp-admin/css/common.css), so there is no external request and the page
+ * matches the chrome around it.
+ *
+ * The tokens sit on :root rather than on the app for two reasons: the
+ * wp-admin chrome around the app (the body ground, the footer) is painted
+ * from them, and so is everything Element Plus teleports out to <body>.
+ * Dark overrides them from `body.fluent_theme_dark`, which is (0,1,1)
+ * against :root's (0,1,0) and therefore wins without an !important
+ * anywhere.
+ *
+ * Every colour below has to be a token, not a literal: a hard coded hex is
+ * a patch of light that survives into dark mode.
+ */
+:root {
+  --flc-primary: #4f66f5;
+  --flc-primary-soft: #eef1fe;
+  --flc-success: #22c55e;
+  --flc-warning: #faa619;
+  --flc-danger: #d63638;
 
-.fluent_content_box {
-  display: block;
-  width: 100%;
-  padding: 20px 20px 10px;
-  background: #fafafa;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  h3 {
-    margin-top: 0px;
+  --flc-ink: #19283a;
+  --flc-ink-soft: #666978;
+  --flc-line: #e0e3e8;
+  --flc-line-soft: #eef0f3;
+  --flc-surface: #ffffff;
+  --flc-ground: #f3f5fa;
+
+  // Raised surfaces that are not cards: the groups column in the smartcode
+  // picker, a hovered row. Same as the ground in light, a shade up in dark,
+  // where a card sits *above* the page rather than below it.
+  --flc-sunken: #f3f5fa;
+  --flc-line-hover: #c9ced3;
+  --flc-feature-line: #c7cffb;
+  --flc-feature-shadow: rgba(79, 102, 245, 0.08);
+
+  // The two notice colourways, amber and red, used by the sidebar panels
+  // and the inline notes alike.
+  --flc-note-bg: #fdf8e9;
+  --flc-note-panel-bg: #fffdf7;
+  --flc-note-line: #f0dcb0;
+  --flc-note-ink: #6b5405;
+  --flc-note-strong: #8a6508;
+
+  --flc-bad-bg: #fcf0f1;
+  --flc-bad-panel-bg: #fffafa;
+  --flc-bad-line: #efc5c6;
+  --flc-bad-ink: #7a2225;
+
+  --flc-container: 1350px;
+  --flc-gutter: 30px;
+}
+
+#fluent_comment_app {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--flc-ink);
+
+  * {
+    box-sizing: border-box;
   }
-  .el-form-item__content p {
+}
+
+// The admin page is a full bleed canvas: WordPress's own padding would put a
+// white gutter beside the top bar.
+.toplevel_page_fluent-comments,
+.comments_page_fluent-comments {
+  #wpcontent {
+    padding-left: 0;
+  }
+
+  #wpbody-content {
+    padding-bottom: 0;
+  }
+
+  .wrap {
+    margin: 0;
+  }
+
+  background: var(--flc-ground, #f3f5fa);
+}
+
+.flc_app {
+  background: var(--flc-ground);
+  min-height: calc(100vh - 32px);
+  padding-bottom: 40px;
+}
+
+// Top bar
+
+.flc_topbar {
+  background: var(--flc-surface);
+  border-bottom: 1px solid var(--flc-line);
+  position: sticky;
+  top: 32px;
+  z-index: 20;
+
+  @media (max-width: 782px) {
+    position: static;
+  }
+}
+
+/**
+ * Full bleed, and three zones: brand hard against the left edge, tabs in
+ * the middle, the icons hard against the right.
+ *
+ * Grid rather than flex with space-between, and the outer columns are both
+ * 1fr: that centres the nav on the *bar* rather than in the gap left over
+ * between the brand and the icons, so the tabs do not shift sideways when
+ * the version chip changes width.
+ *
+ * No container cap here. The pages below keep theirs - it is a reading
+ * column, and this is chrome.
+ */
+.flc_topbar_inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+
+  // Two rows, brand and icons on the first: below this the three zones
+  // stop fitting and the nav is the one that needs the width.
+  @media (max-width: 960px) {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    row-gap: 6px;
+    padding-bottom: 4px;
+  }
+
+  .flc_brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--flc-ink);
+  }
+
+  // The plugin's own icon from the wordpress.org listing, used as published
+  // and inlined so it paints with the first frame.
+  .flc_mark {
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 26px;
+      height: 26px;
+      display: block;
+    }
+  }
+
+  .flc_version {
+    font-size: 12px;
+    color: var(--flc-ink-soft);
+    background: var(--flc-ground);
+    border: 1px solid var(--flc-line);
+    border-radius: 20px;
+    padding: 1px 9px;
+  }
+
+}
+
+// Three tabs, centred in the bar. The pill is on the link rather than a
+// moving indicator: there are three of them and they never reorder.
+.flc_nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  @media (max-width: 960px) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    margin-left: -14px;
+    overflow-x: auto;
+  }
+
+  a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: var(--flc-ink-soft);
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: none;
+
+    &:hover {
+      color: var(--flc-ink);
+      background: var(--flc-sunken);
+    }
+
+    &:focus {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  .flc_nav_on,
+  .flc_nav_on:hover {
+    color: var(--flc-primary);
+    background: var(--flc-primary-soft);
+  }
+}
+
+// Docs and the appearance switch, pushed to the right edge of the bar.
+.flc_topbar_actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+}
+
+// Light / Dark / System. The chosen one is marked in place rather than with
+// a tick column, which would put three quarters of the menu on nothing.
+.flc_theme_menu {
+  .flc_theme_on {
+    color: var(--flc-primary);
+    font-weight: 600;
+  }
+}
+
+.flc_icon_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--flc-ink-soft);
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: none;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  &:hover {
+    background: var(--flc-sunken);
+    color: var(--flc-ink);
+  }
+
+  // wp-admin's focus ring, dropped - but only for the mouse. Clicking the
+  // theme switch used to leave it lit like a pressed toggle; arriving on it
+  // with the keyboard still has to show where you are.
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
+
+  &:focus-visible {
+    background: var(--flc-sunken);
+    color: var(--flc-ink);
+    outline: 2px solid var(--flc-primary);
+    outline-offset: 1px;
+  }
+}
+
+// One container for every page, so the tabs line up down the left edge.
+.flc_page {
+  max-width: var(--flc-container);
+  margin: 0 auto;
+  padding: 22px var(--flc-gutter) 0;
+}
+
+// Pages with no sidebar to fill the right half. The cap goes on the page
+// rather than on the content inside it, so the header travels with it -
+// capping only the content left a 900px column under a 1350px heading.
+.flc_page_narrow {
+  max-width: 900px;
+}
+
+.flc_page_head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--flc-ink);
+  }
+
+  p {
+    margin: 4px 0 0;
+    max-width: 68ch;
+    color: var(--flc-ink-soft);
+  }
+}
+
+// Lets the text column shrink instead of shoving the buttons onto their
+// own line at the first opportunity.
+.flc_page_head_text {
+  min-width: 0;
+}
+
+.flc_page_head_actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  // Not just space-between on the parent: that only right-aligns these
+  // while they share a line with the heading. On a narrow page they wrap
+  // onto their own row, and a wrapped row starts at flex-start - which put
+  // Save changes under the description on the left.
+  margin-left: auto;
+}
+
+.flc_unsaved {
+  font-size: 13px;
+  color: var(--flc-warning);
+}
+
+// Body: content left, the panel that watches it right.
+.flc_body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+.flc_card {
+  background: var(--flc-surface);
+  border: 1px solid var(--flc-line);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.flc_card_feature {
+  border-color: var(--flc-feature-line);
+  box-shadow: 0 1px 3px var(--flc-feature-shadow);
+}
+
+.flc_card_head {
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--flc-ink);
+  }
+
+  p {
+    margin: 5px 0 0;
+    max-width: 76ch;
+    color: var(--flc-ink-soft);
+  }
+}
+
+.flc_group_head {
+  margin: 18px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--flc-ink-soft);
+}
+
+.flc_group_note {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--flc-ink-soft);
+}
+
+.flc_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 0;
+  border-top: 1px solid var(--flc-line-soft);
+  margin-top: 12px;
+
+  + .flc_row {
     margin-top: 0;
+  }
+
+  .flc_row_text {
+    min-width: 0;
+
+    > strong {
+      display: block;
+      font-weight: 600;
+    }
+
+    // Direct child only: a chip is a span inside the <strong> above and has
+    // to stay inline.
+    > span {
+      display: block;
+      margin-top: 2px;
+      max-width: 76ch;
+      color: var(--flc-ink-soft);
+      font-size: 13px;
+    }
+  }
+}
+
+.flc_two_up {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.flc_field {
+  label {
+    display: block;
+    margin-bottom: 7px;
+
+    > strong {
+      font-weight: 600;
+    }
+
+    > span {
+      display: block;
+      margin-top: 1px;
+      color: var(--flc-ink-soft);
+      font-size: 13px;
+    }
+  }
+
+  textarea {
+    font-family: Menlo, Consolas, monospace !important;
+    font-size: 13px !important;
+  }
+}
+
+.flc_post_types {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.flc_post_type {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 13px;
+  border: 1px solid var(--flc-line);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--flc-line-hover);
+  }
+
+  .flc_post_type_title {
+    font-weight: 600;
+    color: var(--flc-ink);
+  }
+
+  .flc_post_type_slug {
+    font-size: 12px;
+    color: var(--flc-ink-soft);
+  }
+}
+
+.flc_post_type_on {
+  border-color: var(--flc-primary);
+  background: var(--flc-primary-soft);
+}
+
+// Sidebar
+
+.flc_sidebar {
+  position: sticky;
+  top: 100px;
+
+  @media (max-width: 1100px) {
+    position: static;
+  }
+}
+
+.flc_panel {
+  background: var(--flc-surface);
+  border: 1px solid var(--flc-line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--flc-ink-soft);
+  }
+
+  .flc_panel_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .flc_panel_intro,
+  .flc_panel_note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--flc-ink-soft);
+  }
+
+  .flc_panel_note {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--flc-line-soft);
+  }
+
+  .flc_panel_intro + * {
+    margin-top: 10px;
+  }
+
+  code {
+    font-size: 11px;
+    padding: 1px 4px;
+    background: var(--flc-ground);
+    border-radius: 3px;
+  }
+}
+
+// The placement panel only appears when something needs doing, so it reads
+// as a notice. Red once rejection is on, because then it is not advice any
+// more: those posts cannot take comments.
+.flc_panel_notice {
+  border-color: var(--flc-note-line);
+  background: var(--flc-note-panel-bg);
+
+  h2 {
+    color: var(--flc-note-strong);
+  }
+}
+
+.flc_panel_bad {
+  border-color: var(--flc-bad-line);
+  background: var(--flc-bad-panel-bg);
+
+  h2 {
+    color: var(--flc-bad-ink);
+  }
+}
+
+.flc_side_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--flc-line-soft);
+  font-size: 13px;
+
+  &:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .el-input-number {
+    width: 90px;
+  }
+}
+
+.flc_setup_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flc_setup_row {
+  padding: 9px 0;
+  border-top: 1px solid var(--flc-line-soft);
+  font-size: 13px;
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  .flc_setup_row_head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--flc-primary);
+  }
+}
+
+.flc_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 8px;
+  background: var(--flc-ink-soft);
+}
+
+.flc_dot_ok   { background: var(--flc-success); }
+.flc_dot_warn { background: var(--flc-warning); }
+.flc_dot_bad  { background: var(--flc-danger); }
+
+.flc_chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid var(--flc-line);
+  border-radius: 20px;
+  background: var(--flc-ground);
+  color: var(--flc-ink-soft);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+// Amber: not set up yet. Red: this will break something.
+.flc_inline_note {
+  margin: 14px 0 0;
+  padding: 9px 13px;
+  border-left: 3px solid var(--flc-warning);
+  background: var(--flc-note-bg);
+  color: var(--flc-note-ink);
+  font-size: 13px;
+  border-radius: 0 6px 6px 0;
+}
+
+.flc_inline_warn {
+  margin: 14px 0 0;
+  padding: 9px 13px;
+  border-left: 3px solid var(--flc-danger);
+  background: var(--flc-bad-bg);
+  color: var(--flc-bad-ink);
+  font-size: 13px;
+  border-radius: 0 6px 6px 0;
+}
+
+.flc_muted {
+  color: var(--flc-ink-soft);
+  font-size: 12px;
+  margin: 0;
+}
+
+.flc_link_button {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--flc-primary);
+  font-family: inherit;
+  font-size: 12px;
+
+  &:disabled {
+    color: var(--flc-ink-soft);
+    cursor: default;
+  }
+}
+
+.flc_footnote {
+  margin: 0 0 20px;
+  color: var(--flc-ink-soft);
+  font-size: 12px;
+
+  a {
+    color: var(--flc-primary);
+  }
+
+  .flc_chip {
+    margin-left: 0;
+  }
+}
+
+code {
+  font-size: 12px;
+}
+
+// ---------------------------------------------------------------------------
+// Emails
+// ---------------------------------------------------------------------------
+
+.flc_email_list {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flc_email_row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--flc-line-soft);
+
+  .flc_email_text {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+
+    &:hover > strong {
+      color: var(--flc-primary);
+    }
+
+    > strong {
+      display: block;
+      font-weight: 600;
+    }
+
+    > span {
+      display: block;
+      margin-top: 2px;
+      max-width: 72ch;
+      color: var(--flc-ink-soft);
+      font-size: 13px;
+    }
+  }
+
+  .el-tag,
+  .el-switch {
+    flex-shrink: 0;
+  }
+}
+
+// Off is a real state, not an error, so it recedes rather than shouts.
+.flc_email_row_off .flc_email_text {
+  opacity: 0.55;
+}
+
+// A label above its control rather than beside it: the subject line and the
+// editor both want the full width.
+.flc_field_stacked {
+  margin-top: 18px;
+
+  &:first-of-type {
+    margin-top: 8px;
+  }
+}
+
+.flc_editor {
+  // A row of its own above the editor rather than pinned to its top right
+  // corner: wp.editor puts the media button and the Visual/Text tabs
+  // there, and the placeholder button landed on top of the tabs.
+  .flc_editor_bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+
+  .flc_editor_area {
+    width: 100%;
+    min-height: 320px;
+  }
+
+  .flc_editor_plain {
+    font-family: Menlo, Consolas, monospace;
+    font-size: 13px;
+    padding: 10px;
+    border: 1px solid var(--flc-line);
+    border-radius: 6px;
+  }
+}
+
+// White in both themes, deliberately: what is inside it is an email, and
+// an email is a light document wherever the admin screen happens to be.
+.flc_email_frame {
+  border: 1px solid var(--flc-line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 520px;
+    border: 0;
+  }
+}
+
+// A preview sitting inside a card, under the card's own heading.
+.flc_card_preview {
+  margin-top: 16px;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.flc_preview_subject {
+  margin: 0 0 12px;
+  color: var(--flc-ink-soft);
+
+  strong {
+    color: var(--flc-ink);
+  }
+}
+
+// Controls left, a live email right. Stacks well before the sidebar
+// breakpoint because the preview needs about 600px to be worth looking at.
+.flc_design {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1250px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.flc_design_preview {
+  position: sticky;
+  top: 100px;
+
+  .flc_email_frame iframe {
+    height: 640px;
+  }
+
+  .flc_muted {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 1250px) {
+    position: static;
+  }
+}
+
+.flc_logo_field {
+  display: flex;
+  gap: 8px;
+
+  .el-input {
+    flex: 1;
+  }
+}
+
+// The placeholder picker: groups left, codes right.
+.flc_codes_popover {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flc_codes {
+  display: flex;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .flc_codes_groups {
+    width: 150px;
+    flex-shrink: 0;
+    background: var(--flc-sunken);
+    padding: 8px;
+
+    li {
+      padding: 7px 9px;
+      margin-bottom: 3px;
+      border-radius: 5px;
+      font-size: 13px;
+      color: var(--flc-ink);
+      cursor: pointer;
+
+      &:hover {
+        background: var(--flc-line-soft);
+      }
+    }
+
+    .flc_codes_group_on,
+    .flc_codes_group_on:hover {
+      background: var(--flc-primary);
+      color: #ffffff;
+    }
+  }
+
+  .flc_codes_list {
+    flex: 1;
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 6px 14px;
+
+    li {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--flc-line-soft);
+      font-size: 13px;
+      color: var(--flc-ink);
+      cursor: pointer;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &:hover {
+        color: var(--flc-primary);
+      }
+
+      span {
+        display: block;
+        margin-top: 2px;
+        font-family: Menlo, Consolas, monospace;
+        font-size: 11px;
+        color: var(--flc-ink-soft);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// About
+// ---------------------------------------------------------------------------
+
+.flc_about_actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.flc_plugin_list {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+
+  a {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--flc-line);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: none;
+
+    &:hover {
+      border-color: var(--flc-primary);
+      background: var(--flc-primary-soft);
+    }
+
+    strong {
+      display: block;
+      font-weight: 600;
+      color: var(--flc-ink);
+    }
+
+    span {
+      display: block;
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--flc-ink-soft);
+    }
+  }
+}
+
+// Element Plus, pulled onto the shared palette.
+#fluent_comment_app {
+  --el-color-primary: #4f66f5;
+  --el-color-success: #22c55e;
+  --el-color-warning: #faa619;
+  --el-border-radius-base: 6px;
+  --el-font-family: inherit;
+}
+
+/**
+ * Undo wp-admin's form styling inside the app.
+ *
+ * This is a specificity loss, not a load-order one. wp-admin/css/forms.css
+ * styles fields as `input[type="text"]` - an element plus an attribute, so
+ * (0,1,1) - while Element Plus resets its own inner field with the single
+ * class `.el-input__inner`, (0,1,0). WordPress wins, and its border,
+ * radius, padding and min-height get drawn on the native input *inside*
+ * the component's own bordered wrapper: two boxes, one in the other.
+ *
+ * Everything below is scoped to the app's id, which is (1,0,0) and settles
+ * it. Only the elements Element Plus owns are touched, so nothing on the
+ * rest of wp-admin changes.
+ */
+#fluent_comment_app {
+  .el-input__inner,
+  .el-select__input {
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    outline: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+    height: inherit;
+    line-height: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+
+    &:focus {
+      border: 0;
+      box-shadow: none;
+      outline: 0;
+    }
+  }
+
+  // For an input the wrapper carries the border; for a textarea the
+  // element itself does, so this one is given Element Plus's own look back
+  // rather than stripped.
+  .el-textarea__inner {
+    border: 0;
+    border-radius: var(--el-border-radius-base);
+    box-shadow: 0 0 0 1px var(--el-border-color) inset;
+    padding: 5px 11px;
+    min-height: 0;
+    font-family: inherit;
+    color: inherit;
+
+    &:focus {
+      border: 0;
+      outline: 0;
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+    }
+  }
+
+  // Checkbox, radio and switch each keep a real input for the keyboard and
+  // hide it. WordPress gives it a size, a border and a dashicon tick,
+  // which is enough to knock the visible control out of line.
+  .el-checkbox__original,
+  .el-radio__original,
+  .el-switch__input {
+    width: 0;
+    height: 0;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+
+    &::before {
+      content: none;
+    }
+  }
+
+  // Reads as disabled otherwise: the append slot is grey by design, and an
+  // Element Plus button inside one is transparent with inherited colour.
+  .el-input-group__append .el-button {
+    color: var(--flc-primary);
+    font-weight: 500;
+  }
+}
+
+
+// ---------------------------------------------------------------------------
+// Dark
+// ---------------------------------------------------------------------------
+
+/**
+ * `fluent_theme_dark` on <body>, per the Fluent theme mode spec - the same
+ * class every Fluent plugin uses, off the same `fluent_theme_mode` storage
+ * key, so a person who picks dark in FluentCart lands here in dark. Do not
+ * rename it or add a second class of our own beside it.
+ *
+ * <body> is the right host for the app, the wp-admin chrome around it and
+ * the Element Plus layers teleported out to <body> alike: they are all
+ * inside it. It also beats Element Plus's own `html.dark` block for
+ * everything below, not on specificity but on proximity - a token declared
+ * on the nearer ancestor wins.
+ *
+ * Nothing below re-states a rule: it is the same stylesheet with a
+ * different set of values in the tokens, which is why every colour above
+ * has to go through one.
+ */
+// On the root, not the body: the page canvas and the document scrollbar take
+// their colour scheme from <html>, and it inherits down from there to every
+// native control. `dark` is Element Plus's own class - see theme.js.
+html.dark {
+  color-scheme: dark;
+}
+
+body.fluent_theme_dark {
+  --flc-primary: #8f9dff;
+  --flc-primary-soft: #222a48;
+  --flc-success: #4ade80;
+  --flc-warning: #fbbf24;
+  --flc-danger: #f87171;
+
+  --flc-ink: #e5e9f0;
+  --flc-ink-soft: #98a2b5;
+  --flc-line: #2c3446;
+  --flc-line-soft: #232b3b;
+  --flc-surface: #171d2b;
+  --flc-ground: #0f1420;
+
+  // A card sits above the page here rather than below it, so the raised
+  // surface is a shade lighter than the card, not darker.
+  --flc-sunken: #202737;
+  --flc-line-hover: #3b455a;
+  --flc-feature-line: #3a4573;
+  --flc-feature-shadow: rgba(0, 0, 0, 0.35);
+
+  --flc-note-bg: #2a2415;
+  --flc-note-panel-bg: #241f12;
+  --flc-note-line: #4a3d1c;
+  --flc-note-ink: #e8cf92;
+  --flc-note-strong: #f0d79b;
+
+  --flc-bad-bg: #2c1a1c;
+  --flc-bad-panel-bg: #261618;
+  --flc-bad-line: #5a2b2e;
+  --flc-bad-ink: #f0a8ab;
+
+  /**
+   * Element Plus's dark palette pulled onto ours.
+   *
+   * Its own dark is a neutral near-black (#141414); ours is a blue-grey
+   * slate, and an input sitting a whole hue away from the card behind it
+   * reads as broken rather than as contrast. Set here, on html rather than
+   * on the app, because a select dropdown, a popover and a notification
+   * are all teleported to <body> and would otherwise keep the near-black.
+   *
+   * Same specificity as Element Plus's own `html.dark` block, which it
+   * loses on order: that is the @import at the top of this file.
+   */
+  --el-bg-color: var(--flc-surface);
+  --el-bg-color-page: var(--flc-ground);
+  --el-bg-color-overlay: var(--flc-surface);
+  --el-fill-color-blank: var(--flc-surface);
+  --el-fill-color: var(--flc-sunken);
+  --el-fill-color-light: var(--flc-sunken);
+  --el-fill-color-lighter: var(--flc-line-soft);
+  --el-border-color: var(--flc-line);
+  --el-border-color-light: var(--flc-line);
+  --el-border-color-lighter: var(--flc-line-soft);
+  --el-border-color-hover: var(--flc-line-hover);
+  --el-text-color-primary: var(--flc-ink);
+  --el-text-color-regular: var(--flc-ink);
+  --el-text-color-secondary: var(--flc-ink-soft);
+  --el-text-color-placeholder: var(--flc-ink-soft);
+  --el-text-color-disabled: var(--flc-ink-soft);
+
+  // The info colourway, which is what a plain el-tag is built from - the
+  // "Default" / "WordPress default" chips on the Emails list.
+  --el-color-info: var(--flc-ink-soft);
+  --el-color-info-light-8: var(--flc-line);
+  --el-color-info-light-9: var(--flc-sunken);
+
+  // wp-admin's own footer, which sits under the app on the same ground.
+  #wpfooter {
+    color: var(--flc-ink-soft);
+
+    a {
+      color: var(--flc-primary);
+    }
+  }
+
+  /**
+   * The email body editor keeps its own light sheet.
+   *
+   * Two reasons, and neither is laziness: what is being edited is a light
+   * HTML email, so typing it on a dark canvas would misrepresent it; and
+   * the furniture around it - the Visual / Text tabs, the media button,
+   * the TinyMCE toolbar - is WordPress's, which has no dark mode and
+   * cannot be given one from here. So the tokens go back to their light
+   * values for the width of the sheet rather than half of it inheriting a
+   * dark page.
+   */
+  #fluent_comment_app .flc_editor {
+    color-scheme: light;
+
+    --flc-ink: #19283a;
+    --flc-ink-soft: #666978;
+    --flc-line: #e0e3e8;
+    --flc-line-soft: #eef0f3;
+    --flc-surface: #ffffff;
+
+    // Literals, not var(--flc-…): a custom property's value is substituted
+    // where it is *declared*, so the --el-* above resolved against the dark
+    // palette on <html> and inherit down here already resolved. Handing
+    // them --flc-surface again would hand them #171d2b, which is how the
+    // placeholder button came out a dark chip on a white sheet.
+    --el-bg-color: #ffffff;
+    --el-bg-color-overlay: #ffffff;
+    --el-fill-color-blank: #ffffff;
+    --el-fill-color: #f3f5fa;
+    --el-fill-color-light: #f3f5fa;
+    --el-fill-color-lighter: #eef0f3;
+    --el-border-color: #e0e3e8;
+    --el-border-color-light: #e0e3e8;
+    --el-border-color-lighter: #eef0f3;
+    --el-border-color-hover: #c9ced3;
+    --el-text-color-primary: #19283a;
+    --el-text-color-regular: #19283a;
+    --el-text-color-secondary: #666978;
+    --el-text-color-placeholder: #666978;
+    --el-text-color-disabled: #666978;
+
+    background: #ffffff;
+    color: var(--flc-ink);
+    border: 1px solid var(--flc-line);
+    border-radius: 8px;
+    padding: 12px;
   }
 }

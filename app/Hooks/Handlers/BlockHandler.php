@@ -3,28 +3,34 @@
 namespace FluentComments\App\Hooks\Handlers;
 
 use FluentComments\App\Services\Frontend;
-use FluentComments\App\Services\Helper;
 
 class BlockHandler
 {
     public function register()
     {
         add_action('init', [$this, 'registerBlock']);
-
-        // On block themes the theme template renders the core Comments
-        // block. Replace it, otherwise the native form stays on the page
-        // and rejecting native submissions would lock the post entirely.
-        add_filter('render_block', [$this, 'maybeReplaceCoreComments'], 10, 2);
     }
 
     public function registerBlock()
     {
-        register_block_type(
+        $blockType = register_block_type(
             FLUENT_COMMENTS_PLUGIN_PATH . 'resources/block/block.json',
             [
                 'render_callback' => [$this, 'renderBlock'],
             ]
         );
+
+        if (!$blockType) {
+            return;
+        }
+
+        // The editor's own __() calls resolve against a JSON file rather
+        // than the .mo, and only once the handle is pointed at one. The
+        // handle is generated from block.json, so it is read back off the
+        // registered type rather than guessed at.
+        foreach ($blockType->editor_script_handles as $handle) {
+            wp_set_script_translations($handle, 'fluent-comments', FLUENT_COMMENTS_PLUGIN_PATH . 'languages');
+        }
     }
 
     /**
@@ -53,49 +59,6 @@ class BlockHandler
         }
 
         return Frontend::renderApp($postId, $attributes);
-    }
-
-    /**
-     * Swap the core Comments block for ours on the post types we handle.
-     *
-     * @param string $blockContent
-     * @param array $block
-     * @return string
-     */
-    public function maybeReplaceCoreComments($blockContent, $block)
-    {
-        if (is_admin() || empty($block['blockName'])) {
-            return $blockContent;
-        }
-
-        if (!in_array($block['blockName'], ['core/comments', 'core/post-comments'], true)) {
-            return $blockContent;
-        }
-
-        if (!Helper::isBlockTheme() || !Helper::isBlockThemeTakeoverEnabled()) {
-            return $blockContent;
-        }
-
-        $post = get_post();
-
-        if (!$post || !Helper::isHandlingComments($post)) {
-            return $blockContent;
-        }
-
-        if (!post_type_supports($post->post_type, 'comments') || post_password_required($post)) {
-            return $blockContent;
-        }
-
-        $attributes = [
-            'showTitle'   => true,
-            'showAvatars' => (bool)get_option('show_avatars'),
-        ];
-
-        if (!empty($block['attrs']['align'])) {
-            $attributes['align'] = $block['attrs']['align'];
-        }
-
-        return Frontend::renderApp($post->ID, $attributes);
     }
 
     /**
@@ -140,7 +103,7 @@ class BlockHandler
         <div class="<?php echo esc_attr($wrapperClass); ?>"<?php echo $cssVars ? ' style="' . esc_attr($cssVars) . '"' : ''; ?>>
             <div class="fluent_dynamic_comments">
                 <p style="text-align: center; padding: 40px 20px; background: #f5f5f5; border-radius: 4px;">
-                    <?php esc_html_e('Fluent Comments will appear here on the frontend.', 'fluent-comments'); ?>
+                    <?php esc_html_e('FluentComments will appear here on the frontend.', 'fluent-comments'); ?>
                 </p>
             </div>
         </div>

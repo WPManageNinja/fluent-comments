@@ -9,13 +9,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-29T14:13:19+00:00\n"
+"POT-Creation-Date: 2026-08-30T15:52:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
 
 #. Plugin Name of the plugin
 #: fluent-comments.php
+#: app/Hooks/Handlers/AdminSettingsHandler.php:27
+#: app/Hooks/Handlers/AdminSettingsHandler.php:28
+#: app/Hooks/Handlers/AdminSettingsHandler.php:213
+#: dist/block/editor.jsx.js:1
 msgid "FluentComments"
 msgstr ""
 
@@ -39,141 +43,28 @@ msgstr ""
 msgid "https://wpmanageninja.com"
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:26
-#: app/Hooks/Handlers/AdminSettingsHandler.php:27
-#: app/Hooks/Handlers/AdminSettingsHandler.php:160
-#: resources/block/editor.jsx:123
-msgid "Fluent Comments"
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:98
+#: app/Hooks/Handlers/AdminSettingsHandler.php:122
 msgid "Settings cannot be empty."
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:117
+#: app/Hooks/Handlers/AdminSettingsHandler.php:149
 msgid "Settings saved successfully."
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:161
-msgid "You are using a block theme and the Comments block replacement is turned off, so your posts are still using the default WordPress comment form."
+#: app/Hooks/Handlers/AdminSettingsHandler.php:214
+msgid "Thanks for installing! Nothing has been set up yet, so the defaults are running: FluentComments handles comments on posts, and comments posted through any other form are rejected as spam."
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:165
-msgid "Review settings"
+#: app/Hooks/Handlers/AdminSettingsHandler.php:218
+msgid "You are on a block theme, so FluentComments does not place itself on your templates. Until you add the FluentComments block in the Site Editor or the [fluent_comments] shortcode, posts cannot take comments at all. The settings screen checks your templates and tells you where it is missing."
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:168
-msgid "Dismiss"
+#: app/Hooks/Handlers/AdminSettingsHandler.php:223
+msgid "Configure FluentComments"
 msgstr ""
 
-#: app/Hooks/Handlers/AdminSettingsHandler.php:200
-msgid "You do not have permission to do this action."
-msgstr ""
-
-#: app/Hooks/Handlers/AdminSettingsHandler.php:206
-msgid "Invalid nonce."
-msgstr ""
-
-#: app/Hooks/Handlers/BlockHandler.php:143
-msgid "Fluent Comments will appear here on the frontend."
-msgstr ""
-
-#. translators: post title.
-#: app/Hooks/Handlers/CommentNotificationHandler.php:162
-#, php-format
-msgid "Comment Approved: %s"
-msgstr ""
-
-#. translators: post title.
-#: app/Hooks/Handlers/CommentNotificationHandler.php:167
-#, php-format
-msgid "New Comment on Your Post: %s"
-msgstr ""
-
-#. translators: post title.
-#: app/Hooks/Handlers/CommentNotificationHandler.php:172
-#, php-format
-msgid "New Reply to Your Comment in: %s"
-msgstr ""
-
-#. translators: %s: name of the person receiving the email.
-#: app/Hooks/Handlers/CommentNotificationHandler.php:218
-#: app/Hooks/Handlers/CommentNotificationHandler.php:257
-#: app/Hooks/Handlers/CommentNotificationHandler.php:299
-#, php-format
-msgid "Hi %s,"
-msgstr ""
-
-#. translators: post title
-#: app/Hooks/Handlers/CommentNotificationHandler.php:219
-#, php-format
-msgid "Your comment on \"%s\" has been approved and is now live on our site."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:227
-msgid "Your Comment:"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:243
-msgid "View Your Comment"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:248
-msgid "Thank you for engaging with our content! We appreciate your thoughtful contribution to the discussion."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:249
-#: app/Hooks/Handlers/CommentNotificationHandler.php:291
-msgid "Keep the conversation going by sharing your thoughts on other posts too."
-msgstr ""
-
-#. translators: post title
-#: app/Hooks/Handlers/CommentNotificationHandler.php:258
-#, php-format
-msgid "You have received a new comment on your post \"%s\""
-msgstr ""
-
-#. translators: comment author's name
-#: app/Hooks/Handlers/CommentNotificationHandler.php:266
-#, php-format
-msgid "Comment from: %s"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:284
-#: app/Hooks/Handlers/CommentNotificationHandler.php:326
-msgid "View the Comment"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:290
-msgid "Engaging with your readers helps build a strong community around your content. Consider replying to keep the conversation going!"
-msgstr ""
-
-#. translators: 1: post title, 2: comment author name
-#: app/Hooks/Handlers/CommentNotificationHandler.php:300
-#, php-format
-msgid "There's a new comment in the discussion on \"%1$s\" by %2$s, where you previously participated."
-msgstr ""
-
-#. translators: comment author's name
-#: app/Hooks/Handlers/CommentNotificationHandler.php:308
-#, php-format
-msgid "Latest comment by %s"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:317
-msgid "The conversation is continuing, and your insights might be valuable to the discussion. Join back in and share your thoughts!"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:338
-msgid "💡 Why we're notifying you:"
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:341
-msgid "You're receiving this because you previously commented on this post. We believe ongoing discussions create more value for everyone involved."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentNotificationHandler.php:378
-msgid "Best regards,"
+#: app/Hooks/Handlers/BlockHandler.php:106
+msgid "FluentComments will appear here on the frontend."
 msgstr ""
 
 #: app/Hooks/Handlers/CommentsHandler.php:95
@@ -213,6 +104,46 @@ msgstr ""
 msgid "Invalid post id."
 msgstr ""
 
+#: app/Hooks/Handlers/EmailSettingsHandler.php:78
+msgid "Unknown status."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:87
+msgid "A customised email needs both a subject and a body."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:96
+msgid "Email saved."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:128
+msgid "This email will be sent."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:129
+msgid "This email will not be sent."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:236
+msgid "That is not a valid email address."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:245
+msgid "Email template saved."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:299
+msgid "Jane Doe"
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:303
+msgid "This is what a comment looks like in your email. It is here so you can see how the spacing, the colours and the type hold up against real text rather than a single short line."
+msgstr ""
+
+#: app/Hooks/Handlers/EmailSettingsHandler.php:360
+msgid "Unknown email."
+msgstr ""
+
 #. translators: %s: human readable time difference, e.g. "3 days".
 #: app/Services/CommentsRepository.php:92
 #, php-format
@@ -245,6 +176,297 @@ msgstr ""
 msgid "Your comment could not be posted."
 msgstr ""
 
+#: app/Services/EmailService.php:65
+msgid "Their comment was approved"
+msgstr ""
+
+#: app/Services/EmailService.php:66
+msgid "Sent to the commenter when a comment that was waiting in the queue goes live."
+msgstr ""
+
+#: app/Services/EmailService.php:73
+msgid "Someone replied in their thread"
+msgstr ""
+
+#: app/Services/EmailService.php:74
+msgid "Sent to everyone above a reply in the thread, so a conversation carries on without them having to come back and check."
+msgstr ""
+
+#: app/Services/EmailService.php:81
+msgid "A comment landed on their post"
+msgstr ""
+
+#: app/Services/EmailService.php:82
+msgid "Sent to the author of the post. On a site where the only author is you, WordPress's own notice below covers the same ground - turn one of the two off."
+msgstr ""
+
+#: app/Services/EmailService.php:89
+msgid "A comment was posted"
+msgstr ""
+
+#: app/Services/EmailService.php:90
+msgid "WordPress sends this to you and the post author for every approved comment. We rewrite it on the post types FluentComments runs on."
+msgstr ""
+
+#: app/Services/EmailService.php:93
+msgid "Switching this off is the same as clearing \"Anyone posts a comment\" on Settings > Discussion."
+msgstr ""
+
+#: app/Services/EmailService.php:97
+msgid "A comment is waiting for review"
+msgstr ""
+
+#: app/Services/EmailService.php:98
+msgid "WordPress sends this when a comment is held. It carries the approve, spam and trash links, so keep those in if you customise it."
+msgstr ""
+
+#: app/Services/EmailService.php:101
+msgid "Switching this off is the same as clearing \"A comment is held for moderation\" on Settings > Discussion."
+msgstr ""
+
+#: app/Services/EmailService.php:453
+#: app/Services/EmailService.php:490
+msgid "Comment"
+msgstr ""
+
+#: app/Services/EmailService.php:454
+msgid "Comment author"
+msgstr ""
+
+#: app/Services/EmailService.php:455
+msgid "Comment author email"
+msgstr ""
+
+#: app/Services/EmailService.php:456
+msgid "Comment author website"
+msgstr ""
+
+#: app/Services/EmailService.php:457
+msgid "Comment date"
+msgstr ""
+
+#: app/Services/EmailService.php:458
+msgid "Comment time"
+msgstr ""
+
+#: app/Services/EmailService.php:459
+msgid "Link to the comment"
+msgstr ""
+
+#: app/Services/EmailService.php:465
+msgid "Comment author IP"
+msgstr ""
+
+#: app/Services/EmailService.php:466
+msgid "Approve link"
+msgstr ""
+
+#: app/Services/EmailService.php:467
+msgid "Mark as spam link"
+msgstr ""
+
+#: app/Services/EmailService.php:468
+msgid "Move to trash link"
+msgstr ""
+
+#: app/Services/EmailService.php:469
+msgid "Moderation queue link"
+msgstr ""
+
+#: app/Services/EmailService.php:479
+msgid "Recipient"
+msgstr ""
+
+#: app/Services/EmailService.php:481
+msgid "Their name"
+msgstr ""
+
+#: app/Services/EmailService.php:482
+msgid "Their email"
+msgstr ""
+
+#: app/Services/EmailService.php:495
+msgid "Post"
+msgstr ""
+
+#: app/Services/EmailService.php:497
+msgid "Post title"
+msgstr ""
+
+#: app/Services/EmailService.php:498
+msgid "Post author"
+msgstr ""
+
+#: app/Services/EmailService.php:499
+msgid "Post date"
+msgstr ""
+
+#: app/Services/EmailService.php:500
+msgid "Post URL"
+msgstr ""
+
+#: app/Services/EmailService.php:501
+msgid "Edit post URL"
+msgstr ""
+
+#: app/Services/EmailService.php:506
+msgid "Site"
+msgstr ""
+
+#: app/Services/EmailService.php:508
+msgid "Site title"
+msgstr ""
+
+#: app/Services/EmailService.php:509
+msgid "Site tagline"
+msgstr ""
+
+#: app/Services/EmailService.php:510
+msgid "Admin email"
+msgstr ""
+
+#: app/Services/EmailService.php:511
+msgid "Site URL"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:525
+#, php-format
+msgid "Your comment on %s is now live"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:530
+#, php-format
+msgid "New reply in the discussion on %s"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:535
+#, php-format
+msgid "New comment on %s"
+msgstr ""
+
+#. translators: 1: site title placeholder, 2: post title placeholder.
+#: app/Services/EmailService.php:540
+#, php-format
+msgid "[%1$s] Comment on %2$s"
+msgstr ""
+
+#. translators: 1: site title placeholder, 2: post title placeholder.
+#: app/Services/EmailService.php:545
+#, php-format
+msgid "[%1$s] Please moderate a comment on %2$s"
+msgstr ""
+
+#. translators: %s is the recipient's name placeholder.
+#: app/Services/EmailService.php:561
+#: app/Services/EmailService.php:575
+#: app/Services/EmailService.php:589
+#, php-format
+msgid "Hi %s,"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:564
+#, php-format
+msgid "Your comment on <strong>%s</strong> has been approved and is now live."
+msgstr ""
+
+#: app/Services/EmailService.php:567
+msgid "View your comment"
+msgstr ""
+
+#: app/Services/EmailService.php:569
+msgid "Thanks for taking the time to write it."
+msgstr ""
+
+#. translators: 1: comment author placeholder, 2: post title placeholder.
+#: app/Services/EmailService.php:578
+#, php-format
+msgid "%1$s replied in a discussion you took part in on <strong>%2$s</strong>."
+msgstr ""
+
+#: app/Services/EmailService.php:581
+msgid "Read the reply"
+msgstr ""
+
+#: app/Services/EmailService.php:583
+msgid "You are getting this because you commented on this post."
+msgstr ""
+
+#. translators: 1: comment author placeholder, 2: post title placeholder.
+#: app/Services/EmailService.php:592
+#, php-format
+msgid "%1$s left a comment on your post <strong>%2$s</strong>."
+msgstr ""
+
+#: app/Services/EmailService.php:595
+#: app/Services/EmailService.php:610
+msgid "View the comment"
+msgstr ""
+
+#: app/Services/EmailService.php:597
+msgid "Replying keeps the conversation going."
+msgstr ""
+
+#: app/Services/EmailService.php:602
+#: app/Services/EmailService.php:620
+msgid "Hi there,"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:605
+#, php-format
+msgid "A new comment was posted on <strong>%s</strong>."
+msgstr ""
+
+#. translators: 1: comment author placeholder, 2: comment author email placeholder.
+#: app/Services/EmailService.php:607
+#, php-format
+msgid "From %1$s (%2$s)"
+msgstr ""
+
+#. translators: %s is the trash link placeholder.
+#: app/Services/EmailService.php:614
+#, php-format
+msgid "Move it to the trash: %s"
+msgstr ""
+
+#. translators: %s is the post title placeholder.
+#: app/Services/EmailService.php:623
+#, php-format
+msgid "A comment on <strong>%s</strong> is waiting for your review."
+msgstr ""
+
+#. translators: 1: comment author placeholder, 2: comment author email placeholder, 3: author IP placeholder.
+#: app/Services/EmailService.php:625
+#, php-format
+msgid "From %1$s (%2$s) at %3$s"
+msgstr ""
+
+#: app/Services/EmailService.php:628
+msgid "Approve it"
+msgstr ""
+
+#. translators: %s is the spam link placeholder.
+#: app/Services/EmailService.php:632
+#, php-format
+msgid "Mark as spam: %s"
+msgstr ""
+
+#. translators: %s is the trash link placeholder.
+#: app/Services/EmailService.php:634
+#, php-format
+msgid "Move to the trash: %s"
+msgstr ""
+
+#. translators: %s is the moderation queue link placeholder.
+#: app/Services/EmailService.php:636
+#, php-format
+msgid "See everything waiting: %s"
+msgstr ""
+
 #. translators: 1: comment date, 2: comment time.
 #: app/Services/FluentWalkerComment.php:39
 #, php-format
@@ -252,14 +474,14 @@ msgid "%1$s at %2$s"
 msgstr ""
 
 #: app/Services/FluentWalkerComment.php:56
+#: app/Services/TransStrings.php:56
 msgid "Edit"
 msgstr ""
 
 #: app/Services/FluentWalkerComment.php:79
 #: app/Services/FluentWalkerComment.php:82
 #: app/Services/Frontend.php:320
-#: resources/block/editor.jsx:160
-#: resources/block/editor.jsx:178
+#: dist/block/editor.jsx.js:1
 msgid "Reply"
 msgstr ""
 
@@ -276,7 +498,7 @@ msgstr ""
 
 #: app/Services/Frontend.php:313
 #: app/Views/comments.php:22
-#: resources/block/editor.jsx:54
+#: dist/block/editor.jsx.js:1
 msgid "Add your first comment to this post"
 msgstr ""
 
@@ -285,7 +507,7 @@ msgid "Loading…"
 msgstr ""
 
 #: app/Services/Frontend.php:315
-#: resources/block/editor.jsx:137
+#: dist/block/editor.jsx.js:1
 msgid "Write your comment here..."
 msgstr ""
 
@@ -329,6 +551,14 @@ msgstr ""
 msgid "You must be logged in to post a comment."
 msgstr ""
 
+#: app/Services/Helper.php:206
+msgid "You do not have permission to do this action."
+msgstr ""
+
+#: app/Services/Helper.php:212
+msgid "Invalid nonce."
+msgstr ""
+
 #: app/Services/SpamGuard.php:190
 #: app/Services/SpamGuard.php:243
 msgid "Your session has expired. Please reload the page and try again."
@@ -340,6 +570,620 @@ msgstr ""
 
 #: app/Services/SpamGuard.php:647
 msgid "Your comment could not be verified. Please reload the page and try again."
+msgstr ""
+
+#. translators: 1: the "Core" chip, 2: a link reading "Settings > Discussion"
+#: app/Services/TransStrings.php:20
+#, php-format
+msgid "%1$s settings are WordPress options. WordPress enforces them on every comment, and changing them here is the same as changing them under %2$s."
+msgstr ""
+
+#: app/Services/TransStrings.php:21
+msgid "+ Placeholder"
+msgstr ""
+
+#: app/Services/TransStrings.php:22
+msgid "- it starts from a FluentComments version you can preview and edit."
+msgstr ""
+
+#. translators: %s is a comma separated list of post type names
+#: app/Services/TransStrings.php:24
+#, php-format
+msgid "<strong>%s</strong> has neither the FluentComments block nor the shortcode in the template. With this on, those posts cannot take comments at all."
+msgstr ""
+
+#. translators: %s is a comma separated list of post type names
+#: app/Services/TransStrings.php:26
+#, php-format
+msgid "<strong>%s</strong> have neither the FluentComments block nor the shortcode in the template. With this on, those posts cannot take comments at all."
+msgstr ""
+
+#: app/Services/TransStrings.php:27
+msgid "A helpdesk that lives in your own admin."
+msgstr ""
+
+#: app/Services/TransStrings.php:28
+msgid "A review on wordpress.org is the single most useful thing you can do for a free plugin. It takes a minute and it is what decides whether the next person finds it."
+msgstr ""
+
+#: app/Services/TransStrings.php:29
+msgid "About"
+msgstr ""
+
+#: app/Services/TransStrings.php:30
+msgid "About FluentComments"
+msgstr ""
+
+#: app/Services/TransStrings.php:31
+msgid "Anything in braces is filled in when the email is sent."
+msgstr ""
+
+#. translators: %s is the current appearance mode: Light, Dark or System
+#: app/Services/TransStrings.php:33
+#, php-format
+msgid "Appearance: %s"
+msgstr ""
+
+#: app/Services/TransStrings.php:34
+msgid "Approve people who have been approved before"
+msgstr ""
+
+#: app/Services/TransStrings.php:35
+msgid "Back to emails"
+msgstr ""
+
+#: app/Services/TransStrings.php:36
+msgid "Back to the defaults"
+msgstr ""
+
+#. translators: 1: <strong>FluentComments</strong>, 2: <code>[fluent_comments]</code>, the shortcode
+#: app/Services/TransStrings.php:38
+#, php-format
+msgid "Block theme, so nothing is placed for you. These post types need the %1$s block or %2$s in the template they render through."
+msgstr ""
+
+#: app/Services/TransStrings.php:39
+msgid "Blocked and held words"
+msgstr ""
+
+#: app/Services/TransStrings.php:40
+msgid "Body"
+msgstr ""
+
+#: app/Services/TransStrings.php:41
+msgid "Checking…"
+msgstr ""
+
+#: app/Services/TransStrings.php:42
+msgid "Choose"
+msgstr ""
+
+#: app/Services/TransStrings.php:43
+msgid "Choose a logo"
+msgstr ""
+
+#: app/Services/TransStrings.php:44
+msgid "Clear"
+msgstr ""
+
+#: app/Services/TransStrings.php:45
+msgid "Close"
+msgstr ""
+
+#: app/Services/TransStrings.php:46
+msgid "Close comments on old posts"
+msgstr ""
+
+#: app/Services/TransStrings.php:47
+msgid "Colours"
+msgstr ""
+
+#: app/Services/TransStrings.php:48
+msgid "Comments that post without reloading the page, and a layered spam defence that holds what looks wrong instead of throwing it away. Built by the WPManageNinja team, the people behind FluentCRM, Fluent Forms and Fluent Support."
+msgstr ""
+
+#: app/Services/TransStrings.php:49
+msgid "Content"
+msgstr ""
+
+#: app/Services/TransStrings.php:50
+msgid "Core"
+msgstr ""
+
+#: app/Services/TransStrings.php:51
+msgid "Customised"
+msgstr ""
+
+#: app/Services/TransStrings.php:52
+msgid "Dark"
+msgstr ""
+
+#: app/Services/TransStrings.php:53
+msgid "Days before closing"
+msgstr ""
+
+#: app/Services/TransStrings.php:54
+msgid "Default"
+msgstr ""
+
+#: app/Services/TransStrings.php:55
+msgid "Documentation"
+msgstr ""
+
+#: app/Services/TransStrings.php:57
+msgid "Edit Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:58
+msgid "Edit email"
+msgstr ""
+
+#: app/Services/TransStrings.php:59
+msgid "Email Template"
+msgstr ""
+
+#: app/Services/TransStrings.php:60
+msgid "Email marketing and contact management, self hosted."
+msgstr ""
+
+#: app/Services/TransStrings.php:61
+msgid "Email preview"
+msgstr ""
+
+#: app/Services/TransStrings.php:62
+msgid "Emails"
+msgstr ""
+
+#: app/Services/TransStrings.php:63
+msgid "Enjoying it?"
+msgstr ""
+
+#: app/Services/TransStrings.php:64
+msgid "Error"
+msgstr ""
+
+#: app/Services/TransStrings.php:65
+msgid "Every email FluentComments is responsible for: whether it is sent, and what it says."
+msgstr ""
+
+#: app/Services/TransStrings.php:66
+msgid "FluentComments block found"
+msgstr ""
+
+#: app/Services/TransStrings.php:67
+msgid "FluentComments default"
+msgstr ""
+
+#: app/Services/TransStrings.php:68
+msgid "FluentComments is free software under the GPL, version 2 or later."
+msgstr ""
+
+#: app/Services/TransStrings.php:69
+msgid "Footer"
+msgstr ""
+
+#: app/Services/TransStrings.php:70
+msgid "Footer text"
+msgstr ""
+
+#: app/Services/TransStrings.php:71
+msgid "Forms that stay fast on a page full of them."
+msgstr ""
+
+#: app/Services/TransStrings.php:72
+msgid "Free plugins from the same team, all on wordpress.org."
+msgstr ""
+
+#: app/Services/TransStrings.php:73
+msgid "From email"
+msgstr ""
+
+#: app/Services/TransStrings.php:74
+msgid "From name"
+msgstr ""
+
+#: app/Services/TransStrings.php:75
+msgid "Get support"
+msgstr ""
+
+#: app/Services/TransStrings.php:76
+msgid "Header"
+msgstr ""
+
+#: app/Services/TransStrings.php:77
+msgid "Hold comments with this many links"
+msgstr ""
+
+#: app/Services/TransStrings.php:78
+msgid "Hold every comment for review"
+msgstr ""
+
+#: app/Services/TransStrings.php:79
+msgid "Hold for review"
+msgstr ""
+
+#: app/Services/TransStrings.php:80
+msgid "Leave a review"
+msgstr ""
+
+#: app/Services/TransStrings.php:81
+msgid "Leave both empty and WordPress decides, which is what an SMTP plugin expects. These apply to the WordPress notices too, once you have customised them."
+msgstr ""
+
+#: app/Services/TransStrings.php:82
+msgid "Light"
+msgstr ""
+
+#: app/Services/TransStrings.php:83
+msgid "Link count is the single best spam signal. 2 is a sensible default."
+msgstr ""
+
+#: app/Services/TransStrings.php:84
+msgid "Links and buttons"
+msgstr ""
+
+#: app/Services/TransStrings.php:85
+msgid "Logged in users only"
+msgstr ""
+
+#: app/Services/TransStrings.php:86
+msgid "Login security, two factor and social login."
+msgstr ""
+
+#: app/Services/TransStrings.php:87
+msgid "Logo"
+msgstr ""
+
+#: app/Services/TransStrings.php:88
+msgid "Make wp_mail() actually deliver."
+msgstr ""
+
+#: app/Services/TransStrings.php:89
+msgid "Message background"
+msgstr ""
+
+#: app/Services/TransStrings.php:90
+msgid "Message text"
+msgstr ""
+
+#: app/Services/TransStrings.php:91
+msgid "More from the Fluent family"
+msgstr ""
+
+#: app/Services/TransStrings.php:92
+msgid "Never reaches the queue. Keep this one narrow."
+msgstr ""
+
+#: app/Services/TransStrings.php:93
+msgid "No matching template"
+msgstr ""
+
+#: app/Services/TransStrings.php:94
+msgid "No post types selected, so FluentComments is doing nothing right now."
+msgstr ""
+
+#: app/Services/TransStrings.php:95
+msgid "Nobody is told when this happens."
+msgstr ""
+
+#: app/Services/TransStrings.php:96
+msgid "Nothing appears until you approve it."
+msgstr ""
+
+#: app/Services/TransStrings.php:97
+msgid "Nothing found yet"
+msgstr ""
+
+#: app/Services/TransStrings.php:98
+msgid "Off turns it off everywhere. This is the same switch the list shows."
+msgstr ""
+
+#: app/Services/TransStrings.php:99
+msgid "One per line"
+msgstr ""
+
+#. translators: 1: <code>press</code>, 2: <code>WordPress</code> - an example of a partial word match
+#: app/Services/TransStrings.php:101
+#, php-format
+msgid "One word, name, URL, or IP per line. Matched anywhere in the comment, its author, URL, email, or IP, and inside longer words too, so %1$s also catches %2$s."
+msgstr ""
+
+#: app/Services/TransStrings.php:102
+msgid "Only accept comments from FluentComments"
+msgstr ""
+
+#: app/Services/TransStrings.php:103
+msgid "Open in Site Editor"
+msgstr ""
+
+#: app/Services/TransStrings.php:104
+msgid "Optional"
+msgstr ""
+
+#: app/Services/TransStrings.php:105
+msgid "Page behind the email"
+msgstr ""
+
+#: app/Services/TransStrings.php:106
+msgid "Placement needed"
+msgstr ""
+
+#: app/Services/TransStrings.php:107
+msgid "Preview"
+msgstr ""
+
+#: app/Services/TransStrings.php:108
+msgid "Quoted comment background"
+msgstr ""
+
+#: app/Services/TransStrings.php:109
+msgid "Quoted comment text"
+msgstr ""
+
+#: app/Services/TransStrings.php:110
+msgid "Reads the template and everything it pulls in. A shortcode inside a single post's own content will not show up here."
+msgstr ""
+
+#: app/Services/TransStrings.php:111
+msgid "Recheck"
+msgstr ""
+
+#. translators: %s is <code>wp-comments-post.php</code>, the WordPress comment endpoint
+#: app/Services/TransStrings.php:113
+#, php-format
+msgid "Recommended. Anything posted to the default WordPress form is rejected on the post types above, which is what stops bots hitting %s. Users who can moderate comments are never blocked."
+msgstr ""
+
+#. translators: %s is a link reading "template design"
+#: app/Services/TransStrings.php:115
+#, php-format
+msgid "Rendered against the most recent comment on your site, through the %s every email shares."
+msgstr ""
+
+#: app/Services/TransStrings.php:116
+msgid "Reply nesting depth"
+msgstr ""
+
+#: app/Services/TransStrings.php:117
+msgid "Reply-To email"
+msgstr ""
+
+#: app/Services/TransStrings.php:118
+msgid "Reply-To name"
+msgstr ""
+
+#: app/Services/TransStrings.php:119
+msgid "Require a name and email"
+msgstr ""
+
+#: app/Services/TransStrings.php:120
+msgid "Reset it with"
+msgstr ""
+
+#: app/Services/TransStrings.php:121
+msgid "Save changes"
+msgstr ""
+
+#: app/Services/TransStrings.php:122
+msgid "Scheduling and appointments inside WordPress."
+msgstr ""
+
+#: app/Services/TransStrings.php:123
+msgid "Send it"
+msgstr ""
+
+#: app/Services/TransStrings.php:124
+msgid "Send straight to trash"
+msgstr ""
+
+#: app/Services/TransStrings.php:125
+msgid "Sender"
+msgstr ""
+
+#: app/Services/TransStrings.php:126
+msgid "Sent by FluentComments, only for comments on the post types it runs on."
+msgstr ""
+
+#: app/Services/TransStrings.php:127
+msgid "Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:128
+msgid "Settings &rsaquo; Discussion"
+msgstr ""
+
+#: app/Services/TransStrings.php:129
+msgid "Shown above the message. Left off if you leave this empty."
+msgstr ""
+
+#: app/Services/TransStrings.php:130
+msgid "Shown against a real comment from your site where there is one."
+msgstr ""
+
+#: app/Services/TransStrings.php:131
+msgid "Sits under the message. Leave it empty for your site name and address."
+msgstr ""
+
+#: app/Services/TransStrings.php:132
+msgid "Something is wrong!"
+msgstr ""
+
+#: app/Services/TransStrings.php:133
+msgid "Something wrong?"
+msgstr ""
+
+#: app/Services/TransStrings.php:134
+msgid "Source on GitHub"
+msgstr ""
+
+#: app/Services/TransStrings.php:135
+msgid "Still using the default Comments block"
+msgstr ""
+
+#: app/Services/TransStrings.php:136
+msgid "Subject"
+msgstr ""
+
+#: app/Services/TransStrings.php:137
+msgid "Subject line"
+msgstr ""
+
+#: app/Services/TransStrings.php:138
+msgid "Subject:"
+msgstr ""
+
+#: app/Services/TransStrings.php:139
+msgid "Support questions go to the wordpress.org forum. Bugs and pull requests go to GitHub, where they get read faster."
+msgstr ""
+
+#: app/Services/TransStrings.php:140
+msgid "System"
+msgstr ""
+
+#: app/Services/TransStrings.php:141
+msgid "Template"
+msgstr ""
+
+#: app/Services/TransStrings.php:142
+msgid "Template design"
+msgstr ""
+
+#: app/Services/TransStrings.php:143
+msgid "The frame every FluentComments email is rendered into, and the addresses they come from."
+msgstr ""
+
+#: app/Services/TransStrings.php:144
+msgid "The preview beside this repaints as you drag."
+msgstr ""
+
+#. translators: 1: the "Core" chip, 2: a link reading "Settings > Discussion"
+#: app/Services/TransStrings.php:146
+#, php-format
+msgid "The switches take effect as you set them, so there is nothing to save on this page. The two above marked %1$s are the same WordPress options as %2$s."
+msgstr ""
+
+#: app/Services/TransStrings.php:147
+msgid "The wording FluentComments ships with is sent."
+msgstr ""
+
+#: app/Services/TransStrings.php:148
+msgid "Their first comment waits, the rest go straight through."
+msgstr ""
+
+#: app/Services/TransStrings.php:149
+msgid "These post types use the FluentComments form instead of the WordPress one."
+msgstr ""
+
+#: app/Services/TransStrings.php:150
+msgid "This email"
+msgstr ""
+
+#: app/Services/TransStrings.php:151
+msgid "This one goes to several people at once, so there is no single recipient to greet."
+msgstr ""
+
+#: app/Services/TransStrings.php:152
+msgid "This preview could not be built."
+msgstr ""
+
+#: app/Services/TransStrings.php:153
+msgid "To the people who comment"
+msgstr ""
+
+#: app/Services/TransStrings.php:154
+msgid "To you"
+msgstr ""
+
+#: app/Services/TransStrings.php:155
+msgid "Unsaved changes"
+msgstr ""
+
+#: app/Services/TransStrings.php:156
+msgid "Use this image"
+msgstr ""
+
+#: app/Services/TransStrings.php:157
+msgid "Waits in the moderation queue for you."
+msgstr ""
+
+#: app/Services/TransStrings.php:158
+msgid "What gets sent"
+msgstr ""
+
+#: app/Services/TransStrings.php:159
+msgid "When to hold a comment"
+msgstr ""
+
+#: app/Services/TransStrings.php:160
+msgid "Where FluentComments runs"
+msgstr ""
+
+#: app/Services/TransStrings.php:161
+msgid "Where FluentComments runs, and the rules every comment is held to. Notification emails are on the Emails tab."
+msgstr ""
+
+#: app/Services/TransStrings.php:162
+msgid "Who can comment"
+msgstr ""
+
+#: app/Services/TransStrings.php:163
+msgid "WordPress applies these to every comment, ours included."
+msgstr ""
+
+#: app/Services/TransStrings.php:164
+msgid "WordPress builds this one itself, as plain text, and FluentComments leaves it alone. There is nothing here to preview."
+msgstr ""
+
+#: app/Services/TransStrings.php:165
+msgid "WordPress default"
+msgstr ""
+
+#: app/Services/TransStrings.php:166
+msgid "WordPress sends its own notice, untouched. Nothing here changes it."
+msgstr ""
+
+#: app/Services/TransStrings.php:167
+msgid "WordPress sends these two itself, and these are its own switches. Leave the wording alone and they go out exactly as they do today; write your own and FluentComments rewrites them on the way out, on its post types only."
+msgstr ""
+
+#: app/Services/TransStrings.php:168
+msgid "Wording"
+msgstr ""
+
+#: app/Services/TransStrings.php:169
+msgid "Write your own instead"
+msgstr ""
+
+#: app/Services/TransStrings.php:170
+msgid "You are getting this because you commented on our site."
+msgstr ""
+
+#: app/Services/TransStrings.php:171
+msgid "Your own"
+msgstr ""
+
+#: app/Services/TransStrings.php:172
+msgid "Your site"
+msgstr ""
+
+#: app/Services/TransStrings.php:173
+msgid "Your subject and body below are sent instead of the default."
+msgstr ""
+
+#: app/Services/TransStrings.php:174
+msgid "[fluent_comments] shortcode found"
+msgstr ""
+
+#: app/Services/TransStrings.php:175
+msgid "start from the default"
+msgstr ""
+
+#: app/Services/TransStrings.php:176
+msgid "template design"
+msgstr ""
+
+#: app/Services/TransStrings.php:177
+msgid "★ Leave a review"
 msgstr ""
 
 #. translators: %s: comment count.
@@ -378,79 +1222,54 @@ msgstr ""
 msgid "Post Comment"
 msgstr ""
 
-#: resources/block/editor.jsx:53
+#: dist/block/editor.jsx.js:1
 msgid "Latest comments"
 msgstr ""
 
-#: resources/block/editor.jsx:59
+#: dist/block/editor.jsx.js:1
 msgid "Display Settings"
 msgstr ""
 
-#: resources/block/editor.jsx:61
+#: dist/block/editor.jsx.js:1
 msgid "Show Title"
 msgstr ""
 
-#: resources/block/editor.jsx:68
+#: dist/block/editor.jsx.js:1
 msgid "Title (with comments)"
 msgstr ""
 
-#: resources/block/editor.jsx:72
+#: dist/block/editor.jsx.js:1
 msgid "Use {count} to show comment count"
 msgstr ""
 
-#: resources/block/editor.jsx:75
+#: dist/block/editor.jsx.js:1
 msgid "Title (no comments)"
 msgstr ""
 
-#: resources/block/editor.jsx:83
+#: dist/block/editor.jsx.js:1
 msgid "Show Avatars"
 msgstr ""
 
-#: resources/block/editor.jsx:88
+#: dist/block/editor.jsx.js:1
 msgid "Border Radius"
 msgstr ""
 
-#: resources/block/editor.jsx:97
+#: dist/block/editor.jsx.js:1
 msgid "Color Settings"
 msgstr ""
 
-#: resources/block/editor.jsx:103
+#: dist/block/editor.jsx.js:1
 msgid "Primary Color"
 msgstr ""
 
-#: resources/block/editor.jsx:108
+#: dist/block/editor.jsx.js:1
 msgid "Text Color"
 msgstr ""
 
-#: resources/block/editor.jsx:113
+#: dist/block/editor.jsx.js:1
 msgid "Card Background"
 msgstr ""
 
-#: resources/block/editor.jsx:140
+#: dist/block/editor.jsx.js:1
 msgid "Submit"
-msgstr ""
-
-#: resources/block/block.json
-msgctxt "block title"
-msgid "Fluent Comments"
-msgstr ""
-
-#: resources/block/block.json
-msgctxt "block description"
-msgid "Display comments and comment form with AJAX loading and spam protection."
-msgstr ""
-
-#: resources/block/block.json
-msgctxt "block keyword"
-msgid "comments"
-msgstr ""
-
-#: resources/block/block.json
-msgctxt "block keyword"
-msgid "discussion"
-msgstr ""
-
-#: resources/block/block.json
-msgctxt "block keyword"
-msgid "fluent"
 msgstr ""

@@ -1,6 +1,7 @@
 <script>
     import { ajax, errorMessage } from './ajax';
     import { getSession, invalidateSession, readHashedCookie } from './session';
+    import { autosizeTextArea } from './autosize';
 
     let { documentId, threadId, willScroll, oncreated, showAvatar = true } = $props();
 
@@ -96,11 +97,8 @@
     function resizeTextArea(event) {
         if (resizeFrame) cancelAnimationFrame(resizeFrame);
 
-        resizeFrame = requestAnimationFrame(() => {
-            const el = event.target;
-            el.style.height = '5px';
-            el.style.height = Math.min(el.scrollHeight, 300) + 'px';
-        });
+        const el = event.target;
+        resizeFrame = requestAnimationFrame(() => autosizeTextArea(el));
     }
 
     // Injected after load, so anything that binds on DOMContentLoaded has

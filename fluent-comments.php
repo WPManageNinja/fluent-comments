@@ -37,10 +37,16 @@ class FluentCommentsPlugin
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/CommentSubmission.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Frontend.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Mailer.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/SmartCodeParser.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/EmailService.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/FluentWalkerComment.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/TemplateScanner.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/DiscussionSettings.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/AdminSettingsHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/EmailSettingsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentsHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CommentNotificationHandler.php';
+        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/CoreEmailHandler.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/BlockHandler.php';
 
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/hooks.php';

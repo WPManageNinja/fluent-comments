@@ -29,9 +29,43 @@ class Mailer
         $this->setDefaultHeaders();
     }
 
+    /**
+     * From and Reply-To as set on the email template screen.
+     *
+     * Left empty unless somebody filled them in, so by default wp_mail()
+     * keeps deciding - which is what an SMTP plugin expects, and what a
+     * site with a properly configured sender address wants.
+     */
     public function setDefaultHeaders($settings = null)
     {
+        if ($settings === null) {
+            $settings = EmailService::getTemplateSettings();
+        }
+
+        if (!empty($settings['from_email']) && is_email($settings['from_email'])) {
+            $this->from = $this->addressHeader($settings['from_name'], $settings['from_email']);
+        }
+
+        if (!empty($settings['reply_to_email']) && is_email($settings['reply_to_email'])) {
+            $this->replyTo = $this->addressHeader($settings['reply_to_name'], $settings['reply_to_email']);
+        }
+
         return $this;
+    }
+
+    /**
+     * A display name reaches a mail header, so anything that could start a
+     * second one is stripped.
+     *
+     * @param string $name
+     * @param string $email
+     * @return string
+     */
+    private function addressHeader($name, $email)
+    {
+        $name = trim(str_replace(['"', "\r", "\n"], '', (string)$name));
+
+        return $name ? '"' . $name . '" <' . $email . '>' : $email;
     }
 
     public function setSubject($subject)

@@ -13,7 +13,7 @@ namespace FluentComments\App\Services;
  * emails live, along with all of core's own validation.
  *
  * What it deliberately does NOT do is run other plugins' comment form
- * validation. Fluent Comments renders its own form and does not fire
+ * validation. FluentComments renders its own form and does not fire
  * core's comment_form hooks, so a plugin that adds a CAPTCHA field never
  * gets to render one here. Letting its validator run anyway would reject
  * every comment on the site for want of a field that was never on the

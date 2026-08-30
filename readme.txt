@@ -1,6 +1,6 @@
-=== FluentComments - Spam protection, AntiSpam, Ajax Enhanced Comments ===
+=== FluentComments - AJAX Comments, Anti-Spam & Comment Email Notifications ===
 Contributors: techjewel, wpmanageninja
-Tags: comments, spam protection, better comments, ajax comments
+Tags: comments, ajax comments, spam protection, antispam, comment notification
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,126 +8,230 @@ Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AJAX powered realtime comments. Designed to prevent spams, performance and make comments beautiful again 🚀
+AJAX comments with layered spam protection and no CAPTCHA. Threaded replies, load more, and 5 editable notification emails. Free, no pro version.
 
 == Description ==
 
-Fluent Comments is a better comment form and comment spam protection plugin. It is easy to use, and it works with classic themes and block (FSE) themes alike.
-Designed to supercharge WordPress native comments with beautiful design, super fast, spam protection. Fluent Comments changes your site's commenting experience and provides you with user engagement features.
+**FluentComments replaces the WordPress comment form with a fast, modern, AJAX powered one, and it stops comment spam before it ever reaches your moderation queue.**
 
-==Amazing Features==
-- AJAX powered realtime comments
-- Layered spam protection: signed submission tokens, a honeypot field, timing checks and per-IP rate limiting
-- Intuitive Comment Form
-- Beautiful Email Notifications for new comments to authors, admins and commenters
-- Beautiful design and user experience
-- Works with classic themes, block (FSE) themes and page builders
-- Gutenberg block with colour and title options, plus a shortcode
+Comments post without a page reload. Replies thread properly. Spam is blocked by several layers working together, so your readers never have to solve a CAPTCHA. And every email your site sends because somebody commented, whether that email goes to the commenter, the post author or you, can be rewritten in your own words with your own logo and colors.
 
-==Upcoming Features==
-- More Design Options
+FluentComments works on classic themes, block (FSE) themes and page builders. Every feature is free. **There is no pro version, no upsell and no paid add-on.** The whole plugin is open source on [GitHub](https://github.com/WPManageNinja/fluent-comments/).
 
-==Using with Block (FSE) Themes==
-Fluent Comments works with block themes out of the box. It replaces the Comments block in your theme's templates automatically, so there is nothing to configure.
+= FluentComments at a glance =
 
-If you would rather place it yourself, turn off "Replace the theme's Comments block" in the settings and add the **Fluent Comments** block to your template, or use the `[fluent_comments]` shortcode.
+* **AJAX comments.** Post a comment or a reply with no page reload.
+* **Comment spam protection.** Signed tokens, a honeypot, a timing check and rate limits, with no CAPTCHA for your readers.
+* **Threaded replies** that follow your WordPress discussion depth.
+* **"Load more" pagination** instead of 400 comments in one request.
+* **Five comment notification emails.** Each one can be edited, previewed and switched off.
+* **An email template designer.** Your logo, your colors, your footer and your From address, shared by all five.
+* **Block (FSE) theme support** with a real block, plus a `[fluent_comments]` shortcode for page builders.
+* **Cache friendly.** There is no security nonce anywhere in the plugin, so a cached comment form never expires.
+* **Light, dark and system** appearance for the admin screen.
+* **Developer friendly.** A small, documented set of actions and filters.
+* **100% free and open source**, GPLv2.
 
-== Other Plugins By WPManageNinja Team ==
-<ul>
-	<li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">Fluent Forms – Fastest Contact Form Builder Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/ninja-tables/" target="_blank">Ninja Tables – Best WP DataTables Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/ninja-charts/" target="_blank">Ninja Charts – Best WP Charts Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/wp-payment-form/" target="_blank">WPPayForm - Stripe Payments Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/mautic-for-fluent-forms/" target="_blank">Mautic Integration For Fluent Forms</a></li>
-	<li><a href="https://wordpress.org/plugins/fluentforms-pdf/" target="_blank">Fluent Forms PDF - PDF Entries for Fluent Forms</a></li>
-	<li><a href="https://wordpress.org/plugins/fluent-smtp/" target="_blank">FluentSMTP - The Most Advanced SMTP, SES Plugin for WordPress</a></li>
-</ul>
+= Why FluentComments =
 
-== CONTRIBUTE ==
-If you want to contribute to this project or just report a bug, you are more than welcome. Please check repository from <a href="https://github.com/WPManageNinja/fluent-comments/">Github</a>.
+WordPress comments are a genuinely good feature buried under a form from 2010 and a spam problem that most people solve by turning comments off. FluentComments fixes both halves: how comments look and feel, and the flood of junk behind them.
 
+= ⚡ Instant, AJAX powered commenting =
+
+* Post a comment or a reply **without reloading the page**
+* Threaded replies that follow your WordPress discussion depth setting
+* **"Load more"** pagination instead of dumping 400 comments into one request
+* Gravatar avatars, relative timestamps and a clean, modern card layout
+* Fully responsive, and styled with CSS custom properties so your theme can restyle every part of it
+* The whole interface is translatable
+
+= 🛡️ Comment spam protection, without a CAPTCHA =
+
+Spam is scored, not guessed at. A borderline comment is **held for moderation**, and only a conclusive failure is turned away. Nobody is asked to identify a traffic light.
+
+* **Signed submission tokens.** Every comment needs a short lived, HMAC signed token that is issued in a separate request. A bot that posts blindly at your site never gets one.
+* **Single use tokens, bound to a session cookie.** A token cannot be replayed, or lifted from another visitor's page.
+* **A honeypot field** whose name comes from your site's own salt. It is different on every install, so it cannot be hard coded against.
+* **A timing check.** A form submitted faster than a human could type is scored as suspicious.
+* **Rate limiting**, keyed per session first and per IP only as a backstop. An office or a CDN exit address is never counted as one person.
+* **Native form rejection.** Once FluentComments handles a post type, anything posted to the default WordPress endpoint without our fields is refused. Bots that skip your page and POST straight to `wp-comments-post.php` get nothing.
+* Every threshold can be adjusted with a filter, and Akismet keeps working alongside it.
+
+= ✉️ Five comment notification emails, all yours to rewrite =
+
+FluentComments owns every notification your site sends about a comment, and puts them all on one screen:
+
+1. **A held comment was approved.** Sent by FluentComments to the commenter.
+2. **Someone replied in their thread.** Sent to everyone above the reply.
+3. **A comment landed on their post.** Sent to the post author.
+4. **A comment was posted.** WordPress's own notice, rewritten.
+5. **A comment is waiting for review.** WordPress's own moderation notice, rewritten.
+
+* Switch each one on or off from its own row. The switch takes effect immediately, with no save button.
+* Edit the subject and body in a real WordPress editor. Smartcodes like `{{comment.author}}`, `{{post.title}}`, `{{receiver.name}}` and `{{comment.content}}` are filled in when the mail goes out.
+* **Preview an email against a real comment from your site** before you send anything.
+* A shared **template designer** for your logo, your colors, your footer text, and the From and Reply-To addresses.
+* WordPress's own two notices are left completely alone until you explicitly ask to replace them. Upgrading the plugin never quietly changes an email your site was already sending.
+
+= 🧩 Block themes, classic themes, page builders =
+
+* A **FluentComments block** for the Site Editor, with its own title, avatar, color and border radius controls
+* A `[fluent_comments]` shortcode that works anywhere, including page builders
+* On a classic theme it takes over `comments_template` automatically, so there is nothing to place
+* On a block theme the plugin **never rewrites your templates for you**. Instead, the settings screen works out which template each of your post types renders through, follows its template parts and patterns, and tells you exactly which post types still need the block placed
+
+= ⚙️ Settings that don't fight WordPress =
+
+The settings screen puts the WordPress Discussion options that actually matter next to the plugin's own: the moderation word lists, the link limit, threading depth, who may comment, and closing comments on old posts.
+
+They are read and written **in place** as real WordPress options, never copied. This screen and Settings › Discussion can never disagree with each other.
+
+= 🚀 Built for cached sites =
+
+Assume every page on your site is served from a full page cache to somebody else. FluentComments does.
+
+* **Nothing visitor specific is ever printed into the HTML.** No identity, no token, and no security nonce anywhere in the plugin, so a comment form served from cache can never fail with a stale security token.
+* The first page of comments is **rendered into the page itself**, so a visitor who only reads never triggers an uncached request.
+* Everything per visitor is fetched **on intent**, when someone actually goes to comment.
+
+= 🧑‍💻 For developers =
+
+A small, documented extension API that works identically on both front ends:
+
+* `fluent_comments/form_fields`: render your own fields into the form
+* `fluent_comments/validate_submission`: reject a submission with a `WP_Error`
+* `fluent_comments/comment_data`: adjust the comment before it reaches WordPress
+* `fluent_comments/spam_score`: nudge the score up or down
+* `fluent_comments/before_process` and `fluent_comments/after_added_comment`: act around the insert
+
+Every comment goes through `wp_handle_comment_submission()`, the same function `wp-comments-post.php` uses, so core's validation, moderation rules and `comment_post` hook all behave exactly as they always did.
+
+= 100% free, forever =
+
+No pro version. No locked features. No "upgrade to unlock". Every feature described on this page is in the plugin you are about to install, and the source is on [GitHub](https://github.com/WPManageNinja/fluent-comments/) under GPLv2.
+
+= Contribute on GitHub =
+
+FluentComments is fully open source. If you want to contribute, or just report a bug, you are very welcome. The repository is on [GitHub](https://github.com/WPManageNinja/fluent-comments/).
+
+= Other plugins by the WPManageNinja team =
+
+* [FluentCart - Simple and Powerful eCommerce Plugin for WordPress](https://wordpress.org/plugins/fluent-cart/)
+* [Fluent Forms - Fastest Contact Form Builder Plugin for WordPress](https://wordpress.org/plugins/fluentform/)
+* [FluentSMTP - The Most Advanced SMTP, SES Plugin for WordPress](https://wordpress.org/plugins/fluent-smtp/)
+* [FluentCRM - Email Marketing Automation and CRM Plugin for WordPress](https://wordpress.org/plugins/fluent-crm/)
+* [Ninja Tables - Best WP DataTables Plugin for WordPress](https://wordpress.org/plugins/ninja-tables/)
 
 == Installation ==
 
-1. Install FluentComments either via the WordPress.org plugin repository or by uploading the files to your server.
-2. Activate FluentComments from Plugins page.
-3. That's it, no additional setup required. Enjoy the secure and beautiful comments in your WordPress.
+1. Install FluentComments from the WordPress.org plugin directory, or upload the plugin folder to `/wp-content/plugins/`.
+2. Activate FluentComments from the Plugins page.
+3. Go to **Comments › FluentComments** and pick the post types it should handle. That is the whole setup.
+
+**If your theme is a block (FSE) theme**, there is one extra step. Open the Site Editor, edit the template your posts render through, replace the **Comments** block with the **FluentComments** block, and save. Or drop the `[fluent_comments]` shortcode wherever you want comments. The settings screen checks this for you and tells you which post types still need it.
 
 == Frequently Asked Questions ==
-= How does Fluent Comments prevent spam =
 
-Fluent Comments layers several checks. Posting a comment requires a signed, short-lived token that is issued in a separate request, so a bot posting blindly to your site is turned away. On top of that there is a hidden honeypot field, a minimum time between opening the form and submitting it, and a per-IP limit on how many comments can be posted per hour. Together these stop the overwhelming majority of automated comment spam, and every threshold can be adjusted with a filter.
+= Is FluentComments really free? Is there a pro version? =
+
+It is free, and there is no pro version. Every feature listed on this page is in the free plugin: the spam protection, all five emails, the template designer and the block. Nothing is held back, and the whole thing is GPLv2 open source on GitHub.
+
+= How does FluentComments stop comment spam without a CAPTCHA? =
+
+By making the submission itself expensive to fake. Posting a comment requires a short lived, cryptographically signed token that is issued in a separate request and tied to a session cookie, so it cannot be replayed or reused. On top of that there is a honeypot field with an install specific name, a minimum time between opening the form and submitting it, and rate limiting keyed per session with a per IP backstop. Anything posted straight to the default WordPress endpoint without our fields is refused outright. Suspicious submissions are scored and held for moderation rather than thrown away, and every threshold can be changed with a filter.
+
+= Do I still need reCAPTCHA or a CAPTCHA plugin? =
+
+No. FluentComments is built so your readers never have to prove they are human. The checks happen between the browser and your server, not in front of the person trying to leave a comment.
+
+= Does it work with Akismet? =
+
+Yes. Akismet inspects the comment itself and needs nothing from the form, so it runs normally alongside FluentComments.
 
 = I use another anti-spam or CAPTCHA plugin on my comment form =
 
-Fluent Comments renders its own comment form, so a field another plugin wants to add, such as a CAPTCHA, is never printed on the page. Because that field cannot be filled in, its validator is skipped while a Fluent Comments submission is processed, rather than rejecting every comment on your site. Akismet keeps working normally, since it examines the comment itself and needs nothing from the form. If you want to keep another plugin's check, add its callback to the `fluent_comments/allowed_comment_hooks` filter, and render its field with the `fluent_comments/form_fields` action.
+FluentComments renders its own comment form, so a field another plugin wants to add, like a CAPTCHA or an extra question, is never printed on the page. Because nobody could fill that field in, running its validator anyway would reject every comment on your site. So those validators are skipped for the duration of a FluentComments submission. If you want to keep another plugin's check, add its callback to the `fluent_comments/allowed_comment_hooks` filter and render its field with the `fluent_comments/form_fields` action.
 
-= Will it slow down my website =
+= Does it work with block (FSE) themes? =
 
-Absolutely not. Fluent Comments is designed to be super fast and lightweight. It will not slow down your website.
+Yes. Add the **FluentComments** block in the Site Editor, or use the `[fluent_comments]` shortcode. The plugin never edits your templates on your behalf. But the settings screen does work out which template each post type renders through, looks inside it and its template parts, and tells you which ones still need the block.
 
-= Is it compatible with all themes =
+= Does it work with Elementor, Divi, Bricks and other page builders? =
 
-Yes, it is compatible with all themes. It will work with any theme.
+Yes. Drop the `[fluent_comments]` shortcode into any builder's shortcode or text widget and the full comment list and form render there.
+
+= Will it work with my caching plugin? =
+
+Yes, and it is designed for it. Nothing visitor specific is printed into the page, so a cached comment form is still a valid one. There is no security nonce anywhere in the plugin, which means a form served from cache can never fail with the "your session has expired" error that nonce based forms hit. Everything per visitor is fetched on demand, only when someone actually goes to comment.
+
+= Will it slow down my site? =
+
+No. The first page of comments is rendered into the page itself, so a visitor who only reads never triggers an extra request. There is no webfont, no external service and no third party script. Comments load in pages rather than all at once.
+
+= Can I keep my existing comments? =
+
+Yes. FluentComments uses the normal WordPress comments table and the normal WordPress comment functions. Nothing is migrated, copied or moved. These are your existing comments, displayed and protected better. Deactivate the plugin and your comments are still exactly where they were.
+
+= Can I restyle the comments to match my theme? =
+
+Yes. Every color, spacing value and radius is a CSS custom property, so a handful of `--fcom-*` overrides in your theme will restyle the whole thing. The block also exposes its title, avatars, colors and border radius in the editor sidebar.
+
+= Does it respect my WordPress Discussion settings? =
+
+Completely. Threading depth, moderation keywords, disallowed keywords, the link limit, "comment author must have a previously approved comment", "users must be registered and logged in": all of them are real WordPress options that FluentComments reads and writes in place. The most useful ones are surfaced on the FluentComments screen so you do not have to go hunting for them.
+
+= Can I customize the comment notification emails? =
+
+Yes, all five of them. Rewrite the subject and body of any email, use smartcodes like `{{comment.author}}` and `{{post.title}}`, preview it against a real comment from your site, and set a shared logo, color scheme, footer and From/Reply-To address for all of them. WordPress's own two notices are left untouched unless you explicitly choose to replace them.
+
+= Can I add my own fields to the comment form? =
+
+Yes. Use the `fluent_comments/form_fields` action to render them and `fluent_comments/validate_submission` to check them. They work identically on the block, the shortcode and the classic template. Because fields ship with the per request session payload rather than the cached page, anything time sensitive in them stays fresh.
 
 == Screenshots ==
-1. Comment List
-2. Admin Panel
-3. Notification Email on Comment Approval
-4. Notification Email to Post Author
-5. Notification Email to Commenters
+1. Comments load and post without reloading the page, with threaded replies and an inline reply form
+2. The settings screen: which post types FluentComments runs on, and the rules every comment is held to
+3. Every notification email in one place, each one switched on or off from the row
+4. Write your own subject and body in the WordPress editor, with placeholders for the comment, post and recipient
+5. Every email previewed against a real comment from your own site before it goes out
+6. One template design - logo, colours, footer and From address - shared by every email
+7. The approval notice as the commenter receives it
+8. The whole screen in dark mode, remembered per browser
 
 == Changelog ==
 
-= 2.1.0 (Date: Aug 29, 2026) =
-**Please read before updating**
-* The plugin's own REST API routes have been removed. Every request now goes through admin-ajax, which authenticates by cookie and needs no nonce, so a comment form served from a full page cache can no longer fail with a stale security token. If you built anything against the 2.0.0 REST routes, move it to the `fluent_comment_session`, `fluent_comment_post` and `fluent_comment_list` AJAX actions.
-* Fluent Comments renders its own comment form and no longer fires the core `comment_form` hooks, which means another plugin's CAPTCHA or extra field is never rendered on the page. Running that plugin's validator anyway would reject every comment on your site over a field nobody could fill in, so those validators are skipped for the duration of a Fluent Comments submission. Akismet is unaffected: it inspects the comment itself and needs nothing from the form. See the FAQ if you rely on another anti-spam plugin.
-* Added an extension API that works on both the classic and the block front end: the `fluent_comments/form_fields` action to render your own fields, `fluent_comments/validate_submission` to reject a submission, `fluent_comments/comment_data` to adjust the comment, and `fluent_comments/spam_score` to nudge the spam score.
-
-**Block (FSE) theme support**
-* Fluent Comments now replaces the Comments block in block theme templates automatically. No shortcode or template editing required.
-* Fixed: activating the plugin on a block theme could leave posts with no working comment form. Native comment submissions are now only rejected where Fluent Comments actually renders a replacement.
-* Added a "Replace the theme's Comments block" setting, plus an admin notice when it is turned off.
-
-**Spam protection**
-* Reworked the token system: HMAC signed tokens replace the previous AES tokens, and the block, shortcode and classic front ends now share a single protected submission path. Previously the block path had no spam protection at all on block themes.
-* Tokens are bound to a session cookie and are single use, so one cannot be replayed or lifted from another visitor.
-* Added a honeypot field, a minimum form fill time and rate limiting. Only comments that are actually created count toward the limit, so a mistyped email never locks anyone out.
-* Rate limits are keyed per session first and per IP only as a backstop, so visitors sharing an office or CDN exit address are not counted as one person.
-* Suspicious submissions are now held for moderation and scored rather than rejected outright. Only a conclusive failure is turned away.
-* Comment posting is now POST only and tokens are fetched in a separate request, which closes a CSRF hole in the AJAX endpoint.
-* Comments on draft, pending and private posts are no longer readable by visitors who cannot see the post.
-
-**Fixes**
-* Fixed: the settings screen was blank because its script and stylesheet were loaded from the wrong path.
-* Fixed: comments submitted through the block or shortcode on a classic theme always failed with "Invalid Security Token".
-* Fixed: comment timestamps were stored using server local time instead of UTC.
-* Fixed: post authors received two notification emails for every comment posted through the classic form.
-* Fixed: the block's "Show Avatars" option had no effect on the front end.
-* Fixed: the comment form was shown on posts with comments closed.
-* Fixed: the block rendered its title twice.
-* Fixed: reply depth now follows the WordPress discussion settings instead of being hard coded to two levels.
-* Fixed: a reply could be attached to a comment belonging to a different post.
-* Fixed: pingbacks and trackbacks no longer appear in the comment list.
-
-**Improvements**
-* Comments are now paginated with a "Load more" button instead of loading every comment at once.
-* The first page of comments is rendered into the page itself, so a visitor who only reads never triggers an uncached request.
-* The whole front-end interface is translatable. Previously every string in the block and shortcode view was hard coded English.
-* Added an uninstall routine that removes the plugin's options and transients.
-* Escaping, sanitizing and internationalisation cleanups throughout.
+= 2.1.0 (Date: Aug 30, 2026) =
+* New: an Emails screen. All five comment notification emails can be edited, previewed against a real comment, and switched on or off from one place.
+* New: a shared email template designer for your logo, colors, footer text and From address.
+* New: a FluentComments block for block (FSE) themes. The settings screen tells you which post types still need it.
+* New: comments load in pages with a "Load more" button instead of all at once.
+* New: the most useful WordPress Discussion settings now sit on the FluentComments screen.
+* New: a rebuilt admin screen with light, dark and system appearance modes.
+* Improved: much stronger spam protection, and a suspicious comment is now held for moderation instead of being turned away.
+* Improved: the whole front end is translatable. Previously it was hard coded English.
+* Fixed: comment times were saved in server time instead of UTC.
+* Fixed: post authors got two emails for the same comment.
+* Fixed: the comment form showed on posts with comments closed.
+* Fixed: reply depth ignored your WordPress discussion settings.
+* Fixed: the block's "Show Avatars" option had no effect.
+* Fixed: pingbacks and trackbacks appeared in the comment list.
+* Please note: if you use another anti-spam or CAPTCHA plugin on your comment form, its check no longer runs on the FluentComments form. Akismet is not affected and keeps working.
 
 = 2.0.0 (Date: Jul 07, 2025) =
-- Added support for FSE Themes
-- Added Email Notification for Admins, Authors and Commenters
-- Added option to enable/disable email notification
-- Advanced spam protection with cryptographic tokens
+* Added support for FSE themes
+* Added email notifications for admins, authors and commenters
+* Added an option to enable or disable email notifications
+* Advanced spam protection with cryptographic tokens
 
 = 1.0.1 (Date: May 18, 2024) =
-* Added shortcode support for FSE Themes
+* Added shortcode support for FSE themes
 * Fixed minor CSS issues
-* Checking Logged in requirement for comment form
+* Checking logged in requirement for the comment form
 
 = 1.0.0 (Date: Sep 30, 2023) =
 * Initial release
+
+== Upgrade Notice ==
+
+= 2.1.0 =
+All five comment notification emails can now be edited and previewed on one screen, there is a block for FSE themes, and spam protection is much stronger. Note: if another anti-spam or CAPTCHA plugin adds a field to your comment form, its check no longer runs.

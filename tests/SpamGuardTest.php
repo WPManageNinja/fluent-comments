@@ -121,7 +121,13 @@ check('scores 40 while younger than the minimum age', !is_wp_error($verified) &&
 
 echo "\nTampering\n";
 resetGuard($sid);
-check('rejects a flipped signature', is_wp_error(SpamGuard::verifyToken(substr($token, 0, -1) . 'f', 42)));
+// Not a fixed replacement character: the signature is hex, so appending a
+// literal 'f' left one token in sixteen completely unchanged, and the check
+// passed a valid token roughly that often.
+$lastChar = substr($token, -1);
+$flipped = substr($token, 0, -1) . ($lastChar === 'f' ? 'e' : 'f');
+check('the flip actually changed the token', $flipped !== $token);
+check('rejects a flipped signature', is_wp_error(SpamGuard::verifyToken($flipped, 42)));
 check('rejects a token minted for another post', is_wp_error(SpamGuard::verifyToken($token, 43)));
 check('rejects a truncated token', is_wp_error(SpamGuard::verifyToken('v3|1|2|3', 42)));
 check('rejects an empty token', is_wp_error(SpamGuard::verifyToken('', 42)));

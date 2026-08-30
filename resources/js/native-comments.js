@@ -1,5 +1,6 @@
 import { ajax } from './ajax';
 import { getSession, invalidateSession, readHashedCookie } from './session';
+import { autosizeTextArea } from './autosize';
 
 document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('flc_comment_form');
@@ -87,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         resizeTextArea() {
-            const el = this.textArea;
-            el.style.height = '76px';
-            el.style.height = Math.min(el.scrollHeight, 300) + 'px';
+            autosizeTextArea(this.textArea);
         },
 
         /**

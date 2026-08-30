@@ -40,17 +40,27 @@ class CommentSubmission
     const FOREIGN_HOOKS = ['preprocess_comment', 'pre_comment_on_post'];
 
     /**
-     * True while a submission of ours is in flight, so the native comment
-     * rejection knows to stand aside for it.
+     * How many submissions of ours are on the stack, so the native comment
+     * rejection knows to stand aside for them.
      *
-     * @var bool
+     * A count rather than a bool: a plugin that posts a comment from inside
+     * 'comment_post' or 'fluent_comments/after_added_comment' nests one
+     * submission inside another, and the inner one finishing does not mean
+     * the outer one has.
+     *
+     * @var int
      */
-    private static $inFlight = false;
+    private static $inFlight = 0;
 
     /**
-     * Hook registries saved while foreign callbacks are isolated.
+     * Hook registries saved while foreign callbacks are isolated, one frame
+     * per nested submission. Only the outermost frame holds the registries
+     * as the request found them, which is why restore pops rather than
+     * clears - an inner call that emptied this left the outer call's finally
+     * with nothing to put back, and the request ran on with every third
+     * party comment validator missing.
      *
-     * @var array<string, \WP_Hook>
+     * @var array<int, array<string, \WP_Hook>>
      */
     private static $suppressed = [];
 
@@ -61,7 +71,7 @@ class CommentSubmission
      */
     public static function isInFlight()
     {
-        return self::$inFlight;
+        return self::$inFlight > 0;
     }
 
     /**
@@ -179,13 +189,13 @@ class CommentSubmission
 
             add_filter('preprocess_comment', [self::class, 'stampAuthorIp'], PHP_INT_MAX);
 
-            self::$inFlight = true;
+            self::$inFlight++;
 
             do_action('fluent_comments/before_process', $post);
 
             $comment = wp_handle_comment_submission($commentData);
         } finally {
-            self::$inFlight = false;
+            self::$inFlight = max(0, self::$inFlight - 1);
 
             remove_filter('preprocess_comment', [self::class, 'stampAuthorIp'], PHP_INT_MAX);
 
@@ -255,14 +265,14 @@ class CommentSubmission
             'Akismet::auto_check_comment',
         ]);
 
-        self::$suppressed = [];
+        $frame = [];
 
         foreach (self::FOREIGN_HOOKS as $hook) {
             if (empty($wp_filter[$hook]) || !($wp_filter[$hook] instanceof \WP_Hook)) {
                 continue;
             }
 
-            self::$suppressed[$hook] = $wp_filter[$hook];
+            $frame[$hook] = $wp_filter[$hook];
 
             $kept = new \WP_Hook();
 
@@ -276,6 +286,8 @@ class CommentSubmission
 
             $wp_filter[$hook] = $kept;
         }
+
+        self::$suppressed[] = $frame;
     }
 
     /**
@@ -287,11 +299,13 @@ class CommentSubmission
     {
         global $wp_filter;
 
-        foreach (self::$suppressed as $hook => $original) {
-            $wp_filter[$hook] = $original;
+        if (!self::$suppressed) {
+            return;
         }
 
-        self::$suppressed = [];
+        foreach (array_pop(self::$suppressed) as $hook => $original) {
+            $wp_filter[$hook] = $original;
+        }
     }
 
     /**

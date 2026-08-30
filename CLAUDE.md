@@ -20,6 +20,7 @@ php tests/NativeRejectionTest.php  # who gets rejected, and who never does
 php tests/CommentEmailTest.php     # smartcode escaping + where "is this sent" lives
 php tests/CommentNotificationTest.php  # who receives an email, and who never does
 php tests/RequiredIdentityTest.php     # our own name + email rule, independent of core
+php tests/PayloadCapTest.php           # the ceiling on nodes in one list response
 ```
 
 ```bash

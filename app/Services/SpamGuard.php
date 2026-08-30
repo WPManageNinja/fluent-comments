@@ -553,6 +553,25 @@ class SpamGuard
      * Leaving it off is safe by design: the limits that matter follow the
      * visitor's session cookie, and the IP is only the coarse backstop.
      *
+     * Two things to understand before turning it on:
+     *
+     * 1. Turning it on trusts the header, not the proxy. Nothing here checks
+     *    that the request actually arrived from your load balancer, so if the
+     *    origin is reachable directly - or the proxy appends to an existing
+     *    X-Forwarded-For rather than replacing it, or does not strip
+     *    CF-Connecting-IP - a client can put whatever it likes in that header
+     *    and rotate its apparent address on every request. Only switch it on
+     *    when the origin accepts connections from the proxy alone, and
+     *    narrow 'fluent_comments/proxy_ip_headers' to the single header your
+     *    proxy actually sets rather than leaving all three enabled.
+     *
+     * 2. Leaving it off behind a proxy that does not rewrite REMOTE_ADDR
+     *    puts every visitor in one bucket. The per-session limit is
+     *    unaffected, which is why this is a backstop rather than a lockout,
+     *    but the per-IP ceiling then applies to the whole site at once. Most
+     *    managed hosts and the Cloudflare plugin restore the real address
+     *    into REMOTE_ADDR for you, in which case there is nothing to do here.
+     *
      * @return string
      */
     public static function getIp()

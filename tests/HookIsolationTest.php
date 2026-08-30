@@ -155,5 +155,43 @@ invoke('suppressForeignHooks');
 invoke('restoreForeignHooks');
 check('is a no-op rather than a fatal', $GLOBALS['wp_filter'] === []);
 
+echo "\nA submission nested inside another\n";
+
+// A plugin that posts a comment from inside 'comment_post' or
+// 'fluent_comments/after_added_comment' puts one of these inside another.
+// The inner call finishing does not mean the request is done being ours,
+// and the inner restore must not hand the outer one an empty registry.
+buildHooks();
+$original = $GLOBALS['wp_filter']['preprocess_comment']->names();
+
+invoke('suppressForeignHooks');   // outer
+invoke('suppressForeignHooks');   // inner
+
+check(
+    'the inner call still leaves only the allow list standing',
+    $GLOBALS['wp_filter']['preprocess_comment']->names() === ['Akismet::auto_check_comment']
+);
+
+invoke('restoreForeignHooks');    // inner returns
+
+check(
+    'and the inner restore does not un-suppress the outer submission',
+    $GLOBALS['wp_filter']['preprocess_comment']->names() === ['Akismet::auto_check_comment']
+);
+
+invoke('restoreForeignHooks');    // outer returns
+
+check('only the outermost restore puts the request back', $GLOBALS['wp_filter']['preprocess_comment']->names() === $original);
+check('and pre_comment_on_post comes back with it', $GLOBALS['wp_filter']['pre_comment_on_post']->names() === ['some_captcha_check']);
+
+echo "\nMore restores than suppressions\n";
+
+buildHooks();
+$original = $GLOBALS['wp_filter']['preprocess_comment']->names();
+invoke('suppressForeignHooks');
+invoke('restoreForeignHooks');
+invoke('restoreForeignHooks');
+check('the extra one is a no-op, not a fatal', $GLOBALS['wp_filter']['preprocess_comment']->names() === $original);
+
 echo "\n$passed passed, $failed failed\n";
 exit($failed ? 1 : 0);

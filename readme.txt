@@ -178,7 +178,9 @@ Yes. Every color, spacing value and radius is a CSS custom property, so a handfu
 
 = Does it respect my WordPress Discussion settings? =
 
-Completely. Threading depth, moderation keywords, disallowed keywords, the link limit, "comment author must have a previously approved comment", "users must be registered and logged in": all of them are real WordPress options that FluentComments reads and writes in place. The most useful ones are surfaced on the FluentComments screen so you do not have to go hunting for them.
+With one exception. Threading depth, moderation keywords, disallowed keywords, the link limit, "comment author must have a previously approved comment", "users must be registered and logged in": all of them are real WordPress options that FluentComments reads and writes in place. The most useful ones are surfaced on the FluentComments screen so you do not have to go hunting for them.
+
+The exception is "Comment author must fill out name and email", which FluentComments always applies to its own form whatever that box is set to. See the question below for why.
 
 = Can I customize the comment notification emails? =
 
@@ -187,6 +189,20 @@ Yes, all five of them. Rewrite the subject and body of any email, use smartcodes
 = Can I add my own fields to the comment form? =
 
 Yes. Use the `fluent_comments/form_fields` action to render them and `fluent_comments/validate_submission` to check them. They work identically on the block, the shortcode and the classic template. Because fields ship with the per request session payload rather than the cached page, anything time sensitive in them stays fresh.
+
+= Do commenters have to give a name and email address? =
+
+Yes, unless they are logged in. FluentComments always asks a logged out commenter for both, and it does not follow the WordPress "Comment author must fill out name and email" setting, which is why that option is not on our settings screen. The reason is the notification emails: every one of them is addressed by the commenter's email, so an anonymous comment quietly opts its author out of the reply notifications everybody else in the thread receives, and leaves you nothing to moderate on. Logged in commenters are never asked, because WordPress already has both from their account. The WordPress setting itself is untouched and still applies to any post type FluentComments is not handling.
+
+= My site is behind Cloudflare or a load balancer. Do I need to do anything? =
+
+Usually not. Most managed hosts, and the Cloudflare plugin, put the visitor's real address into `REMOTE_ADDR` for you, and FluentComments reads it from there.
+
+If yours does not, every visitor looks like the same address. The limit that matters follows a per visitor cookie rather than the IP, so nobody gets locked out, but the loose per IP ceiling then applies to the whole site at once. You can opt into reading proxy headers:
+
+`add_filter('fluent_comments/trust_proxy_headers', '__return_true');`
+
+Only do that when your origin server cannot be reached directly, bypassing the proxy. This setting trusts the header rather than verifying the proxy sent it, so on a directly reachable origin a visitor could set the header themselves and sidestep the per IP limit. It is also worth narrowing `fluent_comments/proxy_ip_headers` to the one header your proxy actually sets.
 
 == Screenshots ==
 1. Comments load and post without reloading the page, with threaded replies and an inline reply form

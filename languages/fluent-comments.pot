@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T17:22:00+00:00\n"
+"POT-Creation-Date: 2026-08-30T17:28:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -145,43 +145,43 @@ msgid "Unknown email."
 msgstr ""
 
 #. translators: %s: human readable time difference, e.g. "3 days".
-#: app/Services/CommentsRepository.php:92
+#: app/Services/CommentsRepository.php:139
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: app/Services/CommentSubmission.php:106
+#: app/Services/CommentSubmission.php:116
 msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:380
+#: app/Services/CommentSubmission.php:394
 #: app/Services/Frontend.php:327
 msgid "Please enter your name and email address."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:388
+#: app/Services/CommentSubmission.php:402
 #: app/Services/Frontend.php:328
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:401
-#: app/Services/CommentSubmission.php:413
+#: app/Services/CommentSubmission.php:415
+#: app/Services/CommentSubmission.php:427
 msgid "Invalid post."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:421
+#: app/Services/CommentSubmission.php:435
 msgid "This post is password protected."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:450
+#: app/Services/CommentSubmission.php:464
 msgid "The comment you are replying to could not be found."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:458
+#: app/Services/CommentSubmission.php:472
 msgid "Replies to this comment are not allowed."
 msgstr ""
 
-#: app/Services/CommentSubmission.php:537
+#: app/Services/CommentSubmission.php:551
 #: app/Services/SpamGuard.php:314
 msgid "Your comment could not be posted."
 msgstr ""
@@ -579,7 +579,7 @@ msgstr ""
 msgid "You are posting too quickly. Please slow down and try again later."
 msgstr ""
 
-#: app/Services/SpamGuard.php:647
+#: app/Services/SpamGuard.php:666
 msgid "Your comment could not be verified. Please reload the page and try again."
 msgstr ""
 

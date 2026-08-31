@@ -433,7 +433,7 @@ class Frontend
             'title_with_comments'  => __('Latest comments ({count})', 'fluent-comments'),
             'title_no_comments'    => __('Add your first comment to this post', 'fluent-comments'),
             'loading'              => __('Loading…', 'fluent-comments'),
-            'comment_placeholder'  => __('Write your comment here...', 'fluent-comments'),
+            'comment_placeholder'  => __('Write your comment here…', 'fluent-comments'),
             'name_placeholder'     => __('Your Name', 'fluent-comments'),
             'email_placeholder'    => __('Your Email Address', 'fluent-comments'),
             'submit'               => __('Submit Comment', 'fluent-comments'),

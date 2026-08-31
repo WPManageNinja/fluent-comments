@@ -84,7 +84,7 @@ class EmailSettingsHandler
         $body = wp_kses_post((string)Arr::get($raw, 'email.body', ''));
 
         if ($contentStatus === 'active' && (!$subject || !$body)) {
-            wp_send_json(['message' => __('A customised email needs both a subject and a body.', 'fluent-comments')], 400);
+            wp_send_json(['message' => __('A customized email needs both a subject and a body.', 'fluent-comments')], 400);
         }
 
         EmailService::saveEmail($emailId, $enabled, $contentStatus, [
@@ -300,7 +300,7 @@ class EmailSettingsHandler
                 'comment_author_email' => 'jane@example.com',
                 'comment_author_url'  => 'https://example.com',
                 'comment_author_IP'   => '203.0.113.4',
-                'comment_content'     => __('This is what a comment looks like in your email. It is here so you can see how the spacing, the colours and the type hold up against real text rather than a single short line.', 'fluent-comments'),
+                'comment_content'     => __('This is what a comment looks like in your email. It is here so you can see how the spacing, the colors and the type hold up against real text rather than a single short line.', 'fluent-comments'),
                 'comment_date'        => current_time('mysql'),
                 'comment_date_gmt'    => current_time('mysql', 1),
                 'comment_approved'    => '1',

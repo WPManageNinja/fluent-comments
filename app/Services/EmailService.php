@@ -79,7 +79,7 @@ class EmailService
             'new_comment_to_post_author' => [
                 'name'        => 'new_comment_to_post_author',
                 'title'       => __('A comment landed on their post', 'fluent-comments'),
-                'description' => __('Sent to the author of the post. On a site where the only author is you, WordPress\'s own notice below covers the same ground - turn one of the two off.', 'fluent-comments'),
+                'description' => __('Sent to the author of the post. On a site where the only author is you, WordPress\'s own notice below covers the same ground — turn one of the two off.', 'fluent-comments'),
                 'recipient'   => 'commenter',
                 'owner'       => 'plugin',
                 'toggle_note' => '',
@@ -90,15 +90,15 @@ class EmailService
                 'description' => __('WordPress sends this to you and the post author for every approved comment. We rewrite it on the post types FluentComments runs on.', 'fluent-comments'),
                 'recipient'   => 'site_admin',
                 'owner'       => 'core',
-                'toggle_note' => __('Switching this off is the same as clearing "Anyone posts a comment" on Settings > Discussion.', 'fluent-comments'),
+                'toggle_note' => __('Switching this off is the same as clearing “Anyone posts a comment” on Settings › Discussion.', 'fluent-comments'),
             ],
             'core_comment_moderation'    => [
                 'name'        => 'core_comment_moderation',
                 'title'       => __('A comment is waiting for review', 'fluent-comments'),
-                'description' => __('WordPress sends this when a comment is held. It carries the approve, spam and trash links, so keep those in if you customise it.', 'fluent-comments'),
+                'description' => __('WordPress sends this when a comment is held. It carries the approve, spam and trash links, so keep those in if you customize it.', 'fluent-comments'),
                 'recipient'   => 'site_admin',
                 'owner'       => 'core',
-                'toggle_note' => __('Switching this off is the same as clearing "A comment is held for moderation" on Settings > Discussion.', 'fluent-comments'),
+                'toggle_note' => __('Switching this off is the same as clearing “A comment is held for moderation” on Settings › Discussion.', 'fluent-comments'),
             ],
         ];
 
@@ -623,7 +623,7 @@ class EmailService
                     '##comment.url##',
                     [
                         /* translators: %s is the trash link placeholder. */
-                        sprintf(__('Move it to the trash: %s', 'fluent-comments'), '<a href="##comment.trash_url##">##comment.trash_url##</a>'),
+                        sprintf(__('Move to the trash: %s', 'fluent-comments'), '<a href="##comment.trash_url##">##comment.trash_url##</a>'),
                     ]
                 );
 

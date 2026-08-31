@@ -75,7 +75,7 @@ app.mixin({
                 errorMessage = convertToText(response);
             }
             if (!errorMessage) {
-                errorMessage = $t('Something is wrong!');
+                errorMessage = $t('Something went wrong. Please try again.');
             }
             this.$notify({
                 type: 'error',

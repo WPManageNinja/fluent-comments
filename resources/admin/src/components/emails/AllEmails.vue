@@ -83,7 +83,7 @@ export default {
             return '<span class="flc_chip">' + this.$t('Core') + '</span>';
         },
         discussionLink() {
-            return '<a href="' + this.appVars.discussion_url + '">' + this.$t('Settings &rsaquo; Discussion') + '</a>';
+            return '<a href="' + this.appVars.discussion_url + '">' + this.$t('Settings › Discussion') + '</a>';
         },
         ourEmails() {
             return this.emails.filter(email => email.owner === 'plugin');

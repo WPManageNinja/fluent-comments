@@ -38,7 +38,12 @@ $loginMessage = sprintf(
 // The commenter's saved name and email are deliberately NOT printed here
 // either, for the same reason. They come from the comment_author_* cookies,
 // and the script fills the fields from those, in the browser.
-$commentPlaceholder = __('Enter your comment here...', 'fluent-comments');
+// The same strings the Svelte form renders. Both forms are the one form
+// as far as a reader is concerned, so the wording comes from one place -
+// this file used to say "Enter your comment here" against the other's
+// "Write your comment here", on the same field of the same plugin.
+$strings = \FluentComments\App\Services\Frontend::getStrings();
+$commentPlaceholder = $strings['comment_placeholder'];
 $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
 ?>
 <div class="flc_comment_respond" id="respond">
@@ -66,7 +71,7 @@ $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
                     </div>
                     <?php // Honeypot: hidden from humans, irresistible to bots. Its name is derived from the site salt, so it differs per install. ?>
                     <div class="flc_hp_field" aria-hidden="true">
-                        <label for="flc_<?php echo esc_attr($honeypotField); ?>"><?php esc_html_e('Leave this field empty', 'fluent-comments'); ?></label>
+                        <label for="flc_<?php echo esc_attr($honeypotField); ?>"><?php echo esc_html($strings['honeypot_label']); ?></label>
                         <input type="text" name="<?php echo esc_attr($honeypotField); ?>"
                                id="flc_<?php echo esc_attr($honeypotField); ?>" value="" tabindex="-1"
                                autocomplete="off"/>
@@ -78,14 +83,14 @@ $honeypotField = \FluentComments\App\Services\SpamGuard::getHoneypotField();
                                     <label class="flc_sr-only"
                                            for="flc_person_name"><?php esc_html_e('Full Name', 'fluent-comments'); ?></label>
                                     <input value="" data-flc_prefill="comment_author"
-                                           placeholder="<?php esc_attr_e('Your Name', 'fluent-comments'); ?>" name="author"
+                                           placeholder="<?php echo esc_attr($strings['name_placeholder']); ?>" name="author"
                                            id="flc_person_name" type="text" class="flc_input_text"/>
                                 </div>
                                 <div class="flc_form_field">
                                     <label class="flc_sr-only"
                                            for="flc_person_email"><?php esc_html_e('Email Address', 'fluent-comments'); ?></label>
                                     <input value="" data-flc_prefill="comment_author_email"
-                                           placeholder="<?php esc_attr_e('Your Email Address', 'fluent-comments'); ?>"
+                                           placeholder="<?php echo esc_attr($strings['email_placeholder']); ?>"
                                            name="email" id="flc_person_email" type="email" class="flc_input_text"/>
                                 </div>
                             </div>

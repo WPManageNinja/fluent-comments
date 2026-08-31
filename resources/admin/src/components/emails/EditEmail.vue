@@ -65,12 +65,19 @@
                             <p class="flc_muted">
                                 {{ $t('WordPress builds this one itself, as plain text, and FluentComments leaves it alone. There is nothing here to preview.') }}
                             </p>
+                            <!--
+                                Two whole sentences and a button that reads on its own, rather
+                                than a sentence split around the button. A fragment starting
+                                "- it starts from" is not something a translator can place.
+                            -->
+                            <p class="flc_muted">
+                                {{ $t('Writing your own starts from a FluentComments version you can preview and edit.') }}
+                            </p>
                             <p>
                                 <button type="button" class="flc_link_button"
                                         @click="settings.content_status = 'active'">
                                     {{ $t('Write your own instead') }}
                                 </button>
-                                {{ $t('- it starts from a FluentComments version you can preview and edit.') }}
                             </p>
                         </template>
                     </div>
@@ -99,10 +106,14 @@
                         <label>
                             <strong>{{ $t('Body') }}</strong>
                             <span>
-                                {{ $t('Reset it with') }}
+                                <!--
+                                    The whole label on the button, not a sentence split across
+                                    it with the full stop stranded in the markup. It names both
+                                    fields because useDefault() replaces both.
+                                -->
                                 <button type="button" class="flc_link_button" @click="useDefault()">
-                                    {{ $t('start from the default') }}
-                                </button>.
+                                    {{ $t('Reset the subject and body to the default') }}
+                                </button>
                             </span>
                         </label>
                         <WpEditor v-if="!reloadingEditor" v-model="settings.email.body" :codes="smartcodes"/>

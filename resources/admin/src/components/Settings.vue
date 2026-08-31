@@ -97,7 +97,7 @@
                     <div class="flc_row">
                         <div class="flc_row_text">
                             <strong>{{ $t('Hold comments with this many links') }}</strong>
-                            <span>{{ $t('Link count is the single best spam signal. 2 is a sensible default.') }}</span>
+                            <span>{{ $t('Link count is the single best spam signal. Two is a sensible default.') }}</span>
                         </div>
                         <el-input-number v-model="discussion.comment_max_links" :min="0" :max="100" size="small" />
                     </div>
@@ -225,7 +225,7 @@ export default {
             return '<span class="flc_chip">' + this.$t('Core') + '</span>';
         },
         discussionLink() {
-            return '<a href="' + this.appVars.discussion_url + '">' + this.$t('Settings &rsaquo; Discussion') + '</a>';
+            return '<a href="' + this.appVars.discussion_url + '">' + this.$t('Settings › Discussion') + '</a>';
         },
         showPlacementWarning() {
             return this.isBlockTheme

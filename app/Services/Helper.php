@@ -222,7 +222,7 @@ class Helper
     public static function verifyAdminAjax()
     {
         if (!current_user_can('manage_options')) {
-            wp_send_json(['message' => __('You do not have permission to do this action.', 'fluent-comments')], 403);
+            wp_send_json(['message' => __('You do not have permission to do this.', 'fluent-comments')], 403);
         }
 
         $nonce = isset($_REQUEST['__nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['__nonce'])) : '';

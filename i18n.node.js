@@ -47,15 +47,36 @@ function readDirRecursively(dir, allFiles = []) {
     return allFiles;
 }
 
+// Escapes that decode to an ordinary character, which is every one a
+// reader-facing string has any business carrying. Anything else - \n, \t,
+// \uXXXX - is reported rather than emitted: see readLiteral().
+const DECODABLE_ESCAPES = {
+    "'": "'",
+    '"': '"',
+    '\\': '\\',
+    '`': '`',
+    '/': '/'
+};
+
 /**
- * Reads a quoted literal starting at `index`, honouring backslash escapes.
+ * Reads a quoted literal starting at `index`, decoding backslash escapes to
+ * the characters they stand for.
  *
  * Parsed rather than matched with one regex so that an apostrophe inside a
  * string ("a post\'s own content") and a call broken over several lines
  * both survive. A regex that handled either tended to swallow the next
  * string on the line.
  *
- * @returns {{value: string, end: number}|null}
+ * Decoding matters because the key has to be byte-identical on both sides:
+ * `$t()` looks the string up at runtime by its *decoded* value, so a key of
+ * `Clearing \"this\"` written out with the backslashes still in it can never
+ * match `Clearing "this"` - the string would be silently untranslatable and
+ * a translator would see the backslashes in the source text.
+ *
+ * `unsupported` is set for an escape with no single-quoted PHP equivalent.
+ * The caller reports those instead of writing a key it knows to be wrong.
+ *
+ * @returns {{value: string, end: number, unsupported: string|null}|null}
  */
 function readLiteral(content, index) {
     const quote = content[index];
@@ -65,21 +86,27 @@ function readLiteral(content, index) {
     }
 
     let value = '';
+    let unsupported = null;
 
     for (let i = index + 1; i < content.length; i++) {
         const char = content[i];
 
         if (char === '\\') {
-            // Kept escaped: it goes straight back out into a PHP
-            // single-quoted literal, and escapePhpSingleQuoted() normalises
-            // it there.
-            value += char + content[i + 1];
+            const escaped = content[i + 1];
+
+            if (Object.prototype.hasOwnProperty.call(DECODABLE_ESCAPES, escaped)) {
+                value += DECODABLE_ESCAPES[escaped];
+            } else {
+                unsupported = unsupported || '\\' + escaped;
+                value += escaped;
+            }
+
             i++;
             continue;
         }
 
         if (char === quote) {
-            return {value, end: i};
+            return {value, end: i, unsupported};
         }
 
         // A literal cannot span lines, so an unterminated one is a
@@ -119,6 +146,26 @@ function commentAbove(content, callIndex) {
     return match ? match[1].trim() : null;
 }
 
+/**
+ * True when the literal can be written out as a PHP key that still matches
+ * what `$t()` will look up at runtime.
+ *
+ * An escape like \\n has no equivalent inside a single-quoted PHP string, so
+ * emitting one would produce a key that silently never matches. A string a
+ * reader sees has no reason to carry one - so this says which call to go
+ * and fix rather than shipping a translation that cannot resolve.
+ */
+function reportable(literal, file, content, callIndex) {
+    if (!literal.unsupported) {
+        return true;
+    }
+
+    const line = content.slice(0, callIndex).split('\n').length;
+    console.warn(`  skipped a string containing ${literal.unsupported} at ${file}:${line}`);
+
+    return false;
+}
+
 function extractStrings(files) {
     const strings = {};
     const comments = {};
@@ -154,6 +201,10 @@ function extractStrings(files) {
                 continue;
             }
 
+            if (!reportable(first, file, content, match.index)) {
+                continue;
+            }
+
             record(first.value, content, match.index);
 
             if (!isPlural) {
@@ -168,7 +219,7 @@ function extractStrings(files) {
 
             const second = readLiteral(content, skipSpace(content, cursor + 1));
 
-            if (second) {
+            if (second && reportable(second, file, content, match.index)) {
                 record(second.value, content, match.index);
             }
         }
@@ -178,12 +229,12 @@ function extractStrings(files) {
 }
 
 /**
- * Escape an apostrophe for a PHP single-quoted literal. Strings scraped
- * from source already arrive escaped, so unescaping first keeps this
- * idempotent rather than doubling the backslash on every run.
+ * Escape a decoded string for a PHP single-quoted literal, where only the
+ * backslash and the apostrophe mean anything. Backslash first, or the one
+ * this adds in front of an apostrophe gets escaped in turn.
  */
 function escapePhpSingleQuoted(str) {
-    return String(str).replace(/\\'/g, "'").replace(/'/g, "\\'");
+    return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
 function writeResults(strings, comments) {

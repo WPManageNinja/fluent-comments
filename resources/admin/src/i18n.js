@@ -34,12 +34,18 @@ export function $t(string, ...args) {
         return translated;
     }
 
-    // %s and %d are filled in order, %1$s and %2$s by position. A
+    // %s and %d are filled in order, %1$s and %2$d by position. A
     // translator often has to reorder them, which is the entire reason the
-    // numbered form exists - so leave both in.
+    // numbered form exists - so leave both in. %% is an escaped percent
+    // sign and consumes no argument, which is why it is matched first:
+    // without it, the second % of a "100%%" would be read as a placeholder.
     let next = 0;
 
-    return translated.replace(/%(\d+)\$s|%s|%d/g, (match, position) => {
+    return translated.replace(/%%|%(\d+)\$[sd]|%[sd]/g, (match, position) => {
+        if (match === '%%') {
+            return '%';
+        }
+
         if (position) {
             const index = parseInt(position, 10) - 1;
 
@@ -54,11 +60,19 @@ export function $t(string, ...args) {
  * Both forms have to be written out at the call site rather than derived,
  * because the extractor reads the source, not the runtime.
  *
+ * The rule is `!== 1`, matching WordPress's own _n(): English puts zero in
+ * the plural, so `count > 1` reads "0 comment".
+ *
+ * `count` is the only value substituted, so a plural sentence that needs a
+ * different argument - the placement warning on the Settings tab, which
+ * substitutes a list of post types - picks between two $t() calls itself
+ * rather than coming through here.
+ *
  * @param {string} singular
  * @param {string} plural
  * @param {number} count
  * @returns {string}
  */
 export function $_n(singular, plural, count) {
-    return $t(count > 1 ? plural : singular, count);
+    return $t(count !== 1 ? plural : singular, count);
 }

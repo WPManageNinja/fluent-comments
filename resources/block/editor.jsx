@@ -123,7 +123,7 @@ const Edit = ({ attributes, setAttributes }) => {
                 <div className="fluent-comments-editor-preview">
                     <div className="flc-preview-header">
                         <CommentIcon />
-                        <span>{__('FluentComments', 'fluent-comments')}</span>
+                        <span>FluentComments</span>
                     </div>
                     <div className="flc-preview-content">
                         {showTitle && (
@@ -137,10 +137,10 @@ const Edit = ({ attributes, setAttributes }) => {
                             {showAvatars && <div className="flc-preview-avatar" />}
                             <div className="flc-preview-form-inner">
                                 <div className="flc-preview-textarea">
-                                    {__('Write your comment here...', 'fluent-comments')}
+                                    {__('Write your comment here…', 'fluent-comments')}
                                 </div>
                                 <button className="flc-preview-submit">
-                                    {__('Submit', 'fluent-comments')}
+                                    {__('Submit Comment', 'fluent-comments')}
                                 </button>
                             </div>
                         </div>
@@ -153,10 +153,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                 <div className="flc-preview-comment-body">
                                     <div className="flc-preview-comment-card">
                                         <div className="flc-preview-comment-meta">
-                                            <strong>{__('Captain Placeholder', 'fluent-comments')}</strong>
+                                            <strong>{__('Sample Commenter', 'fluent-comments')}</strong>
                                             <span className="flc-preview-time">{__('2 days ago', 'fluent-comments')}</span>
                                         </div>
-                                        <p>{__("This is just a preview! Your real comments will look even better. Trust me, I'm a placeholder.", 'fluent-comments')}</p>
+                                        <p>{__('This is a preview. Comments left on your site appear here, in the colors and spacing you choose.', 'fluent-comments')}</p>
                                     </div>
                                     <div className="flc-preview-reply-link">
                                         <ReplyIcon />
@@ -171,10 +171,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                 <div className="flc-preview-comment-body">
                                     <div className="flc-preview-comment-card">
                                         <div className="flc-preview-comment-meta">
-                                            <strong>{__('Demo McTestface', 'fluent-comments')}</strong>
+                                            <strong>{__('Another Visitor', 'fluent-comments')}</strong>
                                             <span className="flc-preview-time">{__('5 hours ago', 'fluent-comments')}</span>
                                         </div>
-                                        <p>{__("I'm not a real person, but if I were, I'd say this comment section looks fantastic!", 'fluent-comments')}</p>
+                                        <p>{__('Threading is on, so a reply sits under the comment it answers.', 'fluent-comments')}</p>
                                     </div>
                                     <div className="flc-preview-reply-link">
                                         <ReplyIcon />
@@ -187,10 +187,10 @@ const Edit = ({ attributes, setAttributes }) => {
                                         <div className="flc-preview-comment-body">
                                             <div className="flc-preview-comment-card">
                                                 <div className="flc-preview-comment-meta">
-                                                    <strong>{__('Reply Bot 3000', 'fluent-comments')}</strong>
+                                                    <strong>{__('Post Author', 'fluent-comments')}</strong>
                                                     <span className="flc-preview-time">{__('just now', 'fluent-comments')}</span>
                                                 </div>
-                                                <p>{__('Beep boop! Nested replies work great too!', 'fluent-comments')}</p>
+                                                <p>{__('And this is what that nested reply looks like.', 'fluent-comments')}</p>
                                             </div>
                                         </div>
                                     </div>

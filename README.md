@@ -8,7 +8,7 @@ AJAX powered, spam-protected comments for WordPress. Replaces the native comment
 
 - AJAX comment posting and loading, with paginated "load more"
 - Layered spam protection: HMAC signed submission tokens, honeypot field, minimum form fill time and per-IP rate limiting
-- Gutenberg block with colour, title and avatar options
+- Gutenberg block with color, title and avatar options
 - `[fluent_comments]` shortcode
 - Automatic replacement of the core Comments block on block themes
 - Email notifications for comment approval, replies and post authors

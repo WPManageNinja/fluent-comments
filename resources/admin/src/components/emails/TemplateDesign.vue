@@ -34,7 +34,7 @@
 
                 <section class="flc_card">
                     <header class="flc_card_head">
-                        <h2>{{ $t('Colours') }}</h2>
+                        <h2>{{ $t('Colors') }}</h2>
                         <p>{{ $t('The preview beside this repaints as you drag.') }}</p>
                     </header>
 
@@ -63,7 +63,7 @@
                 <section class="flc_card">
                     <header class="flc_card_head">
                         <h2>{{ $t('Sender') }}</h2>
-                        <p>{{ $t('Leave both empty and WordPress decides, which is what an SMTP plugin expects. These apply to the WordPress notices too, once you have customised them.') }}</p>
+                        <p>{{ $t('Leave both empty and WordPress decides, which is what an SMTP plugin expects. These apply to the WordPress notices too, once you have customized them.') }}</p>
                     </header>
 
                     <div class="flc_two_up">

@@ -148,7 +148,7 @@ No. FluentComments is built so your readers never have to prove they are human. 
 
 Yes. Akismet inspects the comment itself and needs nothing from the form, so it runs normally alongside FluentComments.
 
-= I use another anti-spam or CAPTCHA plugin on my comment form =
+= What if I use another anti-spam or CAPTCHA plugin on my comment form? =
 
 FluentComments renders its own comment form, so a field another plugin wants to add, like a CAPTCHA or an extra question, is never printed on the page. Because nobody could fill that field in, running its validator anyway would reject every comment on your site. So those validators are skipped for the duration of a FluentComments submission. If you want to keep another plugin's check, add its callback to the `fluent_comments/allowed_comment_hooks` filter and render its field with the `fluent_comments/form_fields` action.
 
@@ -178,7 +178,7 @@ Yes. Every color, spacing value and radius is a CSS custom property, so a handfu
 
 = Does it respect my WordPress Discussion settings? =
 
-With one exception. Threading depth, moderation keywords, disallowed keywords, the link limit, "comment author must have a previously approved comment", "users must be registered and logged in": all of them are real WordPress options that FluentComments reads and writes in place. The most useful ones are surfaced on the FluentComments screen so you do not have to go hunting for them.
+Yes, with one exception. Threading depth, moderation keywords, disallowed keywords, the link limit, "comment author must have a previously approved comment", "users must be registered and logged in": all of them are real WordPress options that FluentComments reads and writes in place. The most useful ones are surfaced on the FluentComments screen so you do not have to go hunting for them.
 
 The exception is "Comment author must fill out name and email", which FluentComments always applies to its own form whatever that box is set to. See the question below for why.
 
@@ -210,7 +210,7 @@ Only do that when your origin server cannot be reached directly, bypassing the p
 3. Every notification email in one place, each one switched on or off from the row
 4. Write your own subject and body in the WordPress editor, with placeholders for the comment, post and recipient
 5. Every email previewed against a real comment from your own site before it goes out
-6. One template design - logo, colours, footer and From address - shared by every email
+6. One template design - logo, colors, footer and From address - shared by every email
 7. The approval notice as the commenter receives it
 8. The whole screen in dark mode, remembered per browser
 

@@ -12,7 +12,7 @@
         </div>
 
         <el-tag v-if="enabled" :type="email.status === 'active' ? 'success' : 'info'" disable-transitions>
-            {{ email.status === 'active' ? $t('Customised') : defaultLabel }}
+            {{ email.status === 'active' ? $t('Customized') : defaultLabel }}
         </el-tag>
 
         <el-button size="small" @click="$emit('edit')">{{ $t('Edit') }}</el-button>

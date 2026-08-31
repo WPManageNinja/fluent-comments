@@ -7,7 +7,7 @@
                 <section class="flc_card flc_card_feature">
                     <header class="flc_card_head">
                         <h2>FluentComments {{ appVars.version }}</h2>
-                        <p>{{ $t('Comments that post without reloading the page, and a layered spam defence that holds what looks wrong instead of throwing it away. Built by the WPManageNinja team, the people behind FluentCRM, Fluent Forms and Fluent Support.') }}</p>
+                        <p>{{ $t('Comments that post without reloading the page, and a layered spam defense that holds what looks wrong instead of throwing it away. Built by the WPManageNinja team, the people behind FluentCRM, Fluent Forms and Fluent Support.') }}</p>
                     </header>
 
                     <div class="flc_about_actions">
@@ -18,7 +18,7 @@
                             {{ $t('Get support') }}
                         </el-button>
                         <el-button tag="a" :href="appVars.links.rate" target="_blank" rel="noopener">
-                            {{ $t('★ Leave a review') }}
+                            ★ {{ $t('Leave a review') }}
                         </el-button>
                         <el-button tag="a" :href="appVars.links.github" target="_blank" rel="noopener">
                             {{ $t('Source on GitHub') }}
@@ -107,7 +107,7 @@ export default {
                 {
                     slug: 'fluent-security',
                     name: 'FluentAuth',
-                    description: this.$t('Login security, two factor and social login.')
+                    description: this.$t('Login security, two-factor and social login.')
                 },
                 {
                     slug: 'fluent-booking',

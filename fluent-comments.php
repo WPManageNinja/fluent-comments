@@ -25,7 +25,32 @@ class FluentCommentsPlugin
 
     public function boot()
     {
+        $this->registerTextDomain();
         $this->registerAutoLoad();
+    }
+
+    /**
+     * Translations that ship inside the plugin's own languages/ directory.
+     *
+     * Without this, only the translations WordPress.org installs into
+     * WP_LANG_DIR/plugins load: the just-in-time loader knows nothing about
+     * a plugin's own folder unless the plugin registers it. Our JS
+     * translations already point at that folder - wp_set_script_translations()
+     * in BlockHandler is handed the path outright - so leaving this out made
+     * a bundled .mo work for the block and not for anything in PHP.
+     *
+     * On init, not on plugins_loaded: loading a text domain before init is
+     * deprecated as of WordPress 6.7 and notices on every request.
+     */
+    private function registerTextDomain()
+    {
+        add_action('init', function () {
+            load_plugin_textdomain(
+                'fluent-comments',
+                false,
+                dirname(plugin_basename(__FILE__)) . '/languages'
+            );
+        });
     }
 
     private function registerAutoLoad()

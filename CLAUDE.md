@@ -297,6 +297,16 @@ to satisfy — but only one rule: **no reader-facing string is written in a
 | Svelte frontend | `i18n.some_key` off `fluentCommentVars` | `Frontend::getStrings()`, hand written |
 | Gutenberg block | `__()` from `@wordpress/i18n` | `wp_set_script_translations()` |
 
+All three end up in the `fluent-comments` text domain, which
+`FluentCommentsPlugin::registerTextDomain()` loads **on `init`** from the
+plugin's own `languages/` directory. Without that call only the
+translations WordPress.org installs into `WP_LANG_DIR/plugins` resolve —
+the just-in-time loader knows nothing about a plugin's own folder unless
+the plugin registers it, so a bundled `.mo` worked for the block (whose
+`wp_set_script_translations()` is handed the path outright) and for nothing
+in PHP. It is on `init` and not `plugins_loaded` because loading a domain
+earlier is deprecated as of WordPress 6.7 and notices on every request.
+
 **The Vue admin follows FluentCommunity.** The English string *is* the key:
 `$t('Save changes')` looks itself up in the map PHP printed into
 `fluentCommentsVars.i18n` and falls back to itself when there is nothing
@@ -305,8 +315,17 @@ leaking into the UI. `$t()` and `$_n()` are registered on the global mixin
 in `app.js` and also exported from `resources/admin/src/i18n.js`, because
 prop defaults (`PageHeader.saveText`, `SmartCodes.buttonText`) and
 `routes.js` are evaluated before there is an instance to reach them
-through. `$t` fills `%s`/`%d` in order and `%1$s`/`%2$s` by position — keep
-the numbered form available, reordering is exactly what it is for.
+through. `$t` fills `%s`/`%d` in order and `%1$s`/`%2$d` by position — keep
+the numbered form available, reordering is exactly what it is for — and
+`%%` is a literal percent that consumes no argument. As with `__()` versus
+`sprintf(__())`, a call with no arguments is not formatted at all.
+
+`$_n(singular, plural, count)` picks on `count !== 1`, which is what
+WordPress's own `_n()` does: English puts zero in the plural, so `> 1`
+reads "0 comment". `count` is the only value it substitutes, so a plural
+sentence that needs a *different* argument — `Settings.vue`'s
+`placementWarning`, which substitutes a list of post types — picks between
+two `$t()` calls itself rather than coming through it.
 
 `npm run i18n` runs `i18n.node.js`, which scrapes every `$t()` and `$_n()`
 call under `resources/admin/src` and writes `app/Services/TransStrings.php`
@@ -314,12 +333,20 @@ call under `resources/admin/src` and writes `app/Services/TransStrings.php`
 see, since it cannot read a `.vue` file. **That file is generated in full
 every run; never edit it.** It is `require_once`d lazily inside
 `renderAdminPage()` rather than with the rest of the plugin, because it is
-150 `__()` calls and one screen wants them. `npm run build` runs the
+about 150 `__()` calls and one screen wants them. `npm run build` runs the
 extractor first, so a forgotten run cannot ship.
 
 The extractor parses the string literal rather than matching one regex, so
 an apostrophe (`'a post\'s own content'`) and a call broken across lines
 both survive, and it warns rather than silently dropping a `$t(variable)`.
+It **decodes** the escapes as it reads, then re-escapes for PHP, because
+the key has to be byte-identical on both sides: `$t()` looks a string up by
+its decoded value, so `$t("Clearing \"this\"")` written out with the
+backslashes still in it produces a key that can never match — silently
+untranslatable, and shown to a translator with the backslashes in it. An
+escape with no single-quoted PHP equivalent (`\n`, `\t`, `\uXXXX` — none of
+which belongs in a string a reader sees) is reported with its file and line
+rather than written out wrong.
 A `<!-- translators: ... -->` or `/* translators: ... */` comment on the
 line directly above a call carrying a placeholder is carried into the
 generated PHP; `make-pot` warns when one is missing, which is the check.
@@ -330,6 +357,14 @@ generated PHP; `make-pot` warns when one is missing, which is the check.
 plain `<a href="#/emails/template">` for that reason — the router is on
 hash history, so it navigates the same). Splitting a sentence at a tag
 hands a translator fragments they cannot reorder.
+
+**A button cannot be spliced in that way**, because it carries a handler
+and `v-html` would not wire one up. So a sentence never wraps one: the
+button gets a label that reads on its own and the explanation goes beside
+it as a whole sentence. `EditEmail` had both halves of this wrong — a
+button followed by the fragment `- it starts from…`, and a `Reset it with`
++ `start from the default` pair with the full stop stranded in the markup.
+Neither is placeable in a language that orders things differently.
 
 **The block's `__()` calls only resolve once the handle points at a JSON
 file**, which is what `BlockHandler::registerBlock()` does with

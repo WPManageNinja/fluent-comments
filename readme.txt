@@ -4,7 +4,7 @@ Tags: comments, ajax comments, spam protection, antispam, comment notification
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -215,6 +215,10 @@ Only do that when your origin server cannot be reached directly, bypassing the p
 8. The whole screen in dark mode, remembered per browser
 
 == Changelog ==
+
+= 2.1.1 =
+* Fixed: UI color issues for the Radio Buttons.
+* Fixed: UI Flickering issues for the comment forms.
 
 = 2.1.0 (Date: Aug 31, 2026) =
 * New: an Emails screen. All five comment notification emails can be edited, previewed against a real comment, and switched on or off from one place.

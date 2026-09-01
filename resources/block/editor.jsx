@@ -22,9 +22,13 @@ const CommentIcon = () => (
     </svg>
 );
 
+// The same path Frontend::renderCommentList() and CommentBlock.svelte draw,
+// for the same reason their title defaults match: a preview that shows an
+// icon the page never renders is a preview that lied. This one used to be a
+// curved arrow while both renderers drew a speech bubble.
 const ReplyIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14">
-        <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+        <path d="M10.5 5h3a6 6 0 110 12v2.625c-3.75-1.5-9-3.75-9-8.625a6 6 0 016-6zM12 15.5h1.5a4.501 4.501 0 001.722-8.657A4.5 4.5 0 0013.5 6.5h-3A4.5 4.5 0 006 11c0 2.707 1.846 4.475 6 6.36V15.5z"/>
     </svg>
 );
 

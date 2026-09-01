@@ -12,9 +12,9 @@
  * cookie it is bound to, not by a nonce.
  */
 
-const config = window.fluentCommentVars || window.fluentCommentPublic || {};
+const config = window.fluentCommentVars || {};
 
-const ajaxUrl = config.ajax_url || config.ajaxurl;
+const ajaxUrl = config.ajax_url;
 
 const toFormData = (fields) => {
     const body = new FormData();
@@ -50,8 +50,8 @@ export function ajax(action, fields = {}, { method = 'POST' } = {}) {
         url = `${ajaxUrl}?${query.toString()}`;
     } else {
         body = fields instanceof FormData ? fields : toFormData(fields);
-        // set(), not append(): a FormData built from the classic form
-        // already carries an action field from the markup.
+        // set(), not append(): a caller may hand over a FormData that
+        // already carries an action field.
         body.set('action', action);
     }
 

@@ -1,66 +1,27 @@
 <?php defined('ABSPATH') or die;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- file scope variables here are template locals, and the hooks fired are WordPress core hooks.
 
-if (post_password_required()) {
+/**
+ * The classic theme entry point: whatever the theme asked comments_template()
+ * for, swapped for this by CommentsHandler::maybeSwapCommentsTemplate().
+ *
+ * There is nothing here but the app. A classic theme and a block theme are
+ * the same comment section - one form, one list, one submission - and they
+ * were two implementations of it for one release too long: a PHP form beside
+ * a Svelte one, a comment walker beside two other renderers of the same
+ * comment, two config globals, two response shapes off one endpoint. Every
+ * fix had to be made twice and the second one was the one that got forgotten.
+ *
+ * So this renders exactly what the block and the shortcode render, and the
+ * first page of comments still arrives as real HTML in the document, which is
+ * what the classic template was rendering server side to begin with. See
+ * Frontend::renderApp().
+ */
+
+$post = get_post();
+
+if (!$post || post_password_required($post)) {
     return;
 }
 
-$comments_number = (int)get_comments_number();
-?>
-<div class="fluent_comments_wrap comments-area">
-    <?php if ($comments_number) : ?>
-        <h2 class="flc_comments-title">
-            <?php
-            printf(
-            /* translators: %s: comment count. */
-                esc_html(_n('Latest comment (%s)', 'Latest comments (%s)', $comments_number, 'fluent-comments')),
-                esc_html(number_format_i18n($comments_number))
-            );
-            ?>
-        </h2>
-    <?php else : ?>
-        <h2 class="flc_comments-title"><?php esc_html_e('Add your first comment to this post', 'fluent-comments'); ?></h2>
-    <?php endif; ?>
-
-    <?php if (comments_open()) : ?>
-        <?php include FLUENT_COMMENTS_PLUGIN_PATH . 'app/Views/comment_form.php'; ?>
-    <?php endif; ?>
-
-    <div class="flc_comments flc_native_comments" id="comments">
-        <div class="flc_comment-list">
-            <?php
-            wp_list_comments([
-                'walker'      => new \FluentComments\App\Services\FluentWalkerComment(),
-                'avatar_size' => 64,
-                'style'       => 'div',
-                'type'        => 'comment',
-            ]);
-
-            $comment_pagination = paginate_comments_links([
-                'echo'      => false,
-                'end_size'  => 0,
-                'mid_size'  => 0,
-                'next_text' => __('Newer Comments', 'fluent-comments') . ' <span aria-hidden="true">&rarr;</span>',
-                'prev_text' => '<span aria-hidden="true">&larr;</span> ' . __('Older Comments', 'fluent-comments'),
-            ]);
-
-            if ($comment_pagination) {
-                // Only the "Next" link is present when there is nothing before this page.
-                $pagination_classes = (false === strpos($comment_pagination, 'prev page-numbers')) ? ' only-next' : '';
-                ?>
-                <nav class="pagination<?php echo esc_attr($pagination_classes); ?>"
-                     aria-label="<?php esc_attr_e('Comments', 'fluent-comments'); ?>">
-                    <?php echo wp_kses_post($comment_pagination); ?>
-                </nav>
-                <?php
-            }
-            ?>
-        </div><!-- .flc_comment-list -->
-    </div><!-- #comments -->
-
-    <?php if (!comments_open() && $comments_number) : ?>
-        <div class="comment-respond" id="respond">
-            <p class="comments-closed"><?php esc_html_e('Comments are closed.', 'fluent-comments'); ?></p>
-        </div>
-    <?php endif; ?>
-</div>
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped per field in the renderer.
+echo \FluentComments\App\Services\Frontend::renderApp($post->ID);

@@ -1,6 +1,6 @@
 <script>
     import { ajax, errorMessage } from './ajax';
-    import { getSession, invalidateSession, readHashedCookie } from './session';
+    import { getSession, invalidateSession, readHashedCookie, renderedLogin } from './session';
     import { identityError } from './validate.js';
     import { autosizeTextArea } from './autosize';
 
@@ -19,11 +19,23 @@
     let notice = $state('');
     let resizeFrame = null;
 
+    // What the server rendered into the page about this visitor. A guess -
+    // the page may have been cached for somebody else - but the right thing
+    // to open with, and the session below corrects it.
+    const guess = renderedLogin(documentId);
+
     // Who the visitor is only becomes known once the session is fetched,
     // which happens on intent. Until then the form renders in its neutral,
     // cacheable state: a default avatar and no personal fields.
     let me = $state(null);
-    let loginMessage = $state('');
+    let loginMessage = $state(guess?.message || '');
+    // The one branch that cannot render neutral: there is no form that is
+    // right for both the reader who must log in and the member who need
+    // not. So it opens on the rendered guess rather than on nothing, and
+    // the session - never cached, and the authority - moves it if the guess
+    // belonged to somebody else. Anything else means a form that is typed
+    // into and then vanishes.
+    let loginRequired = $state(!!guess?.mustLogIn);
     let sessionResolved = $state(false);
     // Distinct from sessionResolved, which is true even when the request
     // failed. Only a session that actually answered tells us anything about
@@ -81,7 +93,12 @@
                 tokenIssuedAt = Date.now();
                 sessionOk = true;
                 me = session.me || null;
-                loginMessage = session.login_message || '';
+                // Both directions: this confirms the rendered guess or
+                // replaces it. login_message is present exactly when the
+                // site requires login and this visitor is not signed in, so
+                // it is the signal as well as the wording.
+                loginRequired = !!session.login_message;
+                loginMessage = session.login_message || loginMessage;
                 fieldsHtml = session.fields_html || '';
             })
             .catch(() => {
@@ -93,6 +110,21 @@
             });
 
         return sessionRequest;
+    }
+
+    /**
+     * Intent, one step earlier than focus.
+     *
+     * Nothing is fetched on load - a visitor who only reads the comments
+     * costs the site nothing - but reaching for the comment area is as good
+     * a signal as landing in it, and the head start is usually the whole
+     * round trip. It is also the only thing that ever corrects a rendered
+     * guess the page cache handed to the wrong visitor, which is why the
+     * handler sits on the wrapper: when the notice is all that is showing,
+     * the notice is the only thing there is to reach for.
+     */
+    function prefetchSession() {
+        loadSession();
     }
 
     function handleOpen() {
@@ -180,8 +212,8 @@
                 await wait(minTokenAge - age);
             }
 
-            // Core's own field names, because this is the same endpoint
-            // and the same handler the classic form posts to.
+            // Core's own field names: CommentSubmission hands them to
+            // wp_handle_comment_submission(), which expects core's.
             const payload = {
                 ...collectExtraFields(),
                 comment_post_ID: documentId,
@@ -219,8 +251,13 @@
     }
 </script>
 
-<div id={formId} class="fluent_comments_form">
-    {#if sessionResolved && vars.require_login && !isLoggedIn}
+<div
+    id={formId}
+    class="fluent_comments_form"
+    onpointerenter={prefetchSession}
+    onpointerdown={prefetchSession}
+>
+    {#if loginRequired}
         <div class="flc_login_message">
             {#if loginMessage}
                 <!-- eslint-disable-next-line svelte/no-at-html-tags -- built and escaped in PHP -->
@@ -268,7 +305,15 @@
                     </div>
 
                     {#if isOpen}
-                        {#if !isLoggedIn}
+                        <!-- Only once the session has said this visitor is signed
+                             out. Rendering these on the way to that answer is
+                             how a signed in commenter came to watch a name and
+                             an email field appear and then vanish under them:
+                             the page cannot know who is asking, so the form
+                             asks for nothing until it has been told. A session
+                             that fails to answer resolves as signed out, which
+                             is the state that still lets somebody comment. -->
+                        {#if sessionResolved && !isLoggedIn}
                             <div class="flc_row flc_person_form_fields">
                                 <div class="flc_form_field">
                                     <label class="flc_sr-only" for="{formId}_name">{i18n.name_placeholder}</label>

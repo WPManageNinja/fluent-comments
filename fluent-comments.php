@@ -5,7 +5,7 @@ defined('ABSPATH') or die;
 Plugin Name:  FluentComments
 Plugin URI:   https://github.com/WPManageNinja/fluent-comments
 Description:  AJAX comments with layered spam protection and no CAPTCHA, plus a full email notification system.
-Version:      2.1.0
+Version:      2.1.1
 Author:       WPManageNinja Team
 Author URI:   https://wpmanageninja.com
 License:      GPLv2 or later
@@ -18,7 +18,7 @@ Requires PHP: 7.4
 
 define('FLUENT_COMMENTS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('FLUENT_COMMENTS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('FLUENT_COMMENTS_VERSION', '2.1.0');
+define('FLUENT_COMMENTS_VERSION', '2.1.1');
 
 class FluentCommentsPlugin
 {
@@ -64,7 +64,6 @@ class FluentCommentsPlugin
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/Mailer.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/SmartCodeParser.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/EmailService.php';
-        require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/FluentWalkerComment.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/TemplateScanner.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Services/DiscussionSettings.php';
         require_once FLUENT_COMMENTS_PLUGIN_PATH . 'app/Hooks/Handlers/AdminSettingsHandler.php';

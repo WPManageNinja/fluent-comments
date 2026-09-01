@@ -19,37 +19,23 @@ const wpExternals = {
 };
 
 /**
- * Two passes, not one, and the reason is the shared chunk it otherwise makes.
+ * One pass, one public entry.
  *
- * app.js and native-comments.js both import ajax/session/validate/autosize -
- * deliberately, so the submission rules are written once. Rollup sees a module
- * reached from two entry points and hoists it into a shared chunk rather than
- * duplicating it. But those two entries are the two front ends, and a page
- * loads one or the other; the sharing was theoretical while the cost was real.
- * WordPress enqueues these as plain script tags with no modulepreload, so the
- * browser had to fetch the entry, parse it, discover a bare `import` and only
- * then go back for the rest - a serial round trip on every page with comments,
- * on both front ends, to save 1.7kB on the rare page that renders both.
+ * There were two: app.js and a second front end for classic themes, which
+ * shared ajax/session/validate/autosize with it. Rollup hoists a module
+ * reached from two entries into a shared chunk, and WordPress enqueues these
+ * as plain script tags with no modulepreload - so the browser fetched the
+ * entry, parsed it, discovered a bare `import` and only then went back for
+ * the rest. A serial round trip on every page with comments, to share code
+ * between two front ends that were never on the same page. The second entry
+ * built apart to avoid it.
  *
- * Rollup will not duplicate a module shared between entries, and no output
- * option asks it to, so the entries are built apart instead: native-comments
- * has its own pass and inlines everything it uses. `emptyOutDir: false` is
- * what lets the second pass land beside the first (see build.sh, which clears
- * dist/ itself for exactly this reason).
- *
- * The duplicated ~1.7kB is in two bundles that are never both on a page.
+ * Both themes now load the same app, so there is nothing to share and
+ * nothing to split. `emptyOutDir: false` stays: @wordpress/scripts writes
+ * the block into the same dist/, and build.sh clears it instead.
  */
-const ENTRIES = {
-  main: {
-    app: path.resolve(__dirname, 'resources/js/app.js'),
-    admin_app: path.resolve(__dirname, 'resources/admin/src/app.js'),
-  },
-  native: {
-    'native-comments': path.resolve(__dirname, 'resources/js/native-comments.js'),
-  },
-};
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [
     svelte(),
     vue(),
@@ -70,7 +56,10 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     emptyOutDir: false,
     rollupOptions: {
-      input: ENTRIES[mode === 'native' ? 'native' : 'main'],
+      input: {
+        app: path.resolve(__dirname, 'resources/js/app.js'),
+        admin_app: path.resolve(__dirname, 'resources/admin/src/app.js'),
+      },
       output: {
         entryFileNames: 'js/[name].js',
         chunkFileNames: 'js/[name]-[hash].js',
@@ -81,4 +70,4 @@ export default defineConfig(({ mode }) => ({
       }
     }
   }
-}));
+});

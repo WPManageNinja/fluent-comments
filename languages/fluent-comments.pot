@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: FluentComments 2.1.0\n"
+"Project-Id-Version: FluentComments 2.1.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fluent-comments\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T18:24:46+00:00\n"
+"POT-Creation-Date: 2026-09-01T05:41:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fluent-comments\n"
@@ -66,41 +66,29 @@ msgstr ""
 msgid "FluentComments will appear here on the frontend."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:98
-msgid "Network error. Please try again."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:99
-#: app/Services/Frontend.php:450
-#: app/Services/TransStrings.php:130
-msgid "Something went wrong. Please try again."
-msgstr ""
-
-#: app/Hooks/Handlers/CommentsHandler.php:168
+#: app/Hooks/Handlers/CommentsHandler.php:148
 msgid "Direct comments are disabled. Please go back and use the comment form on the post."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:169
+#: app/Hooks/Handlers/CommentsHandler.php:149
 msgid "Comment Submission Failure"
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:185
-#: app/Hooks/Handlers/CommentsHandler.php:268
+#: app/Hooks/Handlers/CommentsHandler.php:165
+#: app/Hooks/Handlers/CommentsHandler.php:249
 msgid "Invalid request method."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:215
+#: app/Hooks/Handlers/CommentsHandler.php:195
 msgid "Your comment has been added."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:216
-#: app/Hooks/Handlers/CommentsHandler.php:378
-#: app/Services/FluentWalkerComment.php:66
-#: app/Services/Frontend.php:444
+#: app/Hooks/Handlers/CommentsHandler.php:196
+#: app/Services/Frontend.php:479
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: app/Hooks/Handlers/CommentsHandler.php:276
+#: app/Hooks/Handlers/CommentsHandler.php:257
 msgid "Invalid post id."
 msgstr ""
 
@@ -155,12 +143,12 @@ msgid "Sorry, this post does not allow new comments."
 msgstr ""
 
 #: app/Services/CommentSubmission.php:394
-#: app/Services/Frontend.php:448
+#: app/Services/Frontend.php:483
 msgid "Please enter your name and email address."
 msgstr ""
 
 #: app/Services/CommentSubmission.php:402
-#: app/Services/Frontend.php:449
+#: app/Services/Frontend.php:484
 msgid "Please enter a valid email address."
 msgstr ""
 
@@ -472,86 +460,75 @@ msgstr ""
 msgid "See everything waiting: %s"
 msgstr ""
 
-#. translators: 1: comment date, 2: comment time.
-#: app/Services/FluentWalkerComment.php:39
-#, php-format
-msgid "%1$s at %2$s"
-msgstr ""
-
-#: app/Services/FluentWalkerComment.php:56
-#: app/Services/TransStrings.php:55
-msgid "Edit"
-msgstr ""
-
-#: app/Services/FluentWalkerComment.php:79
-#: app/Services/FluentWalkerComment.php:82
-#: app/Services/Frontend.php:441
-#: dist/block/editor.jsx.js:1
-msgid "Reply"
-msgstr ""
-
 #. translators: %1$s: opening link tag, %2$s: closing link tag.
-#: app/Services/Frontend.php:368
-#: app/Views/comment_form.php:33
+#: app/Services/Frontend.php:360
 #, php-format
 msgid "You must be %1$slogged in%2$s to post a comment."
 msgstr ""
 
-#: app/Services/Frontend.php:433
+#: app/Services/Frontend.php:468
 #: dist/block/editor.jsx.js:1
 msgid "Latest comments ({count})"
 msgstr ""
 
-#: app/Services/Frontend.php:434
-#: app/Views/comments.php:22
+#: app/Services/Frontend.php:469
 #: dist/block/editor.jsx.js:1
 msgid "Add your first comment to this post"
 msgstr ""
 
-#: app/Services/Frontend.php:435
+#: app/Services/Frontend.php:470
 msgid "Loading…"
 msgstr ""
 
-#: app/Services/Frontend.php:436
+#: app/Services/Frontend.php:471
 #: dist/block/editor.jsx.js:1
 msgid "Write your comment here…"
 msgstr ""
 
-#: app/Services/Frontend.php:437
+#: app/Services/Frontend.php:472
 msgid "Your Name"
 msgstr ""
 
-#: app/Services/Frontend.php:438
+#: app/Services/Frontend.php:473
 msgid "Your Email Address"
 msgstr ""
 
-#: app/Services/Frontend.php:439
+#: app/Services/Frontend.php:474
 #: dist/block/editor.jsx.js:1
 msgid "Submit Comment"
 msgstr ""
 
-#: app/Services/Frontend.php:440
+#: app/Services/Frontend.php:475
 msgid "Submitting"
 msgstr ""
 
-#: app/Services/Frontend.php:442
+#: app/Services/Frontend.php:476
+#: dist/block/editor.jsx.js:1
+msgid "Reply"
+msgstr ""
+
+#: app/Services/Frontend.php:477
 msgid "Load more comments"
 msgstr ""
 
-#: app/Services/Frontend.php:443
-#: app/Views/comments.php:63
+#: app/Services/Frontend.php:478
 msgid "Comments are closed."
 msgstr ""
 
-#: app/Services/Frontend.php:445
+#: app/Services/Frontend.php:480
 msgid "Please write your comment first."
 msgstr ""
 
-#: app/Services/Frontend.php:451
+#: app/Services/Frontend.php:485
+#: app/Services/TransStrings.php:130
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: app/Services/Frontend.php:486
 msgid "Leave this field empty"
 msgstr ""
 
-#: app/Services/Frontend.php:452
+#: app/Services/Frontend.php:487
 msgid "You must be logged in to post a comment."
 msgstr ""
 
@@ -708,6 +685,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:54
 msgid "Documentation"
+msgstr ""
+
+#: app/Services/TransStrings.php:55
+msgid "Edit"
 msgstr ""
 
 #: app/Services/TransStrings.php:56
@@ -1172,38 +1153,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:174
 msgid "template design"
-msgstr ""
-
-#. translators: %s: comment count.
-#: app/Views/comments.php:16
-#, php-format
-msgid "Latest comment (%s)"
-msgid_plural "Latest comments (%s)"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Views/comments.php:43
-msgid "Newer Comments"
-msgstr ""
-
-#: app/Views/comments.php:44
-msgid "Older Comments"
-msgstr ""
-
-#: app/Views/comments.php:52
-msgid "Comments"
-msgstr ""
-
-#: app/Views/comment_form.php:84
-msgid "Full Name"
-msgstr ""
-
-#: app/Views/comment_form.php:91
-msgid "Email Address"
-msgstr ""
-
-#: app/Views/comment_form.php:109
-msgid "Post Comment"
 msgstr ""
 
 #: dist/block/editor.jsx.js:1

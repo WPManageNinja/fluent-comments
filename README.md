@@ -31,18 +31,18 @@ GPLv2 or later · WordPress 6.5+ · PHP 7.4+
 
 ```bash
 pnpm install
-pnpm run build        # i18n scrape + both Vite passes + the block
+pnpm run build        # i18n scrape + Vite + the block
 pnpm run dev          # watch app.js and admin_app.js
-pnpm run dev:native   # watch native-comments.js (built in its own pass)
 pnpm run dev:block    # watch the Gutenberg block
 ./build.sh            # release zip into builds/
 ```
 
 Compiled assets land in `/dist` and are not committed, so build before packaging.
-Vite runs **twice** — `app.js` and `native-comments.js` share modules on purpose,
-and a single pass hoists them into a chunk that costs an extra serial request on
-every page with comments. Adding a new entry that shares a module means giving it
-its own pass too.
+Vite makes one pass over two entries (`app.js`, `admin_app.js`) that share
+nothing, so no chunk is emitted. Adding an entry that shares a module with
+another brings the chunk back — and WordPress enqueues these as plain script
+tags with no `modulepreload`, so that costs an extra serial request on every
+page that loads it. Give such an entry its own pass.
 
 Tests are plain PHP scripts against a stubbed WordPress surface — no install, no
 PHPUnit:
@@ -53,20 +53,26 @@ php tests/SpamGuardTest.php   # and the seven others in tests/
 
 ## Architecture
 
-Three front ends over one PHP back end:
+Three bundles over one PHP back end:
 
 | Layer | Stack | Entry point | Output |
 | --- | --- | --- | --- |
 | Public comments UI | Svelte 5 | `resources/js/app.js` | `dist/js/app.js`, `dist/css/app.css` |
-| Classic theme form | Vanilla JS | `resources/js/native-comments.js` | `dist/js/native-comments.js` |
 | Admin settings | Vue 3 + Element Plus | `resources/admin/src/app.js` | `dist/js/admin_app.js`, `dist/css/admin_app.css` |
 | Gutenberg block | React (wp-scripts) | `resources/block/editor.jsx` | `dist/block/` |
 
+### One front end
+
+A classic theme, a block theme, the shortcode and the block all render the same
+Svelte app. `app/Views/comments.php` — what `comments_template` is swapped for —
+is a shim over `Frontend::renderApp()`, the same call the block and shortcode
+make. There is no separate classic form, comment walker or second bundle; there
+was, for one release, and it meant every fix had to be written twice.
+
 ### One submission path
 
-There are two entry points but **one path into the database**. The Svelte UI
-(block, shortcode, block themes) and the classic template both POST to
-`admin-ajax.php` with the same field names, and both hand off to
+**One path into the database.** Everything POSTs to `admin-ajax.php` with core's
+field names and hands off to
 `CommentSubmission::handle()`, which calls `wp_handle_comment_submission()` — the
 same function `wp-comments-post.php` uses. Core's validation, moderation rules
 and `comment_post` hook all behave exactly as they always did.

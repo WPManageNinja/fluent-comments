@@ -1,13 +1,12 @@
 {
   "name": "fluent-comments",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
-    "dev:native": "vite build --mode native --watch",
     "build": "npm run i18n && npm run build:main && npm run build:block",
     "i18n": "node i18n.node.js",
-    "build:main": "vite build && vite build --mode native",
+    "build:main": "vite build",
     "build:block": "wp-scripts build resources/block/editor.jsx --output-path=dist/block",
     "dev:block": "wp-scripts start resources/block/editor.jsx --output-path=dist/block"
   },

@@ -1,5 +1,6 @@
 import { mount } from 'svelte';
 import App from './comments.svelte';
+import { seedRenderedLogin } from './session';
 import '../sass/app.scss';
 
 const isTrue = (value) => value !== '0' && value !== 'false' && value !== undefined;
@@ -41,6 +42,16 @@ document.querySelectorAll('.fluent_dynamic_comments').forEach((elem) => {
         titleNoComments: elem.dataset.title_no_comments || '',
         bootstrap: readBootstrap(elem.dataset.bootstrap)
     };
+
+    // Before mount, so the first thing drawn is already the right branch on
+    // a site that requires login - and so a reply form created later opens
+    // with it too. See Frontend::renderApp(); the session corrects it.
+    if (props.bootstrap) {
+        seedRenderedLogin(postId, {
+            mustLogIn: !!props.bootstrap.must_log_in,
+            message: props.bootstrap.login_message || ''
+        });
+    }
 
     // PHP rendered the first page into this container as real markup, so
     // that anything not running a script - crawlers, link previews - sees

@@ -24,7 +24,6 @@ class Frontend
      */
     const MODULE_HANDLES = [
         'fluent_comments',
-        'fluent_comments_native',
         'fluent_comments_admin',
     ];
 
@@ -104,6 +103,26 @@ class Frontend
         // fresh as the rest of the page around them.
         $bootstrap = CommentsRepository::getPayload($postId, 1);
 
+        // The one visitor-specific thing in this markup, and the reason it is
+        // allowed here: on a site that requires login there is no neutral
+        // form. Rendering one and swapping it for the notice a moment later
+        // is a form somebody starts typing into and then watches disappear,
+        // and rendering the notice for everybody is worse. So the guess for
+        // whoever this request belongs to goes in - the same call core's
+        // comment_form() makes - and the session, which is never cached,
+        // stays the authority: CommentForm corrects the branch on first
+        // intent if a cache handed this page to somebody else. Not added to
+        // getVars(), which stays cache-safe by construction.
+        $bootstrap['must_log_in'] = get_option('comment_registration') && !is_user_logged_in();
+        $bootstrap['login_message'] = $bootstrap['must_log_in'] ? self::loginMessage($postId) : '';
+
+        // Both renderers have to agree, and the client ANDs the block's
+        // attribute with the site option (comments.svelte: avatarsEnabled).
+        // Read here as well, or a site with avatars switched off gets them
+        // in the server HTML and loses them the moment the script mounts -
+        // exactly the reflow the two renderers exist to avoid.
+        $showAvatars = !empty($attributes['showAvatars']) && get_option('show_avatars');
+
         $commentCount = (int)$bootstrap['count'];
         $placeholderTitle = $commentCount
             ? str_replace('{count}', number_format_i18n($commentCount), $titleWithComments)
@@ -125,7 +144,7 @@ class Frontend
                 class="fluent_dynamic_comments"
                 data-post_id="<?php echo esc_attr($postId); ?>"
                 data-bootstrap="<?php echo esc_attr($bootstrapId); ?>"
-                data-show_avatars="<?php echo empty($attributes['showAvatars']) ? '0' : '1'; ?>"
+                data-show_avatars="<?php echo $showAvatars ? '1' : '0'; ?>"
                 data-show_title="<?php echo empty($attributes['showTitle']) ? '0' : '1'; ?>"
                 data-title_with_comments="<?php echo esc_attr($titleWithComments); ?>"
                 data-title_no_comments="<?php echo esc_attr($titleNoComments); ?>"
@@ -150,7 +169,7 @@ class Frontend
                         $bootstrap['comments'],
                         (int)$bootstrap['max_depth'],
                         !empty($bootstrap['comments_open']),
-                        !empty($attributes['showAvatars'])
+                        $showAvatars
                     );
                     ?>
                 </div>
@@ -324,6 +343,27 @@ class Frontend
     }
 
     /**
+     * "You must be logged in to post a comment", with the link.
+     *
+     * One definition, because both front ends show it and the session
+     * payload sends it: the classic template renders it inline, the Svelte
+     * form gets it with the bootstrap, and getSessionPayload() sends the
+     * authoritative copy.
+     *
+     * @param int $postId
+     * @return string
+     */
+    public static function loginMessage($postId)
+    {
+        return sprintf(
+        /* translators: %1$s: opening link tag, %2$s: closing link tag. */
+            __('You must be %1$slogged in%2$s to post a comment.', 'fluent-comments'),
+            '<a class="flc_login_link" href="' . esc_url(wp_login_url(get_permalink($postId))) . '">',
+            '</a>'
+        );
+    }
+
+    /**
      * Everything about this visitor that must never touch a cached page.
      *
      * There is no nonce here, and none on any public request. Every one of
@@ -363,12 +403,7 @@ class Frontend
                 'avatar'    => get_avatar_url($currentUser->ID),
             ];
         } elseif (get_option('comment_registration')) {
-            $payload['login_message'] = sprintf(
-            /* translators: %1$s: opening link tag, %2$s: closing link tag. */
-                __('You must be %1$slogged in%2$s to post a comment.', 'fluent-comments'),
-                '<a class="flc_login_link" href="' . esc_url(wp_login_url(get_permalink($postId))) . '">',
-                '</a>'
-            );
+            $payload['login_message'] = self::loginMessage($postId);
         }
 
         return apply_filters('fluent_comments/session_payload', $payload, $postId);

@@ -16,6 +16,24 @@ import { ajax } from './ajax';
 const pending = new Map();
 
 /**
+ * What the server rendered into this (cached) page about whether the
+ * visitor must log in before commenting.
+ *
+ * It is a guess - the page may have been cached for somebody else - but it
+ * is the right thing to open with, and every form on the page needs it,
+ * including a reply form created long after mount. The session corrects it.
+ */
+const rendered = new Map();
+
+export function seedRenderedLogin(postId, state) {
+    rendered.set(String(postId), state);
+}
+
+export function renderedLogin(postId) {
+    return rendered.get(String(postId)) || null;
+}
+
+/**
  * Fetch (once) the session for a post. Repeat callers share the promise.
  *
  * @param {number|string} postId

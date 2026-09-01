@@ -5,9 +5,9 @@
  * The payload was always in the page, but inside a
  * <script type="application/json"> block - data, not content. Anything that
  * does not run JavaScript, which includes the crawlers behind AI answers and
- * link previews, saw a post whose comments section read "Loading...". The
- * classic template never had this problem because wp_list_comments() writes
- * real markup; this is the block and shortcode path catching up.
+ * link previews, saw a post whose comments section read "Loading...". So
+ * renderApp() writes the page twice: the JSON the app hydrates from, and the
+ * same comments as real markup beside it.
  *
  * Two things are worth pinning. The comment body is the only field allowed
  * markup and everything else is attacker supplied, so the escaping has to
@@ -21,6 +21,38 @@
 namespace FluentComments\App\Services {
     class CommentsRepository
     {
+        public static $payload = [];
+
+        public static function getPayload($postId, $page = 1)
+        {
+            return self::$payload;
+        }
+    }
+
+    class Helper
+    {
+        public static function getMaxDepth()
+        {
+            return 5;
+        }
+
+        public static function getPerPage()
+        {
+            return 20;
+        }
+    }
+
+    class SpamGuard
+    {
+        public static function getMinAge()
+        {
+            return 2;
+        }
+
+        public static function getHoneypotField()
+        {
+            return 'flc_hp';
+        }
     }
 }
 
@@ -74,8 +106,73 @@ function wp_parse_args($args, $defaults = [])
 
 function get_option($name, $default = false)
 {
-    return $default;
+    return array_key_exists($name, $GLOBALS['test_options']) ? $GLOBALS['test_options'][$name] : $default;
 }
+
+// Enough of the enqueue surface for renderApp() to run. What it enqueues is
+// not what this file is about; that it renders without one is.
+function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false)
+{
+}
+
+function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $footer = false)
+{
+}
+
+function wp_localize_script($handle, $name, $data)
+{
+}
+
+function wp_json_encode($data, $flags = 0)
+{
+    return json_encode($data, $flags);
+}
+
+function is_user_logged_in()
+{
+    return !empty($GLOBALS['test_logged_in']);
+}
+
+function get_permalink($postId = 0)
+{
+    return 'https://example.test/hello-world/';
+}
+
+function wp_login_url($redirect = '')
+{
+    return 'https://example.test/wp-login.php';
+}
+
+function admin_url($path = '')
+{
+    return 'https://example.test/wp-admin/' . $path;
+}
+
+function esc_url_raw($url)
+{
+    return $url;
+}
+
+function get_avatar_url($id, $args = [])
+{
+    return 'https://example.test/default-avatar.png';
+}
+
+function number_format_i18n($number)
+{
+    return (string)$number;
+}
+
+function sanitize_html_class($class)
+{
+    return preg_replace('/[^A-Za-z0-9_-]/', '', (string)$class);
+}
+
+define('FLUENT_COMMENTS_PLUGIN_URL', 'https://example.test/wp-content/plugins/fluent-comments/');
+define('FLUENT_COMMENTS_VERSION', '2.1.0');
+
+$GLOBALS['test_options'] = [];
+$GLOBALS['test_logged_in'] = false;
 
 require_once __DIR__ . '/../app/Services/Frontend.php';
 
@@ -199,6 +296,69 @@ echo "\nA held comment says so\n";
 $held = render([comment(1, ['unapproved' => true])]);
 check('the awaiting moderation line is rendered', strpos($held, 'comment-awaiting-moderation') !== false);
 check('and an approved one has none', strpos($html, 'comment-awaiting-moderation') === false);
+
+// ---------------------------------------------------------------------------
+// One entry point, so this is the one that has to hold. A classic theme, the
+// block and the shortcode all render through renderApp() - app/Views/comments.php
+// is a two line shim over it - and everything the app opens with is decided
+// here: the hydration payload, the server HTML beside it, and the login guess.
+// ---------------------------------------------------------------------------
+
+use FluentComments\App\Services\CommentsRepository;
+
+function renderApp(array $options = [], $loggedIn = false, array $attributes = [])
+{
+    $GLOBALS['test_options'] = $options;
+    $GLOBALS['test_logged_in'] = $loggedIn;
+
+    CommentsRepository::$payload = [
+        'comments'      => [comment(1)],
+        'count'         => 1,
+        'max_depth'     => 5,
+        'comments_open' => true,
+        'has_more'      => false,
+        'page'          => 1,
+    ];
+
+    return Frontend::renderApp(7, array_merge([
+        'showTitle'   => true,
+        'showAvatars' => true,
+    ], $attributes));
+}
+
+echo "\nrenderApp() puts the first page in the document twice, as JSON and as HTML\n";
+
+$app = renderApp(['show_avatars' => true]);
+
+check('the container the app mounts to is there', strpos($app, 'class="fluent_dynamic_comments"') !== false);
+check('the bootstrap is a JSON script block', strpos($app, '<script type="application/json" id="flc_bootstrap_7">') !== false);
+check('the comment is in the JSON, so hydration needs no request', strpos($app, 'A perfectly ordinary comment.') !== false);
+check('and again as real HTML for anything that never runs the script', strpos($app, '<li class="flc_comment" id="comment_1"') !== false);
+check('the wrapper matches comments.svelte', strpos($app, '<div class="fluent_comments_wrap comments-area">') !== false);
+
+echo "\nThe two renderers agree about avatars, including with the site option off\n";
+
+check('shown when the site and the block both allow it', strpos(renderApp(['show_avatars' => true]), 'flc_avatar') !== false);
+
+// The client ANDs the block attribute with vars.show_avatars, so the server
+// has to as well. It did not, and a site with avatars off got them in the
+// server HTML and lost them the moment the script mounted.
+$noAvatars = renderApp(['show_avatars' => false]);
+check('gone from the server HTML when the site option is off', strpos($noAvatars, 'flc_avatar') === false);
+check('and the container says so too, so the mount does not move the page', strpos($noAvatars, 'data-show_avatars="0"') !== false);
+
+echo "\nThe login branch is rendered, and only when it applies\n";
+
+$open = renderApp(['show_avatars' => true]);
+check('an ordinary site tells the app nothing to hide', strpos($open, '"must_log_in":false') !== false);
+check('and carries no login message', strpos($open, '"login_message":""') !== false);
+
+$mustLogIn = renderApp(['show_avatars' => true, 'comment_registration' => true], false);
+check('login required and signed out: the app opens on the notice', strpos($mustLogIn, '"must_log_in":true') !== false);
+check('with the message it should render', strpos($mustLogIn, 'logged in') !== false);
+
+$member = renderApp(['show_avatars' => true, 'comment_registration' => true], true);
+check('login required but signed in: the app opens on the form', strpos($member, '"must_log_in":false') !== false);
 
 echo "\n$passed passed, $failed failed\n";
 exit($failed ? 1 : 0);

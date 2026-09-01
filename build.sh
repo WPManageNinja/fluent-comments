@@ -175,7 +175,6 @@ fi
 for required in \
     dist/js/app.js dist/css/app.css \
     dist/js/admin_app.js dist/css/admin_app.css \
-    dist/js/native-comments.js \
     dist/block/editor.jsx.js dist/block/editor.jsx.asset.php
 do
     [[ -e "$ROOT/$required" ]] || die "$required is missing. The frontend build did not complete."

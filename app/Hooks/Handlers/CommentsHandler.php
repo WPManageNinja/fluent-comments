@@ -15,7 +15,7 @@ class CommentsHandler
         add_filter('comments_template', [$this, 'maybeSwapCommentsTemplate'], PHP_INT_MAX - 1);
         add_filter('comments_template_query_args', [$this, 'onlyApprovedComments']);
 
-        add_action('wp_enqueue_scripts', [$this, 'maybeEnqueueNativeAssets']);
+        add_action('wp_enqueue_scripts', [$this, 'maybeEnqueueAssets']);
 
         add_action('wp_ajax_fluent_comment_post', [$this, 'handleAjaxComment']);
         add_action('wp_ajax_nopriv_fluent_comment_post', [$this, 'handleAjaxComment']);
@@ -49,11 +49,21 @@ class CommentsHandler
     }
 
     /**
-     * Assets for the native (classic theme) comment template.
+     * The app, on a classic theme.
+     *
+     * renderApp() enqueues these itself, but it runs while the template is
+     * being included - after wp_head - so the stylesheet would land in the
+     * footer and the comment section would repaint in front of the reader.
+     * Hooking wp_enqueue_scripts as well puts it in the head. enqueueAssets()
+     * is idempotent, so the second call from renderApp() is free.
+     *
+     * Note there is no comments_open() check. The list is rendered by the
+     * same script whether or not anybody may add to it; only the form is
+     * conditional, and comments.svelte decides that from the payload.
      *
      * @return void
      */
-    public function maybeEnqueueNativeAssets()
+    public function maybeEnqueueAssets()
     {
         if (is_admin() || !is_singular() || Helper::isBlockTheme()) {
             return;
@@ -65,64 +75,34 @@ class CommentsHandler
             return;
         }
 
+        // Core's reply script moves core's form around core's markup, none of
+        // which is on this page.
         wp_deregister_script('comment-reply');
 
-        wp_enqueue_style(
-            'fluent_comments',
-            FLUENT_COMMENTS_PLUGIN_URL . 'dist/css/app.css',
-            [],
-            FLUENT_COMMENTS_VERSION
-        );
-
-        if (!comments_open($post)) {
-            return;
-        }
-
-        wp_enqueue_script(
-            'fluent_comments_native',
-            FLUENT_COMMENTS_PLUGIN_URL . 'dist/js/native-comments.js',
-            [],
-            FLUENT_COMMENTS_VERSION,
-            true
-        );
-
-        $strings = Frontend::getStrings();
-
-        // Nothing here may vary by visitor: this markup goes into the page
-        // cache and is served to everybody.
-        wp_localize_script('fluent_comments_native', 'fluentCommentPublic', [
-            'ajaxurl'  => admin_url('admin-ajax.php'),
-            'honeypot' => SpamGuard::getHoneypotField(),
-            'min_age'  => SpamGuard::getMinAge(),
-            'i18n'     => [
-                'network_error' => __('Network error. Please try again.', 'fluent-comments'),
-                'generic_error' => __('Something went wrong. Please try again.', 'fluent-comments'),
-                // Both forms validate identity with the same shared module,
-                // so they read the wording from the same place too.
-                'identity_required' => $strings['identity_required'],
-                'email_invalid'     => $strings['email_invalid'],
-            ],
-        ]);
+        Frontend::enqueueAssets();
     }
 
     /**
-     * Drop core's include_unapproved from the query the classic template
-     * renders from.
+     * Drop core's include_unapproved from the query comments_template() runs.
      *
-     * comments_template() adds the current user, or the email address in
-     * the visitor's comment cookie, to include_unapproved so that somebody
-     * can see their own comment while it waits for moderation. That is the
-     * right call for an uncached page and the wrong one for this plugin:
-     * our markup is written on the assumption that it goes into a full page
-     * cache and is then served to other people, and one visitor's held
-     * comment is exactly the kind of thing that must not travel that way.
+     * Nothing of ours renders from that query any more - the template it
+     * ends up including asks CommentsRepository for its own approved-only
+     * payload - but comments_template() runs it before the comments_template
+     * filter is even reached, and leaves the result in $wp_query->comments
+     * for whatever else is on the page.
+     *
+     * comments_template() adds the current user, or the email address in the
+     * visitor's comment cookie, to include_unapproved so that somebody can
+     * see their own comment while it waits for moderation. That is the right
+     * call for an uncached page and the wrong one here: it makes the query
+     * vary by visitor on a page written to be cached and served to other
+     * people, and one visitor's held comment is exactly the kind of thing
+     * that must not travel that way.
      *
      * Nothing is really lost. A comment posted in this session is still
-     * shown immediately - the script appends what the submit returned - so
-     * the only case that changes is reloading the page later and finding
-     * your own held comment gone from the list. The Svelte front end has
-     * always worked this way; CommentsRepository asks for approved
-     * comments and nothing else.
+     * shown immediately - the app renders what the submit returned - so the
+     * only case that changes is reloading the page later and finding your
+     * own held comment gone from the list.
      *
      * Scoped to the posts we render, so a theme's own comment template on
      * any other post type keeps core's behaviour.
@@ -214,8 +194,10 @@ class CommentsHandler
             'message'           => $approved
                 ? __('Your comment has been added.', 'fluent-comments')
                 : __('Your comment is awaiting moderation.', 'fluent-comments'),
-            // The Svelte app renders from the structured comment, the
-            // classic template injects the markup. One endpoint, both.
+            // The structured comment, rendered by CommentBlock.svelte. There
+            // used to be a second, pre-rendered HTML copy here for the
+            // classic template to inject; both front ends are the same app
+            // now, so there is one shape to keep right.
             //
             // The depth has to be the real one. Left at the default of 1, a
             // reply accepted at the bottom of a thread comes back claiming
@@ -225,7 +207,6 @@ class CommentsHandler
                 $comment,
                 CommentSubmission::getCommentDepth($comment)
             ),
-            'comment_preview'   => $this->commentPreview($comment),
         ], 200);
     }
 
@@ -341,51 +322,6 @@ class CommentsHandler
     private function sendError($message, $status = 403)
     {
         wp_send_json(['message' => $message], $status);
-    }
-
-    /**
-     * Markup for a freshly posted comment, injected by the native form.
-     *
-     * @param \WP_Comment $comment
-     * @return string
-     */
-    private function commentPreview($comment)
-    {
-        ob_start();
-
-        $comment_author = get_comment_author($comment);
-        ?>
-        <div id="comment-<?php echo (int)$comment->comment_ID; ?>" class="flc_comment fls_new_comment">
-            <article class="flc_body">
-                <?php if (get_option('show_avatars')) : ?>
-                    <div class="flc_avatar">
-                        <div class="flc_comment_author">
-                            <?php echo wp_kses_post(get_avatar($comment, 64)); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <div class="flc_comment__details">
-                    <div class="crayons-card">
-                        <div class="comment__header">
-                            <b class="fn"><?php echo esc_html($comment_author); ?></b>
-                        </div>
-                        <div class="flc_comment-content">
-                            <?php
-                            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook.
-                            echo wp_kses_post(wpautop(apply_filters('get_comment_text', $comment->comment_content, $comment)));
-                            if ('1' !== (string)$comment->comment_approved) {
-                                ?>
-                                <p class="comment-awaiting-moderation"><?php esc_html_e('Your comment is awaiting moderation.', 'fluent-comments'); ?></p>
-                                <?php
-                            }
-                            ?>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        </div>
-        <?php
-        return ob_get_clean();
     }
 
     /**

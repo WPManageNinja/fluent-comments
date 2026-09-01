@@ -1024,6 +1024,26 @@ code {
   --el-color-warning: #faa619;
   --el-border-radius-base: 6px;
   --el-font-family: inherit;
+
+  /**
+   * A radio button - the two way switch on an email - paints itself out of
+   * the *button* tokens: `var(--el-button-bg-color, --el-fill-color-blank)`
+   * and `var(--el-button-text-color, --el-text-color-regular)`. Element
+   * Plus declares that pair on `.el-button` and nowhere else, so on any
+   * other component they arrive by inheritance, from wherever on the page
+   * somebody happened to set them. FluentCRM's admin bar search script
+   * appends a `<style>` to the head with `--el-button-text-color: #fff` on
+   * `:root`, and it loads on every wp-admin page, this one included. So the
+   * unselected half of the switch came out white on white - the label
+   * vanished, and our fallback never ran, because the token was answered.
+   *
+   * Declared here, they are answered inside the app before anything
+   * outside it is reached. Tokens rather than `color` / `background`, so
+   * the selected half still wins the cascade the way Element Plus intends:
+   * a rule on this id would beat its checked rule and repaint both halves.
+   */
+  --el-button-bg-color: var(--flc-surface);
+  --el-button-text-color: var(--flc-ink);
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Client side checks, shared by the Svelte form and the classic one so the
+ * Client side checks for the comment form, kept beside the server's so the
  * rule is written once.
  *
  * None of this is the decision. CommentSubmission::validateIdentity() is,

@@ -128,8 +128,7 @@
       padding: 7px;
     }
 
-    time,
-    .comment-edit-link {
+    time {
       color: var(--fcom-text-off);
       font-size: var(--fcom-font-size-sm);
     }
@@ -210,8 +209,7 @@
 }
 
 // Error messages
-.flc_error,
-.error.text-danger {
+.flc_error {
   margin: var(--fcom-spacing-sm) 0 !important;
   background: var(--fcom-highlight-bg);
   padding: var(--fcom-spacing-sm) var(--fcom-spacing-md);
@@ -242,15 +240,6 @@
   @include mobile {
     margin-left: var(--fcom-child-indent-mobile);
   }
-}
-
-// Avatar placeholder
-.flc_avatar_el {
-  width: var(--fcom-avatar-size);
-  height: var(--fcom-avatar-size);
-  background: var(--fcom-light-bg);
-  border-radius: var(--fcom-radius-full);
-  border: 5px solid var(--fcom-primary-border);
 }
 
 // Person form fields (name, email)
@@ -330,21 +319,6 @@ button.flc_button {
   }
 }
 
-// Native comments nested styling
-.flc_native_comments {
-  .flc_comment {
-    .flc_comment,
-    .flc_comment_respond {
-      margin-left: var(--fcom-child-indent);
-      margin-top: var(--fcom-spacing-lg);
-
-      @include mobile {
-        margin-left: var(--fcom-child-indent-mobile);
-      }
-    }
-  }
-}
-
 // Moderation notice
 p.comment-awaiting-moderation {
   font-size: 90%;
@@ -371,11 +345,6 @@ p.comment-awaiting-moderation {
   width: 1px !important;
   height: 1px !important;
   overflow: hidden !important;
-}
-
-.flc_loading_placeholder {
-  text-align: center;
-  color: var(--fcom-text-off);
 }
 
 .flc_comments_closed {

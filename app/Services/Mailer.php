@@ -54,8 +54,12 @@ class Mailer
     }
 
     /**
-     * A display name reaches a mail header, so anything that could start a
-     * second one is stripped.
+     * Build a "Name <email>" value for To, From or Reply-To.
+     *
+     * wp_mail() splits To, Cc, Bcc and Reply-To on every comma and ignores
+     * quotes, so a commenter named "x,someone@example.com,y" would add a
+     * recipient. Address separators, quotes and line breaks in the name
+     * become spaces instead of being quoted.
      *
      * @param string $name
      * @param string $email
@@ -63,9 +67,10 @@ class Mailer
      */
     private function addressHeader($name, $email)
     {
-        $name = trim(str_replace(['"', "\r", "\n"], '', (string)$name));
+        $name = preg_replace('/[\x00-\x1F\x7F,;<>"\\\\]+/', ' ', (string)$name);
+        $name = trim(preg_replace('/\s+/', ' ', $name));
 
-        return $name ? '"' . $name . '" <' . $email . '>' : $email;
+        return $name ? $name . ' <' . $email . '>' : $email;
     }
 
     public function setSubject($subject)
@@ -82,17 +87,7 @@ class Mailer
 
     public function to($email, $name = '')
     {
-        $email = sanitize_email($email);
-
-        // Comment author names end up in a mail header, so strip anything
-        // that could be used to inject one.
-        $name = trim(str_replace(['"', "\r", "\n"], '', (string)$name));
-
-        if ($name) {
-            $this->to = '"' . $name . '" <' . $email . '>';
-        } else {
-            $this->to = $email;
-        }
+        $this->to = $this->addressHeader($name, sanitize_email($email));
 
         return $this;
     }

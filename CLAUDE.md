@@ -11,7 +11,7 @@ pnpm run build        # i18n scrape + Vite + the block
 pnpm run dev          # watch app.js + admin_app.js
 pnpm run i18n         # rescrape $t() into app/Services/TransStrings.php
 ./build.sh            # release zip into builds/
-php tests/SpamGuardTest.php   # and the seven others in tests/
+php tests/SpamGuardTest.php   # and the eight others in tests/
 ```
 
 Tests run standalone against a stubbed WordPress surface. No PHPUnit, no
